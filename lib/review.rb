@@ -55,11 +55,12 @@ class Review
     @done.each do |review|
       Wanikani.report_review(review)
     rescue Wanikani::RateLimitError => e
-      Wanikani::LOGGER.warn("#{e.message} — sleeping 60 sec...")
+      Wanikani::LOGGER.warn("#{e.message}, sleeping 60 sec...")
       sleep(60)
       retry
     rescue StandardError => e
       Wanikani::LOGGER.error("Unexpected error: #{e}")
+      break
     end
 
     Wanikani::LOGGER.info('Updating assignments...')

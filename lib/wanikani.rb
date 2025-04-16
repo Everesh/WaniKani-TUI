@@ -81,7 +81,16 @@ module Wanikani
 
     while url
       LOGGER.debug("Requesting page #{page} - #{url}")
-      data = request(url)
+      begin
+        data = request(url)
+      rescue RateLimitError => e
+        LOGGER.warn("Rate limited: #{e.message}, sleeping 60 sec...")
+        sleep(60)
+        retry
+      rescue StandardError => e
+        LOGGER.error("Unexpected error: #{e}")
+        return
+      end
       all_pages.concat(data['data'])
       url = data.dig('pages', 'next_url')
       page += 1
@@ -100,12 +109,17 @@ module Wanikani
       http.request(req)
     end
 
-    unless response.is_a?(Net::HTTPSuccess)
+    case response.code.to_i
+    when 200..299
+      LOGGER.info("Successful response from #{url}")
+    when 429
+      LOGGER.warn("Rate limited: #{response.code}")
+      raise RateLimitError, "Rate limited: #{response.body}"
+    else
       LOGGER.error("Request failed with code #{response.code}")
-      raise "Error during GET request: #{response.code}"
+      raise StandardError, "Error during GET request: #{response.code}"
     end
 
-    LOGGER.debug("Successful response from #{url}")
     JSON.parse(response.body)
   end
 
