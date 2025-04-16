@@ -23,7 +23,7 @@ module Wanikani
     FileUtils.mkdir_p(CACHE_PATH)
 
     if File.exist?(ASSIGNMENTS_CACHE_FILE) && !force
-      LOGGER.info('Using cached assignments. No requests made!')
+      LOGGER.info('Using cached assignments.')
       return
     end
 
@@ -38,7 +38,7 @@ module Wanikani
     FileUtils.mkdir_p(CACHE_PATH)
 
     if File.exist?(SUBJECTS_CACHE_FILE) && !force
-      LOGGER.info('Using cached subjects. No requests made!')
+      LOGGER.info('Using cached subjects.')
       return
     end
 
