@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'lib/wanikani'
 require_relative 'lib/review'
 
