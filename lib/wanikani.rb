@@ -7,7 +7,7 @@ require 'dotenv/load'
 require 'fileutils'
 require 'logger'
 
-# Provides methods to fetch and cache data from the WaniKani API.
+# Provides methods to interact with the WaniKani API
 module Wanikani
   class RateLimitError < StandardError; end
   API_KEY = ENV['WANIKANI_API_KEY']
