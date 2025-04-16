@@ -9,6 +9,7 @@ require 'logger'
 
 # Provides methods to fetch and cache data from the WaniKani API.
 module Wanikani
+  class RateLimitError < StandardError; end
   API_KEY = ENV['WANIKANI_API_KEY']
   raise 'WANIKANI_API_KEY is not set!' if API_KEY.nil? || API_KEY.strip.empty?
 
@@ -47,6 +48,31 @@ module Wanikani
 
     File.write(SUBJECTS_CACHE_FILE, JSON.pretty_generate(all_subjects))
     LOGGER.info("Subjects cached to #{SUBJECTS_CACHE_FILE}")
+  end
+
+  def self.report_review(payload)
+    url = 'https://api.wanikani.com/v2/reviews/'
+    uri = URI(url)
+
+    response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+      req = Net::HTTP::Post.new(uri)
+      req['Authorization'] = "Bearer #{API_KEY}"
+      req['Content-Type'] = 'application/json; charset=utf-8'
+      req.body = JSON.generate(payload)
+      http.request(req)
+    end
+
+    unless response.is_a?(Net::HTTPSuccess)
+      LOGGER.error("POST failed with code #{response.code}")
+      case response.code.to_i
+      when 429
+        raise RateLimitError, "Rate limited: #{response.body}"
+      else
+        raise StandardError, "Error during POST request: #{response.code}"
+      end
+    end
+
+    LOGGER.info("POST successful: #{response.code}")
   end
 
   def self.request_all_data(url)
