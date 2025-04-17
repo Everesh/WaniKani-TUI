@@ -21,11 +21,15 @@ class Review
     @queue.first
   end
 
+  def shift
+    @queue.shift
+  end
+
   def completed
     @done.size
   end
 
-  def done(incorrect_reading, incorrect_meaning)
+  def done(assignment_id, incorrect_reading, incorrect_meaning)
     if !incorrect_reading.is_a?(Integer) || !incorrect_meaning.is_a?(Integer) ||
        incorrect_reading.negative? || incorrect_meaning.negative?
       Wanikani::LOGGET.error('Invalid count of incorrect reading/meaning attepts!')
@@ -34,7 +38,7 @@ class Review
 
     payload = {
       "review": {
-        "assignment_id": @queue.shift['assignment_id'],
+        "assignment_id": assignment_id,
         "incorrect_meaning_answers": incorrect_meaning,
         "incorrect_reading_answers": incorrect_reading,
         "created_at": Time.now.utc.iso8601
@@ -68,6 +72,8 @@ class Review
     Wanikani::LOGGER.info('Regenerating queue...')
     populate_queue_by_ids
     map_queue_ids_to_subjects
+    Wanikani::LOGGER.info('Clearing pending report cache...')
+    @done = []
   end
 
   private
