@@ -4,7 +4,6 @@ require_relative 'lib/wanikani'
 require_relative 'lib/review'
 require 'logger'
 require 'romkan'
-require 'amatch'
 
 COMMAND_EXIT = ':exit'
 COMMAND_REPORT = ':report'
@@ -14,73 +13,60 @@ Wanikani::LOGGER.level = Logger::UNKNOWN
 puts "\n▖  ▖    ▘▖▖    ▘  ▄▖▜ ▘"
 puts   '▌▞▖▌▀▌▛▌▌▙▘▀▌▛▌▌▄▖▌ ▐ ▌'
 puts   "▛ ▝▌█▌▌▌▌▌▌█▌▌▌▌  ▙▖▐▖▌ v0.0.0\n"
+puts ''
+puts "==| Exit: #{COMMAND_EXIT}"
+puts "==| Report: #{COMMAND_REPORT}"
 
-reviews = Review.new
+reviews = Review.new(buffer_size: 5)
 
-queue = []
-while true
-  while queue.length < 5 && reviews.left > 0
-    queue << { 'data' => reviews.shift,
-               'meaning' => { 'passed' => false, 'attempts' => 0 },
-               'reading' => { 'passed' => false, 'attempts' => 0 } }
-  end
-
-  puts "\n==| Completed: #{reviews.completed} | Left: #{reviews.left + queue.count}"
-  puts "==| Commands: Exit -> #{COMMAND_EXIT}, Report -> #{COMMAND_REPORT}"
-  puts "\n==#   #{queue.first.dig('data', 'data', 'characters')}\n\n"
-
-  puts "#{if queue.first.dig('meaning',
-                             'passed')
-            '==? Reading'
-          else
-            '==? Meaning'
-          end} - #{queue.first.dig('data', 'object')}: "
-
-  print '==> '
-  answer = gets.chomp.downcase
-  case answer
-  when COMMAND_EXIT
-    break
-  when COMMAND_REPORT
-    reviews.report_all
-    queue = []
-  else
-    if queue.first.dig('meaning', 'passed')
-      answer.to_kana!
-      puts "==| Parsed as: #{answer}"
-      if queue.first.dig('data', 'data', 'readings').any? { |hash| hash['reading'].downcase == answer }
-        puts '==+ Correct! +++++++++++++++++++++++++++++++++'
-        reviews.done(queue.first.dig('data', 'assignment_id'),
-                     queue.first.dig('reading', 'attempts'),
-                     queue.first.dig('meaning', 'attempts'))
-        queue.shift
-      else
-        puts '==- Incorrect! -------------------------------'
-        puts "==| Expected: #{queue.first.dig('data', 'data', 'readings').first['reading'].downcase}"
-        queue.first['reading']['attempts'] += 1
-        queue << queue.shift
-      end
-    elsif queue.first.dig('data', 'data', 'meanings').any? do |hash|
-      Amatch::JaroWinkler.new(hash['meaning'].downcase).match(answer) >= 0.9
-    end ||
-          queue.first.dig('data', 'data', 'auxiliary_meanings').any? do |hash|
-            Amatch::JaroWinkler.new(hash['meaning'].downcase).match(answer) >= 0.9
-          end
-      puts '==+ Correct! +++++++++++++++++++++++++++++++++'
-      queue.first['meaning']['passed'] = true
-      if queue.first.dig('data', 'object') == 'radical'
-        reviews.done(queue.first.dig('data', 'assignment_id'),
-                     queue.first.dig('reading', 'attempts'),
-                     queue.first.dig('meaning', 'attempts'))
-        queue.shift
-      else
-        queue << queue.shift
-      end
+while reviews.next
+  next_step = if !reviews.meaning_passed? && !reviews.reading_passed?
+                rand(2)
+              else
+                reviews.meaning_passed? ? 1 : 0
+              end # reading : 1, meaning : 0
+  puts ''
+  puts "==| Left: #{reviews.left} | Completed: #{reviews.completed}"
+  if next_step == 1
+    puts "==| #{reviews.next_type} | Reading:"
+    puts "==#   #{reviews.next_word}"
+    print '==? '
+    answer = gets.chomp
+    case answer
+    when COMMAND_EXIT
+      break
+    when COMMAND_REPORT
+      reviews.report_all
+      next
     else
-      puts '==- Incorrect! -------------------------------'
-      puts "==| Expected: #{queue.first.dig('data', 'data', 'meanings').first['meaning'].downcase}"
-      queue.first['meaning']['attempts'] += 1
-      queue << queue.shift
+      puts "==| Expected: \"#{reviews.next.dig('data', 'readings').first['reading']}\""
+      puts "==| Parsed as: \"#{answer.to_kana}\""
+      if reviews.answer_reading(answer)
+        puts '==| CORRECT + + + + + + + + + + + + + + +'
+      else
+        puts '==| INCORRECT - - - - - - - - - - - - - -'
+      end
+    end
+  else
+    puts "==| #{reviews.next_type} | Meaning:"
+    puts "==#   #{reviews.next_word}"
+    print '==? '
+    answer = gets.chomp
+    case answer
+    when COMMAND_EXIT
+      break
+    when COMMAND_REPORT
+      reviews.report_all
+      next
+    else
+      break if answer == COMMAND_EXIT
+
+      puts "==| Expected: \"#{reviews.next.dig('data', 'meanings').first['meaning']}\""
+      if reviews.answer_meaning(answer)
+        puts '==| CORRECT + + + + + + + + + + + + + + +'
+      else
+        puts '==| INCORRECT - - - - - - - - - - - - - -'
+      end
     end
   end
 end

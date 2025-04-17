@@ -3,49 +3,90 @@
 require_relative 'wanikani'
 require 'json'
 require 'time'
+require 'amatch'
+require 'romkan'
 
 # Manages pending review queue and its progress
 class Review
-  def initialize
+  def initialize(buffer_size: 10)
     @done = []
     @queue = []
+    @buffer = []
+    @buffer_size = buffer_size
     populate_queue_by_ids
     map_queue_ids_to_subjects
+    update_buffer
   end
 
   def left
-    @queue.size
+    @queue.size + @buffer.size
   end
 
   def next
-    @queue.first
+    @buffer.first
   end
 
-  def shift
-    @queue.shift
+  def next_word
+    @buffer.first.dig('data', 'characters')
+  end
+
+  def next_type
+    @buffer.first['object']
+  end
+
+  def meaning_passed?
+    @buffer.first['meaning_passed']
+  end
+
+  def answer_meaning(answer)
+    raise 'Meaning already answered' if @buffer.first['meaning_passed']
+
+    answer = Amatch::JaroWinkler.new(answer.downcase)
+    meanings = @buffer.first.dig('data', 'meanings').map { |hash| hash['meaning'] }
+    meanings.concat(@buffer.first.dig('data', 'auxiliary_meanings').map { |hash| hash['meaning'] })
+    if meanings.any? { |meaning| answer.match(meaning.downcase) >= 0.9 }
+      @buffer.first['meaning_passed'] = true
+      if @buffer.first['reading_passed']
+        @done << @buffer.shift
+        update_buffer
+      else
+        @buffer << @buffer.shift
+      end
+      true
+    else
+      @buffer.first['invalid_meanings'] += 1
+      @buffer << @buffer.shift
+      false
+    end
+  end
+
+  def reading_passed?
+    @buffer.first['reading_passed']
+  end
+
+  def answer_reading(answer)
+    raise 'Reading already answered' if @buffer.first['reading_passed']
+
+    answer.to_kana!
+    readings = @buffer.first.dig('data', 'readings').map { |hash| hash['reading'] }
+    if readings.any? { |reading| reading == answer }
+      @buffer.first['reading_passed'] = true
+      if @buffer.first['meaning_passed']
+        @done << @buffer.shift
+        update_buffer
+      else
+        @buffer << @buffer.shift
+      end
+      true
+    else
+      @buffer.first['invalid_readings'] += 1
+      @buffer << @buffer.shift
+      false
+    end
   end
 
   def completed
     @done.size
-  end
-
-  def done(assignment_id, incorrect_reading, incorrect_meaning)
-    if !incorrect_reading.is_a?(Integer) || !incorrect_meaning.is_a?(Integer) ||
-       incorrect_reading.negative? || incorrect_meaning.negative?
-      Wanikani::LOGGET.error('Invalid count of incorrect reading/meaning attepts!')
-      raise 'Invalid params for review completion!'
-    end
-
-    payload = {
-      "review": {
-        "assignment_id": assignment_id,
-        "incorrect_meaning_answers": incorrect_meaning,
-        "incorrect_reading_answers": incorrect_reading,
-        "created_at": Time.now.utc.iso8601
-      }
-    }
-
-    @done << payload
   end
 
   def last
@@ -72,6 +113,7 @@ class Review
     Wanikani::LOGGER.info('Regenerating queue...')
     populate_queue_by_ids
     map_queue_ids_to_subjects
+    update_buffer
     Wanikani::LOGGER.info('Clearing pending report cache...')
     @done = []
   end
@@ -127,5 +169,17 @@ class Review
 
     Wanikani::LOGGER.info('Parsing data from cache...')
     JSON.parse(File.read(path))
+  end
+
+  def update_buffer
+    Wanikani::LOGGER.info('Populating buffer...')
+    while @buffer.length < @buffer_size && !@queue.empty?
+      item = @queue.shift
+      item['reading_passed'] = false
+      item['invalid_readings'] = 0
+      item['meaning_passed'] = false
+      item['invalid_meanings'] = 0
+      @buffer << item
+    end
   end
 end
