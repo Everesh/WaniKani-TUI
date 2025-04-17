@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 # gem "rails"
+gem 'amatch'
 gem 'curses'
 gem 'dotenv'
 gem 'httparty'

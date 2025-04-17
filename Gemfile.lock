@@ -1,6 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    amatch (0.4.1)
+      mize
+      tins (~> 1.0)
     bigdecimal (3.1.9)
     csv (3.3.4)
     curses (1.5.0)
@@ -11,16 +14,22 @@ GEM
       multi_xml (>= 0.5.2)
     logger (1.7.0)
     mini_mime (1.1.5)
+    mize (0.6.1)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     ostruct (0.6.1)
     romkan (0.4.0)
+    sync (0.5.0)
+    tins (1.38.0)
+      bigdecimal
+      sync
 
 PLATFORMS
   ruby
   x86_64-linux
 
 DEPENDENCIES
+  amatch
   curses
   dotenv
   httparty

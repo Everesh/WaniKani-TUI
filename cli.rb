@@ -4,6 +4,7 @@ require_relative 'lib/wanikani'
 require_relative 'lib/review'
 require 'logger'
 require 'romkan'
+require 'amatch'
 
 COMMAND_EXIT = ':exit'
 COMMAND_REPORT = ':report'
@@ -59,8 +60,12 @@ while true
         queue.first['reading']['attempts'] += 1
         queue << queue.shift
       end
-    elsif queue.first.dig('data', 'data', 'meanings').any? { |hash| hash['meaning'].downcase == answer } ||
-          queue.first.dig('data', 'data', 'auxiliary_meanings').any? { |hash| hash['meaning'].downcase == answer }
+    elsif queue.first.dig('data', 'data', 'meanings').any? do |hash|
+      Amatch::JaroWinkler.new(hash['meaning'].downcase).match(answer) >= 0.9
+    end ||
+          queue.first.dig('data', 'data', 'auxiliary_meanings').any? do |hash|
+            Amatch::JaroWinkler.new(hash['meaning'].downcase).match(answer) >= 0.9
+          end
       puts '==+ Correct! +++++++++++++++++++++++++++++++++'
       queue.first['meaning']['passed'] = true
       if queue.first.dig('data', 'object') == 'radical'
