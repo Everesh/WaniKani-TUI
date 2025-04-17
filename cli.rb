@@ -23,7 +23,7 @@ while true
                'reading' => { 'passed' => false, 'attempts' => 0 } }
   end
 
-  puts "==| Completed: #{reviews.completed} | Left: #{reviews.left + queue.count}"
+  puts "\n==| Completed: #{reviews.completed} | Left: #{reviews.left + queue.count}"
   puts "==| Commands: Exit -> #{COMMAND_EXIT}, Report -> #{COMMAND_REPORT}"
   puts "\n==#   #{queue.first.dig('data', 'data', 'characters')}\n\n"
 
@@ -70,5 +70,4 @@ while true
       queue << queue.shift
     end
   end
-  puts "\n"
 end
