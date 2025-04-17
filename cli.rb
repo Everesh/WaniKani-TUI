@@ -27,7 +27,12 @@ while true
   puts "==| Commands: Exit -> #{COMMAND_EXIT}, Report -> #{COMMAND_REPORT}"
   puts "\n==#   #{queue.first.dig('data', 'data', 'characters')}\n\n"
 
-  puts queue.first.dig('meaning', 'passed') ? '==? Reading: ' : '==? Meaning: '
+  puts "#{if queue.first.dig('meaning',
+                             'passed')
+            '==? Reading'
+          else
+            '==? Meaning'
+          end} - #{queue.first.dig('data', 'object')}: "
 
   print '==> '
   answer = gets.chomp.downcase
