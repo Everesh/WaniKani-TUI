@@ -3,6 +3,7 @@
 require_relative 'lib/wanikani'
 require_relative 'lib/review'
 require 'logger'
+require 'romkan'
 
 COMMAND_EXIT = ':exit'
 COMMAND_REPORT = ':report'
@@ -44,6 +45,8 @@ while true
     queue = []
   else
     if queue.first.dig('meaning', 'passed')
+      answer.to_kana!
+      puts "==| Parsed as: #{answer}"
       if queue.first.dig('data', 'data', 'readings').any? { |hash| hash['reading'].downcase == answer }
         puts '==+ Correct! +++++++++++++++++++++++++++++++++'
         reviews.done(queue.first.dig('data', 'assignment_id'),
