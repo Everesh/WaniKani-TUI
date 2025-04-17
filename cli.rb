@@ -5,8 +5,8 @@ require_relative 'lib/review'
 require 'logger'
 require 'romkan'
 
-COMMAND_EXIT = ':exit'
-COMMAND_REPORT = ':report'
+COMMAND_EXIT = ':q'
+COMMAND_REPORT = ':w'
 
 Wanikani::LOGGER.level = Logger::UNKNOWN
 
