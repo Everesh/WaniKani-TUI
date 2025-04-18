@@ -20,7 +20,7 @@ puts "==| Sync: #{COMMAND_SYNC}" + '    | ' + 'Warning: Destroys pending reports
 puts "==| Report: #{COMMAND_REPORT}" + '  | ' + 'Warning: Performs Sync'.colorize(:yellow)
 puts "==| Exit: #{COMMAND_EXIT}"
 
-reviews = Review.new(buffer_size: 10)
+reviews = Review.new(buffer_size: 5)
 
 while reviews.next
   next_step = if !reviews.meaning_passed? && !reviews.reading_passed?
