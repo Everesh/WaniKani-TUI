@@ -98,7 +98,15 @@ class Review
   end
 
   def last
-    @done.last
+    @buffer.last
+  end
+
+  def last_word
+    @buffer.last.dig('data', 'characters')
+  end
+
+  def last_type
+    @buffer.last['object']
   end
 
   def report_all
