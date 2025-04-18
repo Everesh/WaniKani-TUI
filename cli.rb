@@ -36,22 +36,31 @@ while reviews.next
                else
                  reviews.next_type == 'kanji' ? :red : :green
                end
+
   if next_step == 1
     print "==|#{' Reading '.colorize(:white).on_black.bold}|"
     puts "#{" #{reviews.next_type}".colorize(next_color)}:"
     puts "==# #{"  #{reviews.next_word}".bold}"
-    print '==? '
-    answer = gets.chomp
-    case answer
-    when COMMAND_EXIT
-      break
-    when COMMAND_REPORT
-      reviews.report_all
-      next
-    when COMMAND_SYNC
-      reviews.sync
-      next
-    else
+  else
+    print "==|#{' Meaning '.colorize(:black).on_white.bold}|"
+    puts "#{" #{reviews.next_type}".colorize(next_color)}:"
+    puts "==# #{"  #{reviews.next_word}".bold}"
+  end
+
+  print '==? '
+  answer = gets.chomp
+
+  case answer
+  when COMMAND_EXIT
+    break
+  when COMMAND_REPORT
+    reviews.report_all
+    next
+  when COMMAND_SYNC
+    reviews.sync
+    next
+  else
+    if next_step == 1
       puts "==| Expected: \"#{reviews.next.dig('data', 'readings').first['reading']}\""
       puts "==| Parsed as: \"#{answer.to_kana}\""
       if reviews.answer_reading(answer)
@@ -59,25 +68,7 @@ while reviews.next
       else
         puts "==| #{'INCORRECT - - - - - - - - - - - - - -'.colorize(:red)}"
       end
-    end
-  else
-    print "==|#{' Meaning '.colorize(:black).on_white.bold}|"
-    puts "#{" #{reviews.next_type}".colorize(next_color)}:"
-    puts "==# #{"  #{reviews.next_word}".bold}"
-    print '==? '
-    answer = gets.chomp
-    case answer
-    when COMMAND_EXIT
-      break
-    when COMMAND_REPORT
-      reviews.report_all
-      next
-    when COMMAND_SYNC
-      reviews.sync
-      next
     else
-      break if answer == COMMAND_EXIT
-
       puts "==| Expected: \"#{reviews.next.dig('data', 'meanings').first['meaning']}\""
       if reviews.answer_meaning(answer)
         puts "==| #{'CORRECT + + + + + + + + + + + + + + +'.colorize(:green)}"

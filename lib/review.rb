@@ -85,6 +85,11 @@ class Review
     end
   end
 
+  def pass_next
+    @done << @buffer.shift
+    update_buffer
+  end
+
   def completed
     @done.size
   end

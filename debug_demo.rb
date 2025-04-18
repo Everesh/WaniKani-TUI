@@ -32,7 +32,7 @@ Wanikani::LOGGER.info('=============================')
 Wanikani::LOGGER.info('Got it right? [y/N]')
 answer = gets.chomp.downcase
 if answer.start_with?('y')
-  review_queue.done(review_queue.shift['assignment_id'], 0, 0)
+  review_queue.pass_next
   Wanikani::LOGGER.info('=============================')
   Wanikani::LOGGER.info('Send to WaniKani? [y/N]')
   answer = gets.chomp.downcase
