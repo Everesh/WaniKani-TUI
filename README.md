@@ -30,4 +30,8 @@
     ```sh
     bundle exec ruby <cli.rb/tui.rb>
     ```
+---
 
+### Features
+- __Romaji Parsing__: Accepts romaji alongside kana for reading inputs
+- __Typo Tolerance__: Accepts typos for meaning inputs
