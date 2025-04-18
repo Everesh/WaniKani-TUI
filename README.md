@@ -33,7 +33,10 @@
     ```
 5. Run either the CLI or TUI app
     ```sh
-    bundle exec ruby <cli.rb/tui.rb>
+    bundle exec ruby tui.rb
+    ```
+    ```sh
+    bundle exec ruby cli.rb
     ```
 ---
 
