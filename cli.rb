@@ -4,6 +4,7 @@ require_relative 'lib/wanikani'
 require_relative 'lib/review'
 require 'logger'
 require 'romkan'
+require 'colorize'
 
 COMMAND_EXIT = ':q'
 COMMAND_REPORT = ':w'
@@ -26,12 +27,19 @@ while reviews.next
                 rand(2)
               else
                 reviews.meaning_passed? ? 1 : 0
-              end # reading : 1, meaning : 0
+              end
+  puts ''
   puts ''
   puts "==| Left: #{reviews.left} | Completed: #{reviews.completed}"
+  next_color = if reviews.next_type == 'radical'
+                 :blue
+               else
+                 reviews.next_type == 'kanji' ? :red : :green
+               end
   if next_step == 1
-    puts "==| #{reviews.next_type} | Reading:"
-    puts "==#   #{reviews.next_word}"
+    print "==|#{' Reading '.colorize(:white).on_black.bold}|"
+    puts "#{" #{reviews.next_type}".colorize(next_color)}:"
+    puts "==# #{"  #{reviews.next_word}".bold}"
     print '==? '
     answer = gets.chomp
     case answer
@@ -47,14 +55,15 @@ while reviews.next
       puts "==| Expected: \"#{reviews.next.dig('data', 'readings').first['reading']}\""
       puts "==| Parsed as: \"#{answer.to_kana}\""
       if reviews.answer_reading(answer)
-        puts '==| CORRECT + + + + + + + + + + + + + + +'
+        puts "==| #{'CORRECT + + + + + + + + + + + + + + +'.colorize(:green)}"
       else
-        puts '==| INCORRECT - - - - - - - - - - - - - -'
+        puts "==| #{'INCORRECT - - - - - - - - - - - - - -'.colorize(:red)}"
       end
     end
   else
-    puts "==| #{reviews.next_type} | Meaning:"
-    puts "==#   #{reviews.next_word}"
+    print "==|#{' Meaning '.colorize(:black).on_white.bold}|"
+    puts "#{" #{reviews.next_type}".colorize(next_color)}:"
+    puts "==# #{"  #{reviews.next_word}".bold}"
     print '==? '
     answer = gets.chomp
     case answer
@@ -71,9 +80,9 @@ while reviews.next
 
       puts "==| Expected: \"#{reviews.next.dig('data', 'meanings').first['meaning']}\""
       if reviews.answer_meaning(answer)
-        puts '==| CORRECT + + + + + + + + + + + + + + +'
+        puts "==| #{'CORRECT + + + + + + + + + + + + + + +'.colorize(:green)}"
       else
-        puts '==| INCORRECT - - - - - - - - - - - - - -'
+        puts "==| #{'INCORRECT - - - - - - - - - - - - - -'.colorize(:red)}"
       end
     end
   end

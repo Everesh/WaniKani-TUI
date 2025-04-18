@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 # gem "rails"
 gem 'amatch'
+gem 'colorize'
 gem 'curses'
 gem 'dotenv'
 gem 'httparty'
