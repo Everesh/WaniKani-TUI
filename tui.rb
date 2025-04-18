@@ -181,7 +181,9 @@ class WaniKaniTUI
         break
       else
         input_str += ch.chr
-        input_str.to_kana! if reading && !input_str.start_with?(':')
+        if reading && !input_str.start_with?(':') && (!input_str.end_with?('n') || input_str.end_with?('nn'))
+          input_str.to_kana!
+        end
       end
     end
 
