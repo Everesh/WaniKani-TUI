@@ -158,6 +158,8 @@ class WaniKaniTUI
       @ask.addstr('Meaning:')
     end
     @ask.attroff(Curses::A_BOLD)
+    @ask.setpos(2, 0)
+    @ask.addstr('_' * Curses.cols)
   end
 
   def get_input(reading)
