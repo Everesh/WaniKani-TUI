@@ -5,6 +5,8 @@ require_relative 'lib/review'
 require 'curses'
 require 'romkan'
 
+Wanikani::LOGGER.level = Logger::UNKNOWN
+
 class WaniKaniTUI
   COMMAND_EXIT = ':q'
   COMMAND_REPORT = ':w'
