@@ -39,9 +39,13 @@ class WaniKaniTUI
       when COMMAND_EXIT
         break
       when COMMAND_REPORT
+        render_report(reading, input)
+        refresh_boxes
         @reviews.report_all
         next
       when COMMAND_SYNC
+        render_sync(reading, input)
+        refresh_boxes
         @reviews.sync
         next
       end
@@ -248,6 +252,26 @@ class WaniKaniTUI
 
   def wrap_string(str, width)
     str.scan(/.{1,#{width}}/)
+  end
+
+  def render_report(reading, input)
+    structure_boxes(expanded: true)
+    fill_subject
+    fill_ask(reading)
+    fill_input(input)
+
+    @details.setpos((Curses.lines - 9) / 2, (Curses.cols - 'Reporting to WK...'.length) / 2)
+    @details.addstr('Reporting to WK...')
+  end
+
+  def render_sync(reading, input)
+    structure_boxes(expanded: true)
+    fill_subject
+    fill_ask(reading)
+    fill_input(input)
+
+    @details.setpos((Curses.lines - 9) / 2, (Curses.cols - 'Syncing pending reviews...'.length) / 2)
+    @details.addstr('Syncing pending reviews...')
   end
 end
 
