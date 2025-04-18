@@ -3,6 +3,11 @@
 
 ---
 
+### TUI
+![tui preview gif](https://github.com/user-attachments/assets/3b103af1-2c86-4c72-8a2c-1e0cb10ddc47)
+
+---
+
 ### CLI
 ![cli preview gif](https://github.com/user-attachments/assets/a71298d7-3dbb-4fd2-8ae8-bd9d380f2b94)
 

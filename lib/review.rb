@@ -46,7 +46,7 @@ class Review
     meanings.concat(@buffer.first.dig('data', 'auxiliary_meanings').map { |hash| hash['meaning'] })
     if meanings.any? { |meaning| answer.match(meaning.downcase) >= 0.9 }
       @buffer.first['meaning_passed'] = true
-      if @buffer.first['reading_passed']
+      if @buffer.first['reading_passed'] || next_type == 'radical'
         @buffer.first['time_passed'] = Time.now.utc.iso8601(6)
         @done << @buffer.shift
         update_buffer

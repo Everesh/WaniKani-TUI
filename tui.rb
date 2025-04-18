@@ -13,7 +13,7 @@ class WaniKaniTUI
   COMMAND_SYNC = ':u'
 
   def initialize
-    @reviews = Review.new(buffer_size: 5)
+    @reviews = Review.new(buffer_size: 1)
     @screen = Curses.init_screen
     Curses.start_color
     Curses.noecho
