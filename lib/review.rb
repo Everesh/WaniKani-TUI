@@ -68,7 +68,7 @@ class Review
   def answer_reading(answer)
     raise 'Reading already answered' if @buffer.first['reading_passed']
 
-    answer.to_kana!
+    answer = answer.to_kana
     readings = @buffer.first.dig('data', 'readings').map { |hash| hash['reading'] }
     if readings.any? { |reading| reading == answer }
       @buffer.first['reading_passed'] = true
