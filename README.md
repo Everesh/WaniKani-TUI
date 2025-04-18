@@ -10,26 +10,24 @@
 
 ### Installation
 1. Grab the repo:
-    ```Shell
+    ```sh
     git clone https://github.com/Everesh/WaniKani-TUI.git
     ```
 2. Move to the new dir:
-    ```Shell
+    ```sh
     cd WaniKani-TUI
     ```
 3. Install required gems:
-    ```Shell
+    ```sh
     bundle install
     ```
 4. Set up your [WaniKani API key](https://www.wanikani.com/settings/personal_access_tokens):
-    - required flags:
-        - all_data:read
-        - reviews:create
-    ```Shell
+    - required flags: `all_data:read`, `reviews:create`
+    ```sh
     echo "WANIKANI_API_KEY=<your-api-key>" > .env
     ```
 5. Run either the CLI or TUI app
-    ```Shell
+    ```sh
     bundle exec ruby <cli.rb/tui.rb>
     ```
 
