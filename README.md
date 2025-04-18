@@ -9,7 +9,7 @@
 ---
 
 ### CLI
-![cli preview gif](https://github.com/user-attachments/assets/a71298d7-3dbb-4fd2-8ae8-bd9d380f2b94)
+![cli preview gif](https://github.com/user-attachments/assets/702ee7f6-d743-44d4-80a2-fa578720d481)
 
 ---
 
