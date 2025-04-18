@@ -108,11 +108,18 @@ class Review
       break
     end
 
+    sync
+  end
+
+  def sync
     Wanikani::LOGGER.info('Updating assignments...')
     Wanikani.fetch_assignments(force: true)
     Wanikani::LOGGER.info('Regenerating queue...')
+    @queue = []
     populate_queue_by_ids
     map_queue_ids_to_subjects
+    Wanikani::LOGGER.info('Regenerating buffer...')
+    @buffer = []
     update_buffer
     Wanikani::LOGGER.info('Clearing pending report cache...')
     @done = []

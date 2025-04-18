@@ -7,6 +7,7 @@ require 'romkan'
 
 COMMAND_EXIT = ':q'
 COMMAND_REPORT = ':w'
+COMMAND_SYNC = ':u'
 
 Wanikani::LOGGER.level = Logger::UNKNOWN
 
@@ -16,6 +17,7 @@ puts   "▛ ▝▌█▌▌▌▌▌▌█▌▌▌▌  ▙▖▐▖▌ v0.0.0\n
 puts ''
 puts "==| Exit: #{COMMAND_EXIT}"
 puts "==| Report: #{COMMAND_REPORT}"
+puts "==| Force Sync: #{COMMAND_SYNC}"
 
 reviews = Review.new(buffer_size: 5)
 
@@ -38,6 +40,9 @@ while reviews.next
     when COMMAND_REPORT
       reviews.report_all
       next
+    when COMMAND_SYNC
+      reviews.sync
+      next
     else
       puts "==| Expected: \"#{reviews.next.dig('data', 'readings').first['reading']}\""
       puts "==| Parsed as: \"#{answer.to_kana}\""
@@ -57,6 +62,9 @@ while reviews.next
       break
     when COMMAND_REPORT
       reviews.report_all
+      next
+    when COMMAND_SYNC
+      reviews.sync
       next
     else
       break if answer == COMMAND_EXIT
