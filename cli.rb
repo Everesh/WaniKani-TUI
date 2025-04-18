@@ -16,9 +16,9 @@ puts "\n▖  ▖    ▘▖▖    ▘  ▄▖▜ ▘"
 puts   '▌▞▖▌▀▌▛▌▌▙▘▀▌▛▌▌▄▖▌ ▐ ▌'
 puts   "▛ ▝▌█▌▌▌▌▌▌█▌▌▌▌  ▙▖▐▖▌ v0.0.0\n"
 puts ''
+puts "==| Sync: #{COMMAND_SYNC}" + '    | ' + 'Warning: Destroys pending reports'.colorize(:red)
+puts "==| Report: #{COMMAND_REPORT}" + '  | ' + 'Warning: Performs Sync'.colorize(:yellow)
 puts "==| Exit: #{COMMAND_EXIT}"
-puts "==| Report: #{COMMAND_REPORT}"
-puts "==| Force Sync: #{COMMAND_SYNC}"
 
 reviews = Review.new(buffer_size: 5)
 

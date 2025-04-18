@@ -68,6 +68,7 @@ module Wanikani
       when 429
         raise RateLimitError, "Rate limited: #{response.body}"
       else
+        LOGGER.error("Message: #{response.message}")
         raise StandardError, "Error during POST request: #{response.code}"
       end
     end

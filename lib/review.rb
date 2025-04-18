@@ -47,6 +47,7 @@ class Review
     if meanings.any? { |meaning| answer.match(meaning.downcase) >= 0.9 }
       @buffer.first['meaning_passed'] = true
       if @buffer.first['reading_passed']
+        @buffer.first['time_passed'] = Time.now.utc.iso8601(6)
         @done << @buffer.shift
         update_buffer
       else
@@ -72,6 +73,7 @@ class Review
     if readings.any? { |reading| reading == answer }
       @buffer.first['reading_passed'] = true
       if @buffer.first['meaning_passed']
+        @buffer.first['time_passed'] = Time.now.utc.iso8601(6)
         @done << @buffer.shift
         update_buffer
       else
@@ -86,6 +88,7 @@ class Review
   end
 
   def pass_next
+    @buffer.first['time_passed'] = Time.now.utc.iso8601(6)
     @done << @buffer.shift
     update_buffer
   end
@@ -103,7 +106,8 @@ class Review
 
     Wanikani::LOGGER.info('Begining review reporting...')
     @done.each do |review|
-      Wanikani.report_review(review)
+      payload = make_payload(review)
+      Wanikani.report_review(payload)
     rescue Wanikani::RateLimitError => e
       Wanikani::LOGGER.warn("#{e.message}, sleeping 60 sec...")
       sleep(60)
@@ -193,5 +197,16 @@ class Review
       item['invalid_meanings'] = 0
       @buffer << item
     end
+  end
+
+  def make_payload(review)
+    {
+      'review' => {
+        'assignment_id' => review['assignment_id'],
+        'incorrect_meaning_answers' => review['invalid_meanings'],
+        'incorrect_reading_answers' => review['invalid_readings'],
+        'created_at' => review['time_passed']
+      }
+    }
   end
 end
