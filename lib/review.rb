@@ -8,7 +8,7 @@ require 'romkan'
 
 # Manages pending review queue and its progress
 class Review
-  def initialize(buffer_size: 10)
+  def initialize(buffer_size: 5)
     @done = []
     @queue = []
     @buffer = []
@@ -150,7 +150,8 @@ class Review
 
     @queue = assignments.select do |assignment|
       available_at = assignment.dig('data', 'available_at')
-      available_at && Time.parse(available_at) < now
+      started = assignment.dig('data', 'started_at')
+      available_at && Time.parse(available_at) < now && started
     end
 
     @queue.map! do |assignment|
