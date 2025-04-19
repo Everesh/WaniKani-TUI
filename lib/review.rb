@@ -13,8 +13,7 @@ class Review
     @queue = []
     @buffer = []
     @buffer_size = buffer_size
-    populate_queue_by_ids
-    map_queue_ids_to_subjects
+    regen_queue
     update_buffer
   end
 
@@ -133,8 +132,7 @@ class Review
     Wanikani.fetch_assignments(force: true)
     Wanikani::LOGGER.info('Regenerating queue...')
     @queue = []
-    populate_queue_by_ids
-    map_queue_ids_to_subjects
+    regen_queue
     Wanikani::LOGGER.info('Regenerating buffer...')
     @buffer = []
     update_buffer
@@ -143,6 +141,12 @@ class Review
   end
 
   private
+
+  def regen_queue
+    populate_queue_by_ids
+    map_queue_ids_to_subjects
+    shuffle_queue
+  end
 
   def populate_queue_by_ids
     begin
@@ -187,6 +191,10 @@ class Review
       subject['assignment_id'] = assignment_id
       subject
     end
+  end
+
+  def shuffle_queue
+    @queue.shuffle!
   end
 
   def get_cached(path)
