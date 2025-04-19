@@ -116,7 +116,7 @@ class WaniKaniTUI
                                     else
                                       @reviews.next_type == 'kanji' ? 2 : 3
                                     end))
-    @subject.setpos(@subject_height / 2, (Curses.cols - @reviews.next_word.length) / 2)
+    @subject.setpos(@subject_height / 2, (Curses.cols - display_width(@reviews.next_word)) / 2)
     @subject.addstr(@reviews.next_word)
     @subject.attroff(Curses::A_BOLD)
   end
@@ -142,7 +142,7 @@ class WaniKaniTUI
                                     else
                                       @reviews.last_type == 'kanji' ? 2 : 3
                                     end))
-    @subject.setpos(@subject_height / 2, (Curses.cols - @reviews.last_word.length) / 2)
+    @subject.setpos(@subject_height / 2, (Curses.cols - display_width(@reviews.last_word)) / 2)
     @subject.addstr(@reviews.last_word)
     @subject.attroff(Curses::A_BOLD)
   end
@@ -168,7 +168,7 @@ class WaniKaniTUI
     @input.clear
 
     while true
-      @input.setpos(1, (Curses.cols - input_str.length) / 2)
+      @input.setpos(1, (Curses.cols - display_width(input_str)) / 2)
       @input.addstr(input_str)
       @input.refresh
 
@@ -192,7 +192,7 @@ class WaniKaniTUI
 
   def fill_input(input)
     @input.bkgd(Curses.color_pair(6))
-    @input.setpos(1, (Curses.cols - input.length) / 2)
+    @input.setpos(1, (Curses.cols - display_width(input)) / 2)
     @input.addstr(input)
     @input.box
     @input.refresh
@@ -276,6 +276,10 @@ class WaniKaniTUI
 
     @details.setpos((Curses.lines - 9) / 2, (Curses.cols - 'Syncing pending reviews...'.length) / 2)
     @details.addstr('Syncing pending reviews...')
+  end
+
+  def display_width(str)
+    str.each_char.sum { |c| c.bytesize > 1 ? 2 : 1 }
   end
 end
 
