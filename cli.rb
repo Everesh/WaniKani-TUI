@@ -58,7 +58,9 @@ while reviews.next
   when COMMAND_EXIT
     break
   when COMMAND_REPORT
+    Wanikani::LOGGER.level = Logger::INFO
     reviews.report_all
+    Wanikani::LOGGER.level = Logger::UNKNOWN
     next
   when COMMAND_SYNC
     reviews.sync
