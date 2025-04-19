@@ -96,7 +96,7 @@ class WaniKaniTUI
       Curses.init_color(1, 337, 388, 541) # RADIC_WDEK - #56638a
       Curses.init_color(2, 612, 275, 267) # KANJI_WKED - #9c4644
       Curses.init_color(3, 345, 537, 435) # VOCAB_WKED - #58896f
-      Curses.init_color(4, 933, 933, 933) # WHITE_WKED - #eeeeee
+      Curses.init_color(4, 729, 729, 729) # WHITE_WKED - #eeeeee
       Curses.init_color(5, 157, 157, 157) # BLACK_WKED - #282828
 
       Curses.init_pair(1, 4, 1) # Radical
