@@ -184,7 +184,7 @@ class WaniKaniTUI
         input_str = input_str[0..-2]
         @input.clear
       elsif ch == 10
-        break
+        input_str.length > 0 ? break : next
       else
         input_str += ch.chr
         if reading && !input_str.start_with?(':') && (!input_str.end_with?('n') || input_str.end_with?('nn'))
