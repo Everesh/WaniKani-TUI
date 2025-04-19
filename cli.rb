@@ -10,17 +10,21 @@ COMMAND_EXIT = ':q'
 COMMAND_REPORT = ':w'
 COMMAND_SYNC = ':u'
 
-Wanikani::LOGGER.level = Logger::UNKNOWN
+Wanikani::LOGGER.level = Logger::INFO
 
-puts "\n▖  ▖    ▘▖▖    ▘  ▄▖▜ ▘"
-puts   '▌▞▖▌▀▌▛▌▌▙▘▀▌▛▌▌▄▖▌ ▐ ▌'
-puts   "▛ ▝▌█▌▌▌▌▌▌█▌▌▌▌  ▙▖▐▖▌ v0.0.0\n"
-puts ''
-puts "==| Sync: #{COMMAND_SYNC}" + '    | ' + 'Warning: Destroys pending reports'.colorize(:red)
-puts "==| Report: #{COMMAND_REPORT}" + '  | ' + 'Warning: Performs Sync'.colorize(:yellow)
-puts "==| Exit: #{COMMAND_EXIT}"
+Wanikani::LOGGER.info('▖  ▖    ▘▖▖    ▘  ▄▖▜ ▘')
+Wanikani::LOGGER.info('▌▞▖▌▀▌▛▌▌▙▘▀▌▛▌▌▄▖▌ ▐ ▌')
+Wanikani::LOGGER.info('▛ ▝▌█▌▌▌▌▌▌█▌▌▌▌  ▙▖▐▖▌ v0.0.0')
+Wanikani::LOGGER.info('')
 
 reviews = Review.new(buffer_size: 5)
+
+Wanikani::LOGGER.level = Logger::UNKNOWN
+
+puts "\n==|" + ' Commands:'.bold
+puts "==| Sync:   #{COMMAND_SYNC}" + '    | ' + 'Warning: Destroys pending reports'.colorize(:red)
+puts "==| Report: #{COMMAND_REPORT}" + '    | ' + 'Warning: Performs Sync'.colorize(:yellow)
+puts "==| Exit:   #{COMMAND_EXIT}"
 
 while reviews.next
   next_step = if !reviews.meaning_passed? && !reviews.reading_passed?
