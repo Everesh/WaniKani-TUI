@@ -49,6 +49,7 @@ class WaniKaniTUI
         @reviews.sync
         next
       end
+      next if input.start_with?(':')
       next if reading ? @reviews.answer_reading(input) : @reviews.answer_meaning(input)
 
       render_details(reading, input)
