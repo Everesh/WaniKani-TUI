@@ -5,7 +5,7 @@ require_relative 'lib/review'
 require 'curses'
 require 'romkan'
 
-Wanikani::LOGGER.level = Logger::UNKNOWN
+Wanikani::LOGGER.level = Logger::INFO
 
 class WaniKaniTUI
   COMMAND_EXIT = ':q'
@@ -13,6 +13,10 @@ class WaniKaniTUI
   COMMAND_SYNC = ':u'
 
   def initialize
+    Wanikani::LOGGER.info('▖  ▖    ▘▖▖    ▘  ▄▖▖▖▄▖')
+    Wanikani::LOGGER.info('▌▞▖▌▀▌▛▌▌▙▘▀▌▛▌▌▄▖▐ ▌▌▐ ')
+    Wanikani::LOGGER.info('▛ ▝▌█▌▌▌▌▌▌█▌▌▌▌  ▐ ▙▌▟▖ v0.0.0')
+    Wanikani::LOGGER.info('')
     @reviews = Review.new(buffer_size: 5)
     @screen = Curses.init_screen
     Curses.start_color
@@ -21,6 +25,7 @@ class WaniKaniTUI
     Curses.clear
     Curses.refresh
     init_color_pairs
+    Wanikani::LOGGER.level = Logger::UNKNOWN
     main_loop
   end
 
