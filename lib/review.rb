@@ -152,7 +152,7 @@ class Review
     begin
       assignments = get_cached(Wanikani::ASSIGNMENTS_CACHE_FILE)
     rescue StandardError => e
-      Wanikani::LOGGER.warn("Failed to load cached data from #{Wanikani::ASSIGNMENTS_CACHE_FILE}: #{e.message}")
+      Wanikani::LOGGER.warn("Failed to load assignments from cache: #{e.message}")
       Wanikani.fetch_assignments
       retry
     end
@@ -175,7 +175,7 @@ class Review
     begin
       subjects = get_cached(Wanikani::SUBJECTS_CACHE_FILE)
     rescue StandardError => e
-      Wanikani::LOGGER.warn("Failed to load cached data from #{Wanikani::SUBJECTS_CACHE_FILE}: #{e.message}")
+      Wanikani::LOGGER.warn("Failed to load subjects from cache: #{e.message}")
       Wanikani.fetch_all_subjects
       retry
     end
