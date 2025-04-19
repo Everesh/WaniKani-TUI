@@ -279,11 +279,11 @@ class WaniKaniTUI
   end
 
   def render_tagged_string(win, y, x, text)
-    tags = {
+    tags = Hash.new(5).merge({
       'radical' => 1,
       'kanji' => 2,
       'vocabulary' => 3
-    }
+    })
 
     win.setpos(y, x)
     pos = 0
