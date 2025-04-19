@@ -250,19 +250,39 @@ class WaniKaniTUI
     @details.addstr('Mnemonic:')
     @details.attroff(Curses::A_BOLD)
     @details.setpos(line, 11)
+
     mnemonic = @reviews.last.dig('data', 'meaning_mnemonic')
-    wrap_string(mnemonic, Curses.cols - 4).each do |str|
-      line += 1
-      @details.setpos(line, 2)
-      @details.addstr(str)
-    end
+    render_tagged_string(@details, line, 11, mnemonic)
 
     refresh_boxes
   end
 
-  def wrap_string(str, width)
-    str.scan(/.{1,#{width}}/)
+  def render_tagged_string(win, y, x, text)
+    tags = {
+      'radical' => 1,
+      'kanji' => 2,
+      'vocabulary' => 3
+    }
+
+    win.setpos(y, x)
+    pos = 0
+    while pos < text.length
+      if text[pos..] =~ /\A<(?<tag>\w+)>(?<content>.*?)<\/\k<tag>>/m
+        match = Regexp.last_match
+        tag = match[:tag]
+        content = match[:content]
+
+        win.attron(Curses.color_pair(tags[tag])) do
+          win.addstr(content)
+        end
+        pos += match[0].length
+      else
+        win.addstr(text[pos])
+        pos += 1
+      end
+    end
   end
+
 
   def render_report(reading, input)
     structure_boxes(expanded: true)
