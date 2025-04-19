@@ -36,7 +36,7 @@ class WaniKaniTUI
       structure_boxes
       fill_subject
 
-      reading = @reviews.next_type == 'radical' ? false : reading?
+      reading = ['radical', 'kana_vocabulary'].include?(@reviews.next_type) ? false : reading?
       fill_ask(reading)
       refresh_boxes
       input = get_input(reading)
@@ -256,7 +256,7 @@ class WaniKaniTUI
     @details.addstr('Readings:')
     @details.attroff(Curses::A_BOLD)
     @details.setpos(line, 11)
-    readings = if @reviews.last_type == 'radical'
+    readings = if ['radical', 'kana_vocabulary'].include?(@reviews.last_type) 
                  []
                else
                  @reviews.last.dig('data', 'readings').map do |hash|
