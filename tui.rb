@@ -143,9 +143,7 @@ class WaniKaniTUI
                                       @reviews.next_type == 'kanji' ? 2 : 3
                                     end))
     @subject.setpos(@subject_height / 2, (Curses.cols - display_width(@reviews.next_word)) / 2)
-    @subject.attron(Curses::A_BOLD)
     @subject.addstr(@reviews.next_word)
-    @subject.attroff(Curses::A_BOLD)
   end
 
   def fill_subject_last
