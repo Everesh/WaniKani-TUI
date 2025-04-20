@@ -176,17 +176,19 @@ class WaniKaniTUI
 
   def fill_ask(reading)
     @ask.setpos(1, (Curses.cols - 'Meaning:'.length) / 2)
-    @ask.attron(Curses::A_BOLD)
     if reading
       @ask.bkgd(Curses.color_pair(4))
+      @ask.attron(Curses::A_BOLD)
       @ask.addstr('Reading:')
       @ask.setpos(2, 0)
       @ask.addstr('_' * Curses.cols)
+      @ask.attroff(Curses::A_BOLD)
     else
       @ask.bkgd(Curses.color_pair(5))
+      @ask.attron(Curses::A_BOLD)
       @ask.addstr('Meaning:')
+      @ask.attroff(Curses::A_BOLD)
     end
-    @ask.attroff(Curses::A_BOLD)
   end
 
   def get_input(reading)
