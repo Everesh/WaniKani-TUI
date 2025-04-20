@@ -137,13 +137,13 @@ class WaniKaniTUI
     @subject.addstr('Report: :w  ')
     @subject.setpos(2, Curses.cols - 11)
     @subject.addstr('Update: :u  ')
-    @subject.attron(Curses::A_BOLD)
     @subject.bkgd(Curses.color_pair(if @reviews.next_type == 'radical'
                                       1
                                     else
                                       @reviews.next_type == 'kanji' ? 2 : 3
                                     end))
     @subject.setpos(@subject_height / 2, (Curses.cols - display_width(@reviews.next_word)) / 2)
+    @subject.attron(Curses::A_BOLD)
     @subject.addstr(@reviews.next_word)
     @subject.attroff(Curses::A_BOLD)
   end
