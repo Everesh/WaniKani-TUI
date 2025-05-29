@@ -43,3 +43,10 @@
 ### Features
 - __Romaji Parsing__: Accepts romaji alongside kana for reading inputs
 - __Typo Tolerance__: Accepts typos for meaning inputs
+
+---
+
+### Structure
+![structure diagram](https://github.com/user-attachments/assets/365b160d-6981-48e0-9898-0a70b000e3dc)
+
+- with upcomming introduction of `mangodb`, it's most likely to be drastically refactored
