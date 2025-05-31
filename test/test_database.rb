@@ -20,33 +20,33 @@ module WaniKaniTUI
     end
 
     def test_initializes_and_creates_tables
-      db = WaniKaniTUI::Database.new
+      db = Database.new
       tables = db.instance_variable_get(:@db)
                  .execute("SELECT name FROM sqlite_master WHERE type='table'").flatten
 
-      expected = File.read(WaniKaniTUI::Database::INIT_SQL).scan(/CREATE TABLE (\w+)/i).flatten
+      expected = File.read(Database::INIT_SQL).scan(/CREATE TABLE (\w+)/i).flatten
       assert_equal expected.sort, tables.sort
     end
 
     def test_raises_exception_if_schema_corrutped
-      db = WaniKaniTUI::Database.new
+      db = Database.new
       raw = db.instance_variable_get(:@db)
 
       raw.execute('DROP TABLE IF EXISTS subject')
 
       assert_raises(RuntimeError) do
-        WaniKaniTUI::Database.new
+        Database.new
       end
     end
 
     def test_regenerates_corrupted_schema_if_forced
-      db = WaniKaniTUI::Database.new
+      db = Database.new
       raw = db.instance_variable_get(:@db)
 
       raw.execute('DROP TABLE IF EXISTS subject')
 
       assert_silent do
-        WaniKaniTUI::Database.new(force_db_regen: true)
+        Database.new(force_db_regen: true)
       end
     end
   end
