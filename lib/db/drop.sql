@@ -9,5 +9,6 @@ DROP TABLE IF EXISTS subject_reading;
 DROP TABLE IF EXISTS assignment;
 DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS lesson;
+DROP TABLE IF EXISTS meta;
 
 PRAGMA foreign_keys = ON;

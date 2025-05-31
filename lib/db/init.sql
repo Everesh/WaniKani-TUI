@@ -74,3 +74,7 @@ CREATE TABLE lesson (
 	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
 );
 
+CREATE TABLE meta (
+    key TEXT PRIMARY KEY,
+    value TEXT
+)
