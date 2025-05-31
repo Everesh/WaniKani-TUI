@@ -6,3 +6,5 @@ group :development do
   gem 'rake', '~> 13.3'
   gem 'rubocop', '~> 1.75'
 end
+
+gem "sqlite3", "~> 2.6"
