@@ -11,7 +11,7 @@ module WaniKaniTUI
     INIT_SQL = File.expand_path('init.sql', __dir__)
     DROP_SQL = File.expand_path('drop.sql', __dir__)
 
-    def initialize(force_regen: false)
+    def initialize(force_db_regen: false)
       WaniKaniTUI::DataDir.ensure!
 
       db_file = File.join(WaniKaniTUI::DataDir.path, 'db.sqlite3')
@@ -20,7 +20,7 @@ module WaniKaniTUI
       @db.execute('PRAGMA foreign_keys = ON;')
       @db.results_as_hash = true
 
-      force_regen ? db_init : check_schema!
+      force_db_regen ? db_init : check_schema!
     end
 
     private
