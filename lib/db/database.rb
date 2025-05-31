@@ -12,21 +12,32 @@ module WaniKaniTUI
     DROP_SQL = File.expand_path('drop.sql', __dir__)
 
     def initialize(force_db_regen: false)
-      WaniKaniTUI::DataDir.ensure!
+      DataDir.ensure!
 
-      db_file = File.join(WaniKaniTUI::DataDir.path, 'db.sqlite3')
+      db_file = File.join(DataDir.path, 'db.sqlite3')
       @db = SQLite3::Database.open(db_file)
 
       @db.execute('PRAGMA foreign_keys = ON;')
-      @db.results_as_hash = true
 
       force_db_regen ? db_init : check_schema!
+    end
+
+    def execute(sql, params = [])
+      @db.execute(sql, params)
+    end
+
+    def execute_batch(sql)
+      @db.execute_batch(sql)
+    end
+
+    def get_first_row(sql, params = [])
+      @db.get_first_row(sql, params)
     end
 
     private
 
     def check_schema!
-      tables = @db.execute("SELECT name FROM sqlite_master WHERE type='table'").map(&:values).flatten
+      tables = @db.execute("SELECT name FROM sqlite_master WHERE type='table'").flatten
       expected_tables = File.read(INIT_SQL).scan(/CREATE TABLE (\w+)/i).flatten
 
       missing = expected_tables - tables

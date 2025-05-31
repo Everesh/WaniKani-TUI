@@ -22,8 +22,7 @@ module WaniKaniTUI
     def test_initializes_and_creates_tables
       db = WaniKaniTUI::Database.new
       tables = db.instance_variable_get(:@db)
-                 .execute("SELECT name FROM sqlite_master WHERE type='table'")
-                 .map(&:values).flatten
+                 .execute("SELECT name FROM sqlite_master WHERE type='table'").flatten
 
       expected = File.read(WaniKaniTUI::Database::INIT_SQL).scan(/CREATE TABLE (\w+)/i).flatten
       assert_equal expected.sort, tables.sort
@@ -47,7 +46,7 @@ module WaniKaniTUI
       raw.execute('DROP TABLE IF EXISTS subject')
 
       assert_silent do
-        WaniKaniTUI::Database.new(force_regen: true)
+        WaniKaniTUI::Database.new(force_db_regen: true)
       end
     end
   end
