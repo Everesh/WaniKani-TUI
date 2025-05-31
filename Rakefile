@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rake/testtask'
 
 Rake::TestTask.new(:test) do |t|
@@ -6,7 +8,7 @@ Rake::TestTask.new(:test) do |t|
 end
 
 task :lint do
-  sh 'rubocop'
+  sh 'rubocop -A'
 end
 
 task default: :test
