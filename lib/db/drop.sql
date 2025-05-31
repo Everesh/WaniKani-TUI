@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS subject;
+DROP TABLE IF EXISTS components;
+DROP TABLE IF EXISTS meaning;
+DROP TABLE IF EXISTS subject_meaning;
+DROP TABLE IF EXISTS reading;
+DROP TABLE IF EXISTS subject_reading;
+DROP TABLE IF EXISTS assignments;
+DROP TABLE IF EXISTS review;
+DROP TABLE IF EXISTS lesson;

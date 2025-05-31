@@ -1,0 +1,76 @@
+CREATE TABLE subject (
+	id INTEGER PRIMARY KEY,
+	characters TEXT NOT NULL,
+	level INTEGER NOT NULL,
+	object TEXT NOT NULL CHECK (object IN ('radical', 'kanji', 'vocabulary', 'kana_vocabulary')),
+	slug TEXT NOT NULL,
+	url TEXT NOT NULL
+);
+
+CREATE TABLE components (
+	id_component INTEGER NOT NULL,
+	id_product INTEGER NOT NULL,
+	FOREIGN KEY (id_component) REFERENCES subject(id) ON DELETE CASCADE,
+	FOREIGN KEY (id_product) REFERENCES subject(id) ON DELETE CASCADE,
+	PRIMARY KEY (id_component, id_product)
+);
+
+CREATE TABLE reading (
+	reading TEXT PRIMARY KEY
+);
+
+CREATE TABLE subject_reading (
+	id INTEGER NOT NULL,
+	reading TEXT NOT NULL,
+	"primary" BOOLEAN NOT NULL,
+	accepted BOOLEAN NOT NULL,
+	type TEXT NOT NULL,
+	mnemonic TEXT NOT NULL,
+	user_note TEXT,
+	FOREIGN KEY (id) REFERENCES subject(id) ON DELETE CASCADE,
+	FOREIGN KEY (reading) REFERENCES reading(reading) ON DELETE CASCADE,
+	PRIMARY KEY (id, reading)
+);
+
+CREATE TABLE meaning (
+	meaning TEXT PRIMARY KEY
+);
+
+CREATE TABLE subject_meaning (
+	id INTEGER NOT NULL,
+	meaning TEXT NOT NULL,
+	"primary" BOOLEAN NOT NULL,
+	accepted BOOLEAN NOT NULL,
+	type TEXT NOT NULL,
+	mnemonic TEXT NOT NULL,
+	user_note TEXT,
+	FOREIGN KEY (id) REFERENCES subject(id) ON DELETE CASCADE,
+	FOREIGN KEY (meaning) REFERENCES meaning(meaning) ON DELETE CASCADE,
+	PRIMARY KEY (id, meaning)
+);
+
+CREATE TABLE assignment (
+	assignment_id INTEGER PRIMARY KEY,
+	subject_id INTEGER NOT NULL,
+	srs INTEGER NOT NULL CHECK (srs BETWEEN 0 AND 9),
+	hidden BOOLEAN NOT NULL,
+	available_at TIMESTAMP,
+	started_at TIMESTAMP,
+	FOREIGN KEY (subject_id) REFERENCES subject(id) ON DELETE RESTRICT
+);
+CREATE INDEX idx_assignment_subject_id ON assignment(subject_id);
+
+CREATE TABLE review (
+	assignment_id INTEGER PRIMARY KEY,
+	incorrect_meaning_answers INTEGER,
+	incorrect_reading_answers INTEGER,
+	created_at TIMESTAMP,
+	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE lesson (
+	assignment_id INTEGER PRIMARY KEY,
+	started_at TIMESTAMP,
+	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
+);
+
