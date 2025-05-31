@@ -6,6 +6,7 @@ GEM
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     mini_portile2 (2.8.9)
+    minitest (5.25.5)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -42,6 +43,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  minitest (~> 5.25)
   rake (~> 13.3)
   rubocop (~> 1.75)
   sqlite3 (~> 2.6)
