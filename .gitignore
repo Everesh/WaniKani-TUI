@@ -1,6 +1,0 @@
-# .gitignore
-.env
-cache/
-.ruby-lsp/
-debug/
-
