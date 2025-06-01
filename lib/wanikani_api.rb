@@ -5,22 +5,17 @@ require 'json'
 require 'uri'
 
 require_relative 'db/database'
-require_relative 'rate_limit_error'
+require_relative 'error/rate_limit_error'
+require_relative 'error/invalid_api_key_error'
 
 module WaniKaniTUI
   # Handles the interaction between the app and the WaniKani API
   class WaniKaniAPI
     def initialize(db, api_key: nil)
       @db = db
-      if api_key
-        @api_key = api_key
-        @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['api_key', api_key])
-      else
-        @api_key = @db.get_first_row("SELECT value FROM meta WHERE key='api_key'")
-        raise 'API key not set!' if @api_key.nil?
+      @api_key = api_key || fetch_api_key('api_key') or raise 'API key not set!'
 
-        @api_key = @api_key.first
-      end
+      store_api_key('api_key', @api_key) if api_key
     end
 
     def fetch_subjects(updated_after)
@@ -44,6 +39,14 @@ module WaniKaniTUI
     end
 
     private
+
+    def fetch_api_key(key)
+      @db.get_first_row('SELECT value FROM meta WHERE key = ?', [key])&.first
+    end
+
+    def store_api_key(key, value)
+      @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', [key, value])
+    end
 
     def request_bulk(url, updated_after)
       all_pages = []
@@ -79,6 +82,8 @@ module WaniKaniTUI
 
     def parse_response(response)
       case response.code.to_i
+      when 401
+        raise InvalidApiKeyError, "Invalid api key: #{@api_key}"
       when 429
         raise RateLimitError, "Rate limited: #{response.body}"
       when 400..499
