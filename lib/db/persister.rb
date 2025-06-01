@@ -34,7 +34,7 @@ module WaniKaniTUI
 
       def persist_meanings(db, meanings)
         meanings.each do |meaning|
-          db.execute('INSERT OR REPLACE INTO meaning (meaning) VALUES (?)', meaning[1])
+          db.execute('INSERT OR IGNORE INTO meaning (meaning) VALUES (?)', meaning[1])
           db.execute(
             "INSERT OR REPLACE INTO subject_meaning
              (id, meaning, \"primary\", accepted)
@@ -46,7 +46,7 @@ module WaniKaniTUI
 
       def persist_readings(db, readings)
         readings.each do |reading|
-          db.execute('INSERT OR REPLACE INTO reading (reading) VALUES (?)', reading[1])
+          db.execute('INSERT OR IGNORE INTO reading (reading) VALUES (?)', reading[1])
           db.execute(
             "INSERT OR REPLACE INTO subject_reading
              (id, reading, \"primary\", accepted, type)

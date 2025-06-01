@@ -21,7 +21,7 @@ module WaniKaniTUI
 
       subjects = DataNormalizer.subjects(@api.fetch_subjects(updated_after))
       assignments = DataNormalizer.assignments(@api.fetch_assignments(updated_after))
-      Persister.persist(DataNormalizer.unite!(subjects, assignments))
+      Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
     end

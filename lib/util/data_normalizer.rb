@@ -47,20 +47,20 @@ module WaniKaniTUI
       private
 
       def extract_meanings(subject)
-        subject['meanings'].map { |m| extract_meaning(subject, m) }
+        subject['data']['meanings'].map { |m| extract_meaning(subject, m) }
       end
 
       def extract_readings(subject)
         return [] unless %w[kanji vocabulary].include?(subject['object'])
 
-        subject['readings'].map { |r| extract_reading(subject, r) }
+        subject['data']['readings'].map { |r| extract_reading(subject, r) }
       end
 
       def extract_components(subject)
         return [] unless subject['object'] == 'kanji'
 
-        subject['component_subject_ids'].map { |radical| radical_kanji(radical, subject) } +
-          subject['amalgamation_subject_ids'].map { |vocab| kanji_vocab(subject, vocab) }
+        subject['data']['component_subject_ids'].map { |radical| radical_kanji(radical, subject) } +
+          subject['data']['amalgamation_subject_ids'].map { |vocab| kanji_vocab(subject, vocab) }
       end
 
       def extract_subject(subject)
