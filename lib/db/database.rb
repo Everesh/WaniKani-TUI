@@ -3,7 +3,7 @@
 require 'sqlite3'
 require 'fileutils'
 
-require_relative '../data_dir'
+require_relative '../util/data_dir'
 
 module WaniKaniTUI
   # Handles SQLite3 database connection and schema initialization
