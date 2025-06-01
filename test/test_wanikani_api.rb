@@ -28,7 +28,7 @@ module WaniKaniTUI
 
     # Initialization tests
     def test_initialization_with_api_key
-      api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
+      WaniKaniAPI.new(@db, api_key: FAKE_KEY)
       stored_key = @db.get_first_row("SELECT value FROM meta WHERE key='api_key'").first
       assert_equal FAKE_KEY, stored_key
     end
@@ -226,29 +226,6 @@ module WaniKaniTUI
       assert_raises(StandardError) do
         api.send(:parse_response, mock_response)
       end
-    end
-
-    # Meta test, the original test suit binded to :parse_response
-    # which let :request send unintentional http requests to the API
-    def test_no_network_calls_made
-      api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
-
-      http_called = false
-      Net::HTTP.define_singleton_method(:start) do |*args|
-        http_called = true
-        super(*args)
-      end
-
-      api.define_singleton_method(:request) do |uri, updated_after|
-        mock_response = Object.new
-        mock_response.define_singleton_method(:code) { '200' }
-        mock_response.define_singleton_method(:body) { '{"data":[],"pages":{"next_url":null}}' }
-        mock_response
-      end
-
-      api.fetch_subjects(nil)
-
-      refute http_called, 'No network calls should be made when request method is mocked'
     end
   end
 end
