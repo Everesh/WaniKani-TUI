@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'rbconfig'
 
 module WaniKaniTUI
   # Provides helper methods for managing data directory
@@ -10,8 +11,17 @@ module WaniKaniTUI
     end
 
     def self.path
-      data_home = ENV['XDG_DATA_HOME'] || File.join(ENV['HOME'], '.local', 'share')
+      data_home = if windows?
+                    ENV['LOCALAPPDATA'] || File.join(ENV['USERPROFILE'], 'AppData', 'Local')
+                  else
+                    ENV['XDG_DATA_HOME'] || File.join(ENV['HOME'], '.local', 'share')
+                  end
+
       File.join(data_home, 'WaniKaniTUI')
+    end
+
+    def self.windows?
+      RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
     end
   end
 end
