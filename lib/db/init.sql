@@ -62,6 +62,8 @@ CREATE TABLE review (
 	incorrect_meaning_answers INTEGER,
 	incorrect_reading_answers INTEGER,
 	created_at TIMESTAMP,
+	meaning_passed BOOLEAN,
+	reading_passed BOOLEAN,
 	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
 );
 
