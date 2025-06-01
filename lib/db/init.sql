@@ -1,10 +1,12 @@
 CREATE TABLE subject (
 	id INTEGER PRIMARY KEY,
-	characters TEXT NOT NULL,
+	characters TEXT,
 	level INTEGER NOT NULL,
 	object TEXT NOT NULL CHECK (object IN ('radical', 'kanji', 'vocabulary', 'kana_vocabulary')),
 	slug TEXT NOT NULL,
-	url TEXT NOT NULL
+	url TEXT NOT NULL,
+	mnemonic_meaning TEXT,
+	mnemonic_reading TEXT
 );
 
 CREATE TABLE components (
@@ -24,9 +26,7 @@ CREATE TABLE subject_reading (
 	reading TEXT NOT NULL,
 	"primary" BOOLEAN NOT NULL,
 	accepted BOOLEAN NOT NULL,
-	type TEXT NOT NULL,
-	mnemonic TEXT NOT NULL,
-	user_note TEXT,
+	type TEXT,
 	FOREIGN KEY (id) REFERENCES subject(id) ON DELETE CASCADE,
 	FOREIGN KEY (reading) REFERENCES reading(reading) ON DELETE CASCADE,
 	PRIMARY KEY (id, reading)
@@ -41,9 +41,6 @@ CREATE TABLE subject_meaning (
 	meaning TEXT NOT NULL,
 	"primary" BOOLEAN NOT NULL,
 	accepted BOOLEAN NOT NULL,
-	type TEXT NOT NULL,
-	mnemonic TEXT NOT NULL,
-	user_note TEXT,
 	FOREIGN KEY (id) REFERENCES subject(id) ON DELETE CASCADE,
 	FOREIGN KEY (meaning) REFERENCES meaning(meaning) ON DELETE CASCADE,
 	PRIMARY KEY (id, meaning)
