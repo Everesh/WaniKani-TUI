@@ -34,6 +34,10 @@ module WaniKaniTUI
       @db.get_first_row(sql, params)
     end
 
+    def transaction(&block)
+      @db.transaction(&block)
+    end
+
     private
 
     def check_schema!

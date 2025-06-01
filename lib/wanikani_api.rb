@@ -90,13 +90,15 @@ module WaniKaniTUI
 
     def save_subjects(data)
       @db.execute('PRAGMA foreign_keys = OFF;')
-      data.each do |h|
-        @db.execute('INSERT OR REPLACE INTO subject (id, characters, level, object, slug, url) VALUES (?,?,?,?,?,?)',
-                    [h['id'], h['data']['characters'], h['data']['level'], h['object'], h['data']['slug'],
-                     h['data']['document_url']])
-        save_meanings(h)
-        save_readings(h)
-        save_component(h) if h['object'] == 'kanji'
+      @db.transaction do
+        data.each do |h|
+          @db.execute('INSERT OR REPLACE INTO subject (id, characters, level, object, slug, url) VALUES (?,?,?,?,?,?)',
+                      [h['id'], h['data']['characters'], h['data']['level'], h['object'], h['data']['slug'],
+                        h['data']['document_url']])
+          save_meanings(h)
+          save_readings(h)
+          save_component(h) if h['object'] == 'kanji'
+        end
       end
       @db.execute('PRAGMA foreign_keys = ON;')
     end
@@ -142,11 +144,13 @@ module WaniKaniTUI
     end
 
     def save_assignments(data)
-      data.each do |a|
-        hidden = a['data']['hidden'] ? 1 : 0
-        @db.execute('INSERT OR REPLACE INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at) VALUES (?,?,?,?,?,?)',
-                    [a['id'], a['data']['subject_id'], a['data']['srs_stage'], hidden, a['data']['available_at'],
-                     a['data']['started_at']])
+      @db.transaction do
+        data.each do |a|
+          hidden = a['data']['hidden'] ? 1 : 0
+          @db.execute('INSERT OR REPLACE INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at) VALUES (?,?,?,?,?,?)',
+                      [a['id'], a['data']['subject_id'], a['data']['srs_stage'], hidden, a['data']['available_at'],
+                        a['data']['started_at']])
+        end
       end
     end
   end
