@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop: disable Metrics/ClassLength #
+# rubocop: disable Metrics/ClassLength
 
 require 'time'
 
@@ -161,3 +161,5 @@ module WaniKaniTUI
     end
   end
 end
+
+# rubocop: enable Metrics/ClassLength
