@@ -92,7 +92,8 @@ module WaniKaniTUI
       @db.execute('PRAGMA foreign_keys = OFF;')
       data.each do |h|
         @db.execute('INSERT OR REPLACE INTO subject (id, characters, level, object, slug, url) VALUES (?,?,?,?,?,?)',
-                    [h['id'], h['data']['characters'], h['data']['level'], h['object'], h['data']['slug'], h['data']['document_url']])
+                    [h['id'], h['data']['characters'], h['data']['level'], h['object'], h['data']['slug'],
+                     h['data']['document_url']])
         save_meanings(h)
         save_readings(h)
         save_component(h) if h['object'] == 'kanji'
@@ -127,6 +128,7 @@ module WaniKaniTUI
 
     def save_readings(subject)
       return unless subject['data']['readings']
+
       @db.execute('UPDATE subject SET mnemonic_reading = ? WHERE id = ?',
                   [subject['data']['reading_mnemonic'], subject['id']])
 
@@ -143,7 +145,8 @@ module WaniKaniTUI
       data.each do |a|
         hidden = a['data']['hidden'] ? 1 : 0
         @db.execute('INSERT OR REPLACE INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at) VALUES (?,?,?,?,?,?)',
-                    [a['id'], a['data']['subject_id'], a['data']['srs_stage'], hidden, a['data']['available_at'], a['data']['started_at']])
+                    [a['id'], a['data']['subject_id'], a['data']['srs_stage'], hidden, a['data']['available_at'],
+                     a['data']['started_at']])
       end
     end
   end

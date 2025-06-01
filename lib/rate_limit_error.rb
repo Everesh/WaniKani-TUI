@@ -2,6 +2,6 @@
 
 module WaniKaniTUI
   # Defines a semantic Error
-  class RateLimitError < StandardError;
+  class RateLimitError < StandardError
   end
 end
