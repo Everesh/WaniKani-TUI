@@ -7,13 +7,15 @@ require 'uri'
 require_relative 'db/database'
 require_relative 'error/rate_limit_error'
 require_relative 'error/invalid_api_key_error'
+require_relative 'error/missing_api_key_error'
 
 module WaniKaniTUI
   # Handles the interaction between the app and the WaniKani API
   class WaniKaniAPI
     def initialize(db, api_key: nil)
       @db = db
-      @api_key = api_key || fetch_api_key('api_key') or raise 'API key not set!'
+      @api_key = api_key || fetch_api_key('api_key')
+      raise MissingApiKeyError, 'API key not set!' unless @api_key
 
       store_api_key('api_key', @api_key) if api_key
     end
