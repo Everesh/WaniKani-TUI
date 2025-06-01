@@ -85,7 +85,7 @@ module WaniKaniTUI
 
     # Reading tests
     def test_pass_reading_updates_database
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji which doesn't auto-pass
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       refute review.reading_passed?
@@ -98,12 +98,12 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_raises(AttemptingAlreadyPassedSubjectError) do
-        review.pass_reading
+        review.pass_reading # radicals auto pass readings on buffer entry
       end
     end
 
     def test_pass_reading_completes_review_if_meaning_also_passed
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       review.pass_meaning
@@ -127,7 +127,7 @@ module WaniKaniTUI
     end
 
     def test_fail_reading_increments_incorrect_count
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       assert_equal 0, review.incorrect_reading_answers_count
@@ -140,13 +140,13 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_raises(AttemptingAlreadyPassedSubjectError) do
-        review.fail_reading
+        review.fail_reading # radicals auto pass readings
       end
     end
 
     def test_fail_reading_rotates_buffer
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
-      create_available_assignment(2, 6, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
+      create_available_assignment(2, 6, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
@@ -157,18 +157,19 @@ module WaniKaniTUI
     end
 
     def test_multiple_fail_meaning_increments_count
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      # Fail twice on the same assignment by using a single assignment buffer
       assert_equal 0, review.incorrect_meaning_answers_count
-      review.fail_meaning  # count = 1, rotates buffer but comes back to same assignment
+      review.fail_meaning
       assert_equal 1, review.incorrect_meaning_answers_count
+      review.fail_meaning
+      assert_equal 2, review.incorrect_meaning_answers_count
     end
 
     # Meaning tests
     def test_pass_meaning_updates_database
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       refute review.meaning_passed?
@@ -177,11 +178,10 @@ module WaniKaniTUI
     end
 
     def test_pass_meaning_raises_error_if_already_passed
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       review.pass_meaning
-      # With only one assignment, buffer rotates back to the same one
       assert_raises(AttemptingAlreadyPassedSubjectError) do
         review.pass_meaning
       end
@@ -191,7 +191,7 @@ module WaniKaniTUI
       create_available_assignment(1, 1, Time.now.utc.iso8601, 'radical')
       review = Review.new(@db)
 
-      review.pass_meaning
+      review.pass_meaning # radicals auto pass reading on buffer entry
 
       assert_raises(EmptyBufferError) { review.peek }
       review_record = @db.execute('SELECT created_at FROM review WHERE assignment_id = 1').first
@@ -199,8 +199,8 @@ module WaniKaniTUI
     end
 
     def test_pass_meaning_rotates_buffer_if_reading_not_passed
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
-      create_available_assignment(2, 6, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
+      create_available_assignment(2, 6, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
@@ -211,7 +211,7 @@ module WaniKaniTUI
     end
 
     def test_fail_meaning_increments_incorrect_count
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       assert_equal 0, review.incorrect_meaning_answers_count
@@ -220,19 +220,18 @@ module WaniKaniTUI
     end
 
     def test_fail_meaning_raises_error_if_already_passed
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
-      
+
       review.pass_meaning
-      # With only one assignment, buffer rotates back to the same one
       assert_raises(AttemptingAlreadyPassedSubjectError) do
         review.fail_meaning
       end
     end
 
     def test_fail_meaning_rotates_buffer
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
-      create_available_assignment(2, 6, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
+      create_available_assignment(2, 6, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
@@ -243,21 +242,20 @@ module WaniKaniTUI
     end
 
     def test_fail_meaning_on_single_assignment_rotates_correctly
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       assignment_id = review.peek[0]
-      review.fail_meaning  # Should rotate but come back to same assignment
+      review.fail_meaning
 
-      # Should be the same assignment since there's only one
       assert_equal assignment_id, review.peek[0]
       assert_equal 1, review.incorrect_meaning_answers_count
     end
 
     # Buffer management tests
     def test_buffer_size_respects_constant
-      # Create more assignments than buffer size using existing subjects with kanji type
-      (1..10).each do |i|
+      # Create more assignments than buffer size
+      (1..REVIEW_BUFFER_SIZE + 5).each do |i|
         subject_id = ((i - 1) % 20) + 1  # Use existing subjects
         create_available_assignment(i, subject_id, Time.now.utc.iso8601, 'kanji')
       end
@@ -278,18 +276,14 @@ module WaniKaniTUI
 
     def test_buffer_refills_when_reviews_completed
       create_available_assignment(1, 1, Time.now.utc.iso8601, 'radical')
-      create_available_assignment(2, 5, Time.now.utc.iso8601, 'radical')  # Use subject 5 which is radical
+      create_available_assignment(2, 5, Time.now.utc.iso8601, 'radical')
 
       review = Review.new(@db)
 
-      # Complete first review
       review.pass_meaning
 
-      # Should have refilled with the second assignment
-      # The key test is that we can still continue reviewing after completion
       begin
         second_assignment = review.peek[0]
-        # Either we get the second assignment, or if buffer logic makes it the same, that's OK too
         assert [1, 2].include?(second_assignment)
       rescue EmptyBufferError
         flunk "Buffer should have refilled with second assignment"
@@ -297,7 +291,6 @@ module WaniKaniTUI
     end
 
     def test_unavailable_assignments_not_included
-      # Create assignment available in future
       future_time = (Time.now + 3600).utc.iso8601
       create_available_assignment(1, 1, future_time)
 
@@ -326,10 +319,9 @@ module WaniKaniTUI
 
     # Edge cases
     def test_handles_null_incorrect_counts
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      # Ensure database has null values
       @db.execute('UPDATE review SET incorrect_reading_answers = NULL, incorrect_meaning_answers = NULL WHERE assignment_id = 1')
 
       assert_equal 0, review.incorrect_reading_answers_count
@@ -337,7 +329,7 @@ module WaniKaniTUI
     end
 
     def test_review_table_population_is_idempotent
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
 
       # Create review instance twice
       Review.new(@db)
@@ -349,8 +341,7 @@ module WaniKaniTUI
     end
 
     def test_reading_and_meaning_status_independent
-      # Test reading passed, meaning not passed
-      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')  # Use kanji
+      create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
       review.pass_reading
@@ -359,10 +350,9 @@ module WaniKaniTUI
     end
 
     def test_meaning_passed_reading_not_passed
-      # Test meaning passed, reading not passed (separate test for isolation)
       create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
-      
+
       review.pass_meaning
       refute review.reading_passed?
       assert review.meaning_passed?
@@ -381,7 +371,7 @@ module WaniKaniTUI
       4.times do |i|
         assignment_id = review.peek[0]
         reading_statuses[assignment_id] = review.reading_passed?
-        review.fail_meaning  # Rotate to next
+        review.fail_meaning
       end
 
       # Radicals and kana_vocabulary should have reading auto-passed
@@ -394,7 +384,6 @@ module WaniKaniTUI
     private
 
     def setup_test_data
-      # Create basic subject types for testing - add more subjects to avoid foreign key issues
       (1..20).each do |i|
         object_type = case i % 4
                      when 1 then 'radical'
