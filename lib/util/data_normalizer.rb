@@ -23,6 +23,25 @@ module WaniKaniTUI
       normalized
     end
 
+    # Output presented as
+    ### [[assignment_id, subject_id, srs, hidden, available_at, started_at], ...]
+    def self.assignments(data)
+      normalized = []
+
+      data.each do |a|
+        # Boolean to int conversion due to sqlite3 boolean representation
+        normalized << [a['id'], a['data']['subject_id'], a['data']['srs_stage'],
+                       a['data']['hidden'] ? 1 : 0, a['data']['available_at'],
+                       a['data']['started_at']]
+      end
+      normalized
+    end
+
+    def self.unite!(hash, assignments)
+      hash[:assignments] = assignments
+      hash
+    end
+
     # privatized methods of the static class
     class << self
       private
