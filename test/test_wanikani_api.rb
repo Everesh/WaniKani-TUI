@@ -5,9 +5,9 @@ require 'minitest/autorun'
 require 'fileutils'
 require_relative '../lib/wanikani_api'
 require_relative '../lib/db/database'
-require_relative 'error/rate_limit_error'
-require_relative 'error/invalid_api_key_error'
-require_relative 'error/missing_api_key_error'
+require_relative '../lib/error/rate_limit_error'
+require_relative '../lib/error/invalid_api_key_error'
+require_relative '../lib/error/missing_api_key_error'
 
 module WaniKaniTUI
   class TestWaniKaniAPI < Minitest::Test
