@@ -73,6 +73,26 @@ CREATE TABLE lesson (
 	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
 );
 
+/*
+-- Consider enforcing mutual exclusivity of subtypes!
+
+CREATE TRIGGER prevent_review_if_lesson
+BEFORE INSERT ON review
+WHEN EXISTS (SELECT 1 FROM lesson WHERE assignment_id = NEW.assignment_id )
+BEGIN
+    SELECT RAISE(FAIL, 'Cannot insert assignment into review, if its already present in lesson!');
+END;
+
+CREATE TRIGGER prevent_lesson_if_review
+BEFORE INSERT ON lesson
+WHEN EXISTS (SELECT 1 FROM review WHERE assignment_id = NEW.assignment_id )
+BEGIN
+    SELECT RAISE(FAIL, 'Cannot insert assignment into lesson, if its already present in review!');
+END;
+
+-- If implemented, dont forget to update the drop script!
+*/
+
 CREATE TABLE meta (
     key TEXT PRIMARY KEY,
     value TEXT
