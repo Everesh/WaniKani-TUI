@@ -2,8 +2,11 @@
 
 require 'fileutils'
 require 'rbconfig'
+require 'yaml'
 
 module WaniKaniTUI
+  CONFIG_FILE = 'config.yml'
+
   # Provides helper methods for managing data directory
   class DataDir
     def self.ensure!
@@ -22,6 +25,17 @@ module WaniKaniTUI
 
     def self.windows?
       RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+    end
+
+    def self.get_preferences
+      ensure!
+      config_file = File.join(path, CONFIG_FILE)
+      return nil unless File.exist?(config_file)
+
+      YAML.load_file(config_file)
+    rescue Psych::SyntaxError => e
+      puts "Failed to parse config file: #{e.message}"
+      nil
     end
   end
 end
