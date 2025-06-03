@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'yaml'
+require 'fileutils'
 
 require_relative 'db/database'
 require_relative 'wanikani_api'
 require_relative 'util/data_normalizer'
 require_relative 'db/persister'
+require_relative 'review'
+require_relative 'util/data_dir'
 
 module WaniKaniTUI
   # Manages the core functionality of the application.
@@ -14,6 +18,9 @@ module WaniKaniTUI
       @db = Database.new(force_db_regen: force_db_regen)
       @api = WaniKaniAPI.new(@db, api_key: api_key)
       fetch!
+
+      @review = Review.new
+      @preferences = get_preferences
     end
 
     def fetch!
@@ -24,6 +31,19 @@ module WaniKaniTUI
       Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
+    end
+
+    private
+
+    def get_preferences
+      DataDir.ensure!
+      config_file = File.join(DataDir.path, 'config.yml')
+      return nil unless File.exist?(config_file)
+
+      YAML.load_file(config_file)
+    rescue Psych::SyntaxError => e
+      puts "Failed to parse config file: #{e.message}"
+      nil
     end
   end
 end
