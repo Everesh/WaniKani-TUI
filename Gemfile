@@ -10,4 +10,4 @@ end
 
 gem 'sqlite3', '~> 2.6'
 
-gem "pycall", "~> 1.5"
+gem 'pycall', '~> 1.5'

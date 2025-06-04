@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pycall/import'
 require_relative '../error/cant_resize_braille_font_render_error'
 
