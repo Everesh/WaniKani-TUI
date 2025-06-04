@@ -27,7 +27,7 @@ module WaniKaniTUI
       RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
     end
 
-    def self.get_preferences
+    def self.preferences
       ensure!
       config_file = File.join(path, CONFIG_FILE)
       return {} unless File.exist?(config_file)

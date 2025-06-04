@@ -18,7 +18,7 @@ module WaniKaniTUI
       fetch!
 
       @review = Review.new
-      @preferences = DataDir.get_preferences
+      @preferences = DataDir.preferences
     end
 
     def fetch!

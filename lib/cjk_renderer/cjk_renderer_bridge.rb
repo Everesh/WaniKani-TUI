@@ -3,14 +3,15 @@
 require 'pycall/import'
 
 module WaniKaniTUI
+  # Provides entrypoit to the cjk_renderer.py script
   class CJKRendererBridge
     def initialize(font_path: nil)
       PyCall.sys.path.append(__dir__)
       cjk_renderer = PyCall.import_module('cjk_renderer')
-      
+
       default_font = File.join(__dir__, 'NotoSansJP-Regular.ttf')
       font_to_use = font_path || default_font
-      
+
       @renderer = cjk_renderer.CJKRenderer.new(font_to_use)
     end
 
