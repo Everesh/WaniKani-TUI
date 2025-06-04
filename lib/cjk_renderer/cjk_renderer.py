@@ -1,10 +1,11 @@
 import sys
 import json
 import argparse
-from typing import Tuple, List
+from typing import Tuple, List, Optional, Any
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from PIL.Image import Resampling
 
 
 class CJKRenderer:
@@ -13,7 +14,7 @@ class CJKRenderer:
     DEFAULT_FONT = "NotoSansJP-Regular.ttf"
     BRAILLE_WEIGHTS = [[1, 8], [2, 16], [4, 32], [64, 128]]
 
-    def __init__(self, font_path: str = None):
+    def __init__(self, font_path: Optional[str] = None):
         """Initialize renderer with optional custom font."""
         self.font_path = font_path or self.DEFAULT_FONT
 
@@ -73,7 +74,7 @@ class CJKRenderer:
 
         # Stretch to target dimensions
         target_width, target_height = base_size * ratio[0], base_size * ratio[1]
-        stretched = image.resize((target_width, target_height), resample=Image.NEAREST)
+        stretched = image.resize((target_width, target_height), resample=Resampling.NEAREST)
 
         return self.image_to_binary_matrix(stretched)
 
@@ -83,9 +84,9 @@ class CJKRenderer:
         matrix = self.image_to_binary_matrix(image)
         return self.matrix_to_braille(matrix)
 
-    def render_text(self, text: str, base_size: int, ratio: Tuple[int, int] = None, use_braille: bool = False) -> List[List]:
+    def render_text(self, text: str, base_size: int, ratio: Optional[Tuple[int, int]] = None, use_braille: bool = False) -> List[List]:
         """Render multiple characters horizontally concatenated."""
-        combined_matrix = []
+        combined_matrix: List[List[Any]] = []
 
         for char in text:
             if use_braille:
