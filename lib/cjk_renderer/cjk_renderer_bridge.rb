@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'pycall/import'
-require_relative '../error/cant_resize_braille_font_render_error'
 
 module WaniKaniTUI
   class CJKRendererBridge
@@ -13,13 +12,18 @@ module WaniKaniTUI
       @renderer = cjk_renderer.CJKRenderer.new(font_path) unless font_path.nil?
     end
 
-    def render_text(chars, height, ratio, braille)
-      unless !braille || ratio.nil?
-        raise CantResizeBrailleFontRenderError,
-              'Can not change width:height ratio of braille char render!'
+    def get_braille(chars, height)
+      matrix = @renderer.render_text(chars, height, use_braille: true)
+      deep_to_a(matrix)
+    end
+
+    def get_bitmap(chars, height, ratio)
+      unless ratio.instance_of(Array) && ratio.length == 2
+        raise ArgumentError,
+              'Invalid ratio, expected pair [width, height]!'
       end
 
-      matrix = @renderer.render_text(chars, height, ratio: [ratio.first, ratio.last], use_braille: braille)
+      matrix = @renderer.render_text(chars, height, ratio: [ratio.first, ratio.last])
       deep_to_a(matrix)
     end
 
