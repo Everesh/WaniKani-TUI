@@ -7,9 +7,11 @@ module WaniKaniTUI
     def initialize(font_path: nil)
       PyCall.sys.path.append(__dir__)
       cjk_renderer = PyCall.import_module('cjk_renderer')
-      @renderer = cjk_renderer.CJKRenderer.new(File.join(__dir__, 'NotoSansJP-Regular.ttf'))
-
-      @renderer = cjk_renderer.CJKRenderer.new(font_path) unless font_path.nil?
+      
+      default_font = File.join(__dir__, 'NotoSansJP-Regular.ttf')
+      font_to_use = font_path || default_font
+      
+      @renderer = cjk_renderer.CJKRenderer.new(font_to_use)
     end
 
     def get_braille(chars, height)
@@ -18,7 +20,7 @@ module WaniKaniTUI
     end
 
     def get_bitmap(chars, height, ratio)
-      unless ratio.instance_of(Array) && ratio.length == 2
+      unless ratio.instance_of?(Array) && ratio.length == 2
         raise ArgumentError,
               'Invalid ratio, expected pair [width, height]!'
       end
