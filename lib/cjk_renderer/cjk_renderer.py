@@ -1,4 +1,3 @@
-import os
 import sys
 import json
 import argparse
@@ -18,16 +17,10 @@ class CJKRenderer:
         """Initialize renderer with optional custom font."""
         self.font_path = font_path or self.DEFAULT_FONT
 
-    @staticmethod
-    def resource_path(relative_path: str) -> str:
-        """Get absolute path to resource (PyInstaller compatible)."""
-        base_path = getattr(sys, "_MEIPASS", os.path.abspath("."))
-        return os.path.join(base_path, relative_path)
-
     def load_font(self, size: int) -> ImageFont.FreeTypeFont:
         """Load TrueType font with graceful error handling."""
         try:
-            return ImageFont.truetype(self.resource_path(self.font_path), size=size)
+            return ImageFont.truetype(self.font_path, size=size)
         except OSError:
             sys.exit(f"Error: Cannot load font '{self.font_path}'")
 
