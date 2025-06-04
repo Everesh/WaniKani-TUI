@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import argparse
 from typing import Tuple, List
 
@@ -129,6 +130,7 @@ def main() -> None:
     )
     parser.add_argument("text", help="CJK characters to render")
     parser.add_argument("n", type=int, help="Base resolution height")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument("--font", default=CJKRenderer.DEFAULT_FONT, help="TrueType font file path")
 
     render_group = parser.add_mutually_exclusive_group()
@@ -156,8 +158,11 @@ def main() -> None:
     )
 
     # Output final matrix
-    for row in matrix:
-        print("".join(map(str, row)))
+    if args.json:
+        print(json.dumps(matrix))
+    else:
+        for row in matrix:
+            print("".join(map(str, row)))
 
 
 if __name__ == "__main__":
