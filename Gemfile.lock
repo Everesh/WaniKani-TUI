@@ -12,6 +12,7 @@ GEM
       ast (~> 2.4.1)
       racc
     prism (1.4.0)
+    pycall (1.5.2)
     racc (1.8.1)
     rainbow (3.1.1)
     rake (13.3.0)
@@ -44,6 +45,7 @@ PLATFORMS
 
 DEPENDENCIES
   minitest (~> 5.25)
+  pycall (~> 1.5)
   rake (~> 13.3)
   rubocop (~> 1.75)
   sqlite3 (~> 2.6)
