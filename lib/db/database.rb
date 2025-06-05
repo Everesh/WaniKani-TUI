@@ -10,11 +10,12 @@ module WaniKaniTUI
   class Database
     INIT_SQL = File.expand_path('init.sql', __dir__)
     DROP_SQL = File.expand_path('drop.sql', __dir__)
+    DB_FILE_NAME = 'db.sqlite3'
 
     def initialize(force_db_regen: false)
       DataDir.ensure!
 
-      db_file = File.join(DataDir.path, 'db.sqlite3')
+      db_file = File.join(DataDir.path, DB_FILE_NAME)
       @db = SQLite3::Database.open(db_file)
 
       @db.execute('PRAGMA foreign_keys = ON;')
