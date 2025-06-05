@@ -64,13 +64,13 @@ CREATE TABLE review (
 	created_at TIMESTAMP,
 	meaning_passed BOOLEAN,
 	reading_passed BOOLEAN,
-	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
+	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE CASCADE
 );
 
 CREATE TABLE lesson (
 	assignment_id INTEGER PRIMARY KEY,
 	started_at TIMESTAMP,
-	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE RESTRICT
+	FOREIGN KEY (assignment_id) REFERENCES assignment(assignment_id) ON DELETE CASCADE
 );
 
 /*
