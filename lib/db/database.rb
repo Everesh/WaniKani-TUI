@@ -40,6 +40,10 @@ module WaniKaniTUI
       @db.transaction(&block)
     end
 
+    def results_as_hash=(bool)
+      @db.results_as_hash = bool
+    end
+
     private
 
     def check_schema!
