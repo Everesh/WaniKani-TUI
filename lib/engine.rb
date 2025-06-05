@@ -17,6 +17,7 @@ module WaniKaniTUI
     # !!! Temp prototyping accessors, PURGE THESE BEFORE PRODUCTION YA DINGUS
     attr_accessor :db, :api, :preferences, :review, :cjk_renderer
 
+    # rubocop: disable Metrics/MethodLength
     def initialize(force_db_regen: false, api_key: nil)
       if force_db_regen && api_key.nil?
         api_key = fetch_api_key # Attempts to carry over the previous API key to the new DB
@@ -33,6 +34,7 @@ module WaniKaniTUI
       custom_cjk_font = @preferences['cjk_font_path']
       @cjk_renderer = custom_cjk_font ? CJKRendererBridge.new(font_path: custom_cjk_font) : CJKRendererBridge.new
     end
+    # rubocop: enable Metrics/MethodLength
 
     def fetch!
       updated_after = @db.get_first_row("SELECT value FROM meta WHERE key='updated_after'")
