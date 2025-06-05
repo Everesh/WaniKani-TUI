@@ -1,3 +1,4 @@
 tmp/
 lib/cjk_renderer/*
 !lib/cjk_renderer/cjk_renderer*
+.ropeproject
