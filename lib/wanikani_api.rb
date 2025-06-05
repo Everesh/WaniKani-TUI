@@ -14,10 +14,10 @@ module WaniKaniTUI
   class WaniKaniAPI
     def initialize(db, api_key: nil)
       @db = db
-      @api_key = api_key || fetch_api_key('api_key')
+      @api_key = api_key || fetch_api_key
       raise MissingApiKeyError, 'API key not set!' unless @api_key
 
-      store_api_key('api_key', @api_key) if api_key
+      store_api_key(@api_key) if api_key
     end
 
     def fetch_subjects(updated_after)
@@ -32,12 +32,12 @@ module WaniKaniTUI
 
     private
 
-    def fetch_api_key(key)
-      @db.get_first_row('SELECT value FROM meta WHERE key = ?', [key])&.first
+    def fetch_api_key
+      @db.get_first_row('SELECT value FROM meta WHERE key = ?', ['api_key'])&.first
     end
 
-    def store_api_key(key, value)
-      @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', [key, value])
+    def store_api_key(key)
+      @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['api_key', key])
     end
 
     def request_bulk(url, updated_after)

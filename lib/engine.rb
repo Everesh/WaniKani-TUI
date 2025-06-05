@@ -9,11 +9,20 @@ require_relative 'db/persister'
 require_relative 'review'
 require_relative 'util/data_dir'
 require_relative 'cjk_renderer/cjk_renderer_bridge'
+require_relative 'error/missing_api_key_error'
 
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
+    # !!! Temp prototyping accessors, PURGE THESE BEFORE PRODUCTION YA DINGUS
+    attr_accessor :db, :api, :preferences, :review, :cjk_renderer
+
     def initialize(force_db_regen: false, api_key: nil)
+      if force_db_regen && api_key.nil?
+        api_key = fetch_api_key # Attempts to carry over the previous API key to the new DB
+        raise MissingApiKeyError, 'Could not fetch existing API key, new one is required' if api_key.nil?
+      end
+
       @db = Database.new(force_db_regen: force_db_regen)
       @api = WaniKaniAPI.new(@db, api_key: api_key)
       fetch!
@@ -33,6 +42,12 @@ module WaniKaniTUI
       Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
+    end
+
+    private
+
+    def fetch_api_key
+      Database.new.get_first_row('SELECT value FROM meta WHERE key = ?', ['api_key'])&.first
     end
   end
 end
