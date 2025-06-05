@@ -4,6 +4,7 @@ require 'sqlite3'
 require 'fileutils'
 
 require_relative '../util/data_dir'
+require_relative '../error/schema_corrupted_error'
 
 module WaniKaniTUI
   # Handles SQLite3 database connection and schema initialization
@@ -48,7 +49,9 @@ module WaniKaniTUI
       missing = expected_tables - tables
       return if missing.empty?
 
-      missing.length == expected_tables.length ? db_init : raise('Database schema is corrupted')
+      raise SchemaCorruptedError, 'Database schema is corrupted!' if missing.length != expected_tables.length
+
+      db_init
     end
 
     def db_init

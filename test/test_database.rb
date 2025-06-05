@@ -4,6 +4,7 @@
 require 'minitest/autorun'
 require 'fileutils'
 require_relative '../lib/db/database'
+require_relative '../lib/error/schema_corrupted_error'
 
 module WaniKaniTUI
   class TestDatabase < Minitest::Test
@@ -35,7 +36,7 @@ module WaniKaniTUI
 
       raw.execute('DROP TABLE IF EXISTS subject')
 
-      assert_raises(RuntimeError) do
+      assert_raises(SchemaCorruptedError) do
         Database.new
       end
     end
