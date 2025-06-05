@@ -89,7 +89,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       refute review.reading_passed?
-      review.pass_reading
+      review.pass_reading!
       assert review.reading_passed?
     end
 
@@ -98,7 +98,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_raises(AttemptingAlreadyPassedSubjectError) do
-        review.pass_reading # radicals auto pass readings on buffer entry
+        review.pass_reading! # radicals auto pass readings on buffer entry
       end
     end
 
@@ -106,8 +106,8 @@ module WaniKaniTUI
       create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      review.pass_meaning
-      review.pass_reading
+      review.pass_meaning!
+      review.pass_reading!
 
       assert_raises(EmptyBufferError) { review.peek }
       review_record = @db.execute('SELECT created_at FROM review WHERE assignment_id = 1').first
@@ -120,7 +120,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
-      review.pass_reading
+      review.pass_reading!
       second_assignment = review.peek[0]
 
       refute_equal first_assignment, second_assignment
@@ -131,7 +131,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_equal 0, review.incorrect_reading_answers_count
-      review.fail_reading
+      review.fail_reading!
       assert_equal 1, review.incorrect_reading_answers_count
     end
 
@@ -140,7 +140,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_raises(AttemptingAlreadyPassedSubjectError) do
-        review.fail_reading # radicals auto pass readings
+        review.fail_reading! # radicals auto pass readings
       end
     end
 
@@ -150,7 +150,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
-      review.fail_reading
+      review.fail_reading!
       second_assignment = review.peek[0]
 
       refute_equal first_assignment, second_assignment
@@ -161,9 +161,9 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_equal 0, review.incorrect_meaning_answers_count
-      review.fail_meaning
+      review.fail_meaning!
       assert_equal 1, review.incorrect_meaning_answers_count
-      review.fail_meaning
+      review.fail_meaning!
       assert_equal 2, review.incorrect_meaning_answers_count
     end
 
@@ -173,7 +173,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       refute review.meaning_passed?
-      review.pass_meaning
+      review.pass_meaning!
       assert review.meaning_passed?
     end
 
@@ -181,9 +181,9 @@ module WaniKaniTUI
       create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      review.pass_meaning
+      review.pass_meaning!
       assert_raises(AttemptingAlreadyPassedSubjectError) do
-        review.pass_meaning
+        review.pass_meaning!
       end
     end
 
@@ -191,7 +191,7 @@ module WaniKaniTUI
       create_available_assignment(1, 1, Time.now.utc.iso8601, 'radical')
       review = Review.new(@db)
 
-      review.pass_meaning # radicals auto pass reading on buffer entry
+      review.pass_meaning! # radicals auto pass reading on buffer entry
 
       assert_raises(EmptyBufferError) { review.peek }
       review_record = @db.execute('SELECT created_at FROM review WHERE assignment_id = 1').first
@@ -204,7 +204,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
-      review.pass_meaning
+      review.pass_meaning!
       second_assignment = review.peek[0]
 
       refute_equal first_assignment, second_assignment
@@ -215,7 +215,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assert_equal 0, review.incorrect_meaning_answers_count
-      review.fail_meaning
+      review.fail_meaning!
       assert_equal 1, review.incorrect_meaning_answers_count
     end
 
@@ -223,9 +223,9 @@ module WaniKaniTUI
       create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      review.pass_meaning
+      review.pass_meaning!
       assert_raises(AttemptingAlreadyPassedSubjectError) do
-        review.fail_meaning
+        review.fail_meaning!
       end
     end
 
@@ -235,7 +235,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       first_assignment = review.peek[0]
-      review.fail_meaning
+      review.fail_meaning!
       second_assignment = review.peek[0]
 
       refute_equal first_assignment, second_assignment
@@ -246,7 +246,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       assignment_id = review.peek[0]
-      review.fail_meaning
+      review.fail_meaning!
 
       assert_equal assignment_id, review.peek[0]
       assert_equal 1, review.incorrect_meaning_answers_count
@@ -266,7 +266,7 @@ module WaniKaniTUI
       # Collect all assignments in buffer by rotating through them
       DEFAULT_BUFFER_SIZE.times do
         buffer_assignments << review.peek[0]
-        review.fail_meaning  # Rotate to next
+        review.fail_meaning!  # Rotate to next
       end
 
       # Should cycle back to first
@@ -280,7 +280,7 @@ module WaniKaniTUI
 
       review = Review.new(@db)
 
-      review.pass_meaning
+      review.pass_meaning!
 
       begin
         second_assignment = review.peek[0]
@@ -310,7 +310,7 @@ module WaniKaniTUI
       review = Review.new(@db)
 
       # Complete the review
-      review.pass_meaning
+      review.pass_meaning!
 
       # Create new review instance - should have empty buffer
       new_review = Review.new(@db)
@@ -344,7 +344,7 @@ module WaniKaniTUI
       create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      review.pass_reading
+      review.pass_reading!
       assert review.reading_passed?
       refute review.meaning_passed?
     end
@@ -353,7 +353,7 @@ module WaniKaniTUI
       create_available_assignment(1, 2, Time.now.utc.iso8601, 'kanji')
       review = Review.new(@db)
 
-      review.pass_meaning
+      review.pass_meaning!
       refute review.reading_passed?
       assert review.meaning_passed?
     end
@@ -371,7 +371,7 @@ module WaniKaniTUI
       4.times do |i|
         assignment_id = review.peek[0]
         reading_statuses[assignment_id] = review.reading_passed?
-        review.fail_meaning
+        review.fail_meaning!
       end
 
       # Radicals and kana_vocabulary should have reading auto-passed

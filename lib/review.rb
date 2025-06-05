@@ -27,7 +27,7 @@ module WaniKaniTUI
       @buffer.first
     end
 
-    def pass_reading
+    def pass_reading!
       raise AttemptingAlreadyPassedSubjectError, 'Cannot pass reading: already marked as passed!' if reading_passed?
 
       @db.execute('UPDATE review SET reading_passed = 1 WHERE assignment_id = ?', [peek.first])
@@ -35,7 +35,7 @@ module WaniKaniTUI
       meaning_passed? ? complete_review! : @buffer.rotate!
     end
 
-    def fail_reading
+    def fail_reading!
       raise AttemptingAlreadyPassedSubjectError, 'Cannot fail reading: already marked as passed!' if reading_passed?
 
       @db.execute(
@@ -53,7 +53,7 @@ module WaniKaniTUI
       column_value('incorrect_reading_answers') || 0
     end
 
-    def pass_meaning
+    def pass_meaning!
       raise AttemptingAlreadyPassedSubjectError, 'Cannot pass meaning: already marked as passed!' if meaning_passed?
 
       @db.execute('UPDATE review SET meaning_passed = 1 WHERE assignment_id = ?', [peek.first])
@@ -61,7 +61,7 @@ module WaniKaniTUI
       reading_passed? ? complete_review! : @buffer.rotate!
     end
 
-    def fail_meaning
+    def fail_meaning!
       raise AttemptingAlreadyPassedSubjectError, 'Cannot fail meaning: already marked as passed!' if meaning_passed?
 
       @db.execute(
