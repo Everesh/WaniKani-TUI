@@ -9,13 +9,14 @@ require_relative 'error/attempting_already_passed_subject_error'
 require_relative 'error/empty_buffer_error'
 
 module WaniKaniTUI
-  REVIEW_BUFFER_SIZE = 5
+  DEFAULT_BUFFER_SIZE = 5
 
   # Manages reviews: queue, buffer and the review db table
   class Review
-    def initialize(db)
+    def initialize(db, buffer_size: DEFAULT_BUFFER_SIZE)
       @db = db
       @buffer = []
+      @buffer_size = buffer_size
       update_review_table!
       update_buffer!
     end
@@ -147,7 +148,7 @@ module WaniKaniTUI
     end
 
     def update_buffer!
-      return if @buffer.length >= REVIEW_BUFFER_SIZE
+      return if @buffer.length >= @buffer_size
 
       @buffer.concat(@db.execute(
                        "SELECT r.assignment_id, s.id
@@ -156,7 +157,7 @@ module WaniKaniTUI
                         JOIN subject s ON s.id = a.subject_id
                         WHERE NOT (r.meaning_passed = 1 AND r.reading_passed = 1)
                         ORDER BY RANDOM()
-                        LIMIT ?", [REVIEW_BUFFER_SIZE - @buffer.length]
+                        LIMIT ?", [@buffer_size - @buffer.length]
                      ))
     end
   end

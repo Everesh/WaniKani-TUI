@@ -8,6 +8,7 @@ require_relative 'util/data_normalizer'
 require_relative 'db/persister'
 require_relative 'review'
 require_relative 'util/data_dir'
+require_relative 'cjk_renderer/cjk_renderer_bridge'
 
 module WaniKaniTUI
   # Manages the core functionality of the application.
@@ -17,8 +18,11 @@ module WaniKaniTUI
       @api = WaniKaniAPI.new(@db, api_key: api_key)
       fetch!
 
-      @review = Review.new
       @preferences = DataDir.preferences
+      custom_buffer_size = @preferences['buffer_size']
+      @review = custom_buffer_size ? Review.new(@db, buffer_size: custom_buffer_size) : Review.new(@db)
+      custom_cjk_font = @preferences['cjk_font_path']
+      @cjk_renderer = custom_cjk_font ? CJKRendererBridge.new(font_path: custom_cjk_font) : CJKRendererBridge.new
     end
 
     def fetch!
