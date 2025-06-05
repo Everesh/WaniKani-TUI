@@ -9,7 +9,7 @@ require_relative '../lib/error/schema_corrupted_error'
 module WaniKaniTUI
   class TestDatabase < Minitest::Test
     TMP_DIR = File.expand_path('../tmp/test_data', __dir__)
-    DB_PATH = File.join(TMP_DIR, 'db.sqlite3')
+    DB_PATH = File.join(TMP_DIR, Database::DB_FILE_NAME)
 
     def setup
       FileUtils.rm_f(DB_PATH)

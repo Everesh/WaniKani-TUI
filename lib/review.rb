@@ -9,10 +9,10 @@ require_relative 'error/attempting_already_passed_subject_error'
 require_relative 'error/empty_buffer_error'
 
 module WaniKaniTUI
-  DEFAULT_BUFFER_SIZE = 5
-
   # Manages reviews: queue, buffer and the review db table
   class Review
+    DEFAULT_BUFFER_SIZE = 5
+
     def initialize(db, buffer_size: DEFAULT_BUFFER_SIZE)
       @db = db
       @buffer = []
