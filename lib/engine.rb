@@ -46,6 +46,32 @@ module WaniKaniTUI
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
     end
 
+    # ==============
+    # Review section
+    # ==============
+
+    def get_review
+      # Return structured hash with all the relevant data from the front of the buffer
+      # e.g {review: {}, assignment: {}, subject: { ..., readings: {}, meaings: {}, components: {}, amalgamations: {}}}
+    end
+
+    def answer_review!(answer) # Expect a string (bang since this is will modify the db)
+      # Return bool, whether the asnwer was correct
+    end
+
+    def last_review
+      # Return structured has with all the relevant data from the end of the buffer
+      # e.g {review: {}, assignment: {}, subject: { ..., readings: {}, meaings: {}, components: {}, amalgamations: {}}}
+    end
+
+    def progress_statuss_reviews
+      # Return float, 0.0 - 1.0 representing % of all available reviews completed and unreported
+    end
+
+    def report_reviews!
+      # Return bool whether report completed successfuly (beware of wanikaniAPI overloading)
+    end
+
     private
 
     def fetch_api_key
