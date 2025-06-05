@@ -21,16 +21,26 @@ module WaniKaniTUI
     class << self
       private
 
+      # rubocop: disable Metrics/MethodLength
       def persist_subjects(db, subjects)
         subjects.each do |subject|
           db.execute(
-            "INSERT OR REPLACE INTO subject
+            "INSERT INTO subject
              (id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             ON CONFLICT(id) DO UPDATE SET
+              characters = excluded.characters,
+              level = excluded.level,
+              object = excluded.object,
+              slug = excluded.slug,
+              url = excluded.url,
+              mnemonic_reading = excluded.mnemonic_reading,
+              mnemonic_meaning = excluded.mnemonic_meaning",
             subject
           )
         end
       end
+      # rubocop: enable Metrics/MethodLength
 
       def persist_meanings(db, meanings)
         meanings.each do |meaning|
