@@ -255,7 +255,7 @@ module WaniKaniTUI
     # Buffer management tests
     def test_buffer_size_respects_constant
       # Create more assignments than buffer size
-      (1..REVIEW_BUFFER_SIZE + 5).each do |i|
+      (1..DEFAULT_BUFFER_SIZE + 5).each do |i|
         subject_id = ((i - 1) % 20) + 1  # Use existing subjects
         create_available_assignment(i, subject_id, Time.now.utc.iso8601, 'kanji')
       end
@@ -264,14 +264,14 @@ module WaniKaniTUI
       buffer_assignments = []
 
       # Collect all assignments in buffer by rotating through them
-      REVIEW_BUFFER_SIZE.times do
+      DEFAULT_BUFFER_SIZE.times do
         buffer_assignments << review.peek[0]
         review.fail_meaning  # Rotate to next
       end
 
       # Should cycle back to first
       assert_equal buffer_assignments[0], review.peek[0]
-      assert_equal REVIEW_BUFFER_SIZE, buffer_assignments.uniq.length
+      assert_equal DEFAULT_BUFFER_SIZE, buffer_assignments.uniq.length
     end
 
     def test_buffer_refills_when_reviews_completed
