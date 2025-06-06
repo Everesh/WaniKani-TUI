@@ -15,8 +15,7 @@ require_relative 'db/common_query'
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
-    # !!! Temp prototyping accessors, PURGE THESE BEFORE PRODUCTION YA DINGUS
-    attr_accessor :db, :api, :preferences, :review, :cjk_renderer
+    attr_reader :common_query, :preferences, :cjk_renderer
 
     # rubocop: disable Metrics/MethodLength
     def initialize(force_db_regen: false, api_key: nil)
@@ -114,10 +113,6 @@ module WaniKaniTUI
       Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
-    end
-
-    def get_multiline_cjk(chars, line_height)
-      @cjk_renderer.get_braille(chars, line_height)
     end
 
     private
