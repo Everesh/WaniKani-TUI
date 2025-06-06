@@ -10,6 +10,7 @@ require_relative 'review'
 require_relative 'util/data_dir'
 require_relative 'cjk_renderer/cjk_renderer_bridge'
 require_relative 'error/missing_api_key_error'
+require_relative 'db/common_query'
 
 module WaniKaniTUI
   # Manages the core functionality of the application.
@@ -26,6 +27,7 @@ module WaniKaniTUI
 
       @db = Database.new(force_db_regen: force_db_regen)
       @api = WaniKaniAPI.new(@db, api_key: api_key)
+      @common_query = CommonQuery.new(@db)
       fetch!
 
       @preferences = DataDir.preferences
@@ -50,26 +52,71 @@ module WaniKaniTUI
     # Review section
     # ==============
 
-    def get_review
+    def get_review(peek_at_last: false)
+      peek = peek_at_last ? @review.peek_last_as_hash : @review.peek_as_hash
+      review = @common_query.get_review_by_assignment_id_as_hash(peek[:assignment_id])
+      assignment = @common_query.get_assignment_by_assignment_id_as_hash(peek[:assignment_id])
+      subject = @common_query.get_subject_by_id_as_hash(peek[:subject_id])
+      components = @common_query.get_components_by_id_as_hash(peek[:subject_id])
+      amalgamations = @common_query.get_amalgamations_by_id_as_hash(peek[:subject_id])
+      meanings = @common_query.get_meanings_by_id_as_hash(peek[:subject_id])
+      readings = @common_query.get_readings_by_id_as_hash(peek[:subject_id])
+      { review: review, assignment: assignment, subject: subject, readings: readings, meanings: meanings,
+        components: components, amalgamations: amalgamations }
       # Return structured hash with all the relevant data from the front of the buffer
-      # e.g {review: {}, assignment: {}, subject: { ..., readings: {}, meaings: {}, components: {}, amalgamations: {}}}
+      # e.g {review: {}, assignment: {}, subject: {}, readings: [{},..], meanings: [{},..], components: [{},..], amalgamations: [{},..]}}
     end
 
-    def answer_review!(answer) # Expect a string (bang since this is will modify the db)
+    def answer_review_meaning!(answer) # Expect a string (bang since this is will modify the db)
+      is_correct = get_review[:meanings].any? { |reading_hash| reading_hash['meaning'].downcase == answer.downcase }
+
+      if is_correct
+        @review.pass_meaning!
+      else
+        @review.fail_meaning!
+      end
+
+      is_correct
       # Return bool, whether the asnwer was correct
     end
 
-    def last_review
-      # Return structured has with all the relevant data from the end of the buffer
-      # e.g {review: {}, assignment: {}, subject: { ..., readings: {}, meaings: {}, components: {}, amalgamations: {}}}
+    def answer_review_reading!(answer) # Expect a string (bang since this is will modify the db)
+      is_correct = get_review[:readings].any? { |reading_hash| reading_hash['reading'] == answer }
+
+      if is_correct
+        @review.pass_reading!
+      else
+        @review.fail_reading!
+      end
+
+      is_correct
+      # Return bool, whether the asnwer was correct
     end
 
     def progress_statuss_reviews
+      return 0 if @common_query.count_pending_review_reports.zero?
+
+      @common_query.count_available_reviews.to_f / @common_query.count_pending_review_reports.to_f
       # Return float, 0.0 - 1.0 representing % of all available reviews completed and unreported
     end
 
     def report_reviews!
+      # TODO
       # Return bool whether report completed successfuly (beware of wanikaniAPI overloading)
+    end
+
+    # ==============
+    # Lesson section
+    # ==============
+
+    # TODO
+
+    # ==============
+    #  Misc section
+    # ==============
+
+    def get_multiline_cjk(chars, line_height)
+      @cjk_renderer.get_braille(chars, line_height)
     end
 
     private

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'time'
+
 require_relative 'database'
 
 module WaniKaniTUI
@@ -69,6 +71,56 @@ module WaniKaniTUI
       )
     end
 
+    def get_review_by_assignment_id(id)
+      @db.get_first_row(
+        "SELECT *
+         FROM review
+         WHERE assignment_id = ?", [id]
+      )
+    end
+
+    def get_lesson_by_assignment_id(id)
+      @db.get_first_row(
+        "SELECT *
+         FROM lesson
+         WHERE assignment_id = ?", [id]
+      )
+    end
+
+    def count_available_reviews
+      @db.get_first_row(
+        "SELECT COUNT(*)
+         FROM assignment
+         WHERE available_at <= ?
+         AND started_at IS NOT NULL", [Time.now.utc.iso8601]
+      ).first
+    end
+
+    def count_pending_review_reports
+      @db.get_first_row(
+        "SELECT COUNT(*)
+         FROM review
+         WHERE meaning_passed = 1
+         AND reading_passed = 1"
+      ).first
+    end
+
+    def count_available_lessons
+      @db.get_first_row(
+        "SELECT COUNT(*)
+         FROM assignment
+         WHERE available_at <= ?
+         AND started_at IS NULL", [Time.now.utc.iso8601]
+      )
+    end
+
+    def count_pending_lesson_reports
+      @db.get_first_row(
+        "SELECT COUNT(*)
+        FROM lesson"
+      ).first
+    end
+
     private
 
     # Provides *_as_hash suffixed methods that return hashes instead of arrays
@@ -88,5 +140,7 @@ module WaniKaniTUI
     define_as_hash_variant :get_meanings_by_id
     define_as_hash_variant :get_assignment_by_assignment_id
     define_as_hash_variant :get_assignment_by_subject_id
+    define_as_hash_variant :get_review_by_assignment_id
+    define_as_hash_variant :get_lesson_by_assignment_id
   end
 end

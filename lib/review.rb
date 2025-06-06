@@ -21,10 +21,31 @@ module WaniKaniTUI
       update_buffer!
     end
 
+    # [id_assignment, id_subject]
     def peek
       raise EmptyBufferError if @buffer.empty?
 
       @buffer.first
+    end
+
+    def peek_as_hash
+      raise EmptyBufferError if @buffer.empty?
+
+      item = @buffer.first
+      { assignment_id: item.first, subject_id: item.last }
+    end
+
+    def peek_last
+      raise EmptyBufferError if @buffer.empty?
+
+      @buffer.last
+    end
+
+    def peek_last_as_hash
+      raise EmptyBufferError if @buffer.empty?
+
+      item = @buffer.last
+      { assignment_id: item.first, subject_id: item.last }
     end
 
     def pass_reading!
