@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import argparse
@@ -16,7 +17,7 @@ class CJKRenderer:
 
     def __init__(self, font_path: Optional[str] = None):
         """Initialize renderer with optional custom font."""
-        self.font_path = font_path or self.DEFAULT_FONT
+        self.font_path = font_path or os.path.join(os.path.dirname(__file__), self.DEFAULT_FONT)
 
     def load_font(self, size: int) -> ImageFont.FreeTypeFont:
         """Load TrueType font with graceful error handling."""
@@ -125,7 +126,7 @@ def main() -> None:
     parser.add_argument("text", help="CJK characters to render")
     parser.add_argument("n", type=int, help="Base resolution height")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument("--font", default=CJKRenderer.DEFAULT_FONT, help="TrueType font file path")
+    parser.add_argument("--font", default=None, help="TrueType font file path")
 
     render_group = parser.add_mutually_exclusive_group()
     render_group.add_argument(

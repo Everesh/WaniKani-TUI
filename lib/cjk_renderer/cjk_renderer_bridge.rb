@@ -3,18 +3,13 @@
 require 'pycall/import'
 
 module WaniKaniTUI
-  DEFAULT_FONT = 'NotoSansJP-Regular.ttf'
-
   # Provides entrypoit to the cjk_renderer.py script
   class CJKRendererBridge
     def initialize(font_path: nil)
       PyCall.sys.path.append(__dir__)
       cjk_renderer = PyCall.import_module('cjk_renderer')
 
-      default_font = File.join(__dir__, DEFAULT_FONT)
-      font_to_use = font_path || default_font
-
-      @renderer = cjk_renderer.CJKRenderer.new(font_to_use)
+      @renderer = font_path ? cjk_renderer.CJKRenderer.new(font_path) : cjk_renderer.CJKRenderer.new
     end
 
     def get_braille(chars, height)
