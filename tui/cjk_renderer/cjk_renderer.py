@@ -85,13 +85,18 @@ class CJKRenderer:
         matrix = self.image_to_binary_matrix(image)
         return self.matrix_to_braille(matrix)
 
-    def render_text(self, text: str, base_size: int, ratio: Optional[Tuple[int, int]] = None, use_braille: bool = False) -> List[List]:
+    def render_to_braille_no_line_spacing(self, char: str, base_size: int) -> List[List[str]]:
+        """Render CJK character to Unicode braille matrix. For 0 line_spacing"""
+        matrix = self.render_to_matrix(char, base_size * 2, (2, 3))
+        return self.matrix_to_braille(matrix)
+
+    def render_text(self, text: str, base_size: int, ratio: Optional[Tuple[int, int]] = None, use_braille: bool = False, no_line_spacing = False) -> List[List]:
         """Render multiple characters horizontally concatenated."""
         combined_matrix: List[List[Any]] = []
 
         for char in text:
             if use_braille:
-                char_matrix = self.render_to_braille(char, base_size)
+                char_matrix = self.render_to_braille_no_line_spacing(char, base_size) if no_line_spacing else self.render_to_braille(char, base_size)
             else:
                 char_matrix = self.render_to_matrix(char, base_size, ratio or (1, 1))
 

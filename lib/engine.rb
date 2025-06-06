@@ -8,14 +8,13 @@ require_relative 'util/data_normalizer'
 require_relative 'db/persister'
 require_relative 'review'
 require_relative 'util/data_dir'
-require_relative 'cjk_renderer/cjk_renderer_bridge'
 require_relative 'error/missing_api_key_error'
 require_relative 'db/common_query'
 
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
-    attr_reader :common_query, :preferences, :cjk_renderer
+    attr_reader :common_query
 
     # rubocop: disable Metrics/MethodLength
     def initialize(force_db_regen: false, api_key: nil)
@@ -32,8 +31,6 @@ module WaniKaniTUI
       @preferences = DataDir.preferences
       custom_buffer_size = @preferences['buffer_size']
       @review = custom_buffer_size ? Review.new(@db, buffer_size: custom_buffer_size) : Review.new(@db)
-      custom_cjk_font = @preferences['cjk_font_path']
-      @cjk_renderer = custom_cjk_font ? CJKRendererBridge.new(font_path: custom_cjk_font) : CJKRendererBridge.new
     end
     # rubocop: enable Metrics/MethodLength
 
