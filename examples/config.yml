@@ -4,8 +4,10 @@
 
 # Maximum number of review items the user is working on at once.
 buffer_size: 5
+
 # Font used for multiline CJK rendering
 cjk_font_path: "/absolute/path/to/a/JP_font.ttf"
+
 # Increase the height of cjk rendered font
 # - Improves resoluition on terminals with 0 line separartion
 no_line_spacing_correction: False
