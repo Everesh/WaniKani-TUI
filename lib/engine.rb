@@ -38,16 +38,6 @@ module WaniKaniTUI
     end
     # rubocop: enable Metrics/MethodLength
 
-    def fetch!
-      updated_after = @db.get_first_row("SELECT value FROM meta WHERE key='updated_after'")
-
-      subjects = DataNormalizer.subjects(@api.fetch_subjects(updated_after))
-      assignments = DataNormalizer.assignments(@api.fetch_assignments(updated_after))
-      Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
-
-      @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
-    end
-
     # ==============
     # Review section
     # ==============
@@ -94,9 +84,10 @@ module WaniKaniTUI
     end
 
     def progress_statuss_reviews
-      return 0 if @common_query.count_pending_review_reports.zero?
+      available_reviews = @common_query.count_available_reviews
+      return 0 if available_reviews.zero?
 
-      @common_query.count_available_reviews.to_f / @common_query.count_pending_review_reports.to_f
+      @common_query.count_pending_review_reports.to_f / available_reviews.to_f
       # Return float, 0.0 - 1.0 representing % of all available reviews completed and unreported
     end
 
@@ -114,6 +105,16 @@ module WaniKaniTUI
     # ==============
     #  Misc section
     # ==============
+
+    def fetch!
+      updated_after = @db.get_first_row("SELECT value FROM meta WHERE key='updated_after'")
+
+      subjects = DataNormalizer.subjects(@api.fetch_subjects(updated_after))
+      assignments = DataNormalizer.assignments(@api.fetch_assignments(updated_after))
+      Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
+
+      @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
+    end
 
     def get_multiline_cjk(chars, line_height)
       @cjk_renderer.get_braille(chars, line_height)
