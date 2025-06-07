@@ -11,11 +11,11 @@ module WaniKaniTUI
   # Mocks interaction between the app and the WaniKani API
   class MockWaniKaniAPI
     def initialize(db, api_key: nil)
-      GetLocalData.new
       @db = db
       @api_key = api_key || fetch_api_key
       raise MissingApiKeyError, 'API key not set!' unless @api_key
 
+      GetLocalData.new(api_key: @api_key)
       store_api_key(@api_key) if api_key
     end
 
