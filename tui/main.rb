@@ -27,6 +27,9 @@ module WaniKaniTUI
         @engine = init_engine
 
         sleep(10)
+      rescue Interrupt
+        @status_line.state('Exiting...')
+        sleep(1)
       ensure
         Curses.close_screen
       end
