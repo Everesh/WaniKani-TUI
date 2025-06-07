@@ -12,6 +12,9 @@ module WaniKaniTUI
   module TUI
     # The main Curses TUI application class.
     class Main
+      attr_reader :preferences, :cjk_renderer, :status_line, :engine
+      attr_accessor :window
+
       def initialize
         @preferences = DataDir.preferences
         custom_cjk_font = @preferences['cjk_font_path']
@@ -25,7 +28,7 @@ module WaniKaniTUI
         @window = TitleScreen.new(@preferences, @cjk_renderer)
 
         @engine = init_engine
-        raise Interrupt if MainMenu.new(@window, @engine) == 'Exit'
+        MainMenu.new(self)
       rescue Interrupt
         @status_line.state('Exiting...')
       ensure

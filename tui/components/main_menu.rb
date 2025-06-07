@@ -1,16 +1,17 @@
 require 'curses'
 
+require_relative '../windows/title_screen'
+
 module WaniKaniTUI
   module TUI
     # Renders main menu dialog
     class MainMenu
-      MENU_OPTIONS = %w[Review Lesson Exit].freeze
+      MENU_OPTIONS = %w[Review Lesson Home Exit].freeze
 
       attr_accessor :win
 
-      def initialize(window, engine)
-        @window = window
-        @engine = engine
+      def initialize(main)
+        @main = main
         win = Curses::Window.new((MENU_OPTIONS.length * 2) + 3, 20, (Curses.lines / 5) * 3, (Curses.cols - 20) / 2)
         win.keypad(true)
         position = 0
@@ -46,7 +47,7 @@ module WaniKaniTUI
           menu.attrset(i == active_index ? Curses::A_STANDOUT : Curses::A_NORMAL)
           count_available = case label
                             when 'Review'
-                              @engine.common_query.count_available_reviews
+                              @main.engine.common_query.count_available_reviews
                             when 'Lesson'
                               # TODO
                               ''
@@ -67,6 +68,9 @@ module WaniKaniTUI
         when 'Review'
           # TODO
           nil
+        when 'Home'
+          @main.window = TitleScreen.new(@main.preferences, @main.cjk_renderer)
+          MainMenu.new(@main)
         when 'Lesson'
           # TODO
           nil
