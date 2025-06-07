@@ -42,7 +42,7 @@ module WaniKaniTUI
         api_key = @status_line.win.getch
         @status_line.state("Captured #{api_key}!")
         sleep(2)
-        init_engine(api_key: api_key)
+        init_engine(api_key: api_key, force_db_regen: force_db_regen)
       end
 
       def count_down(message, time, counted: 0)
