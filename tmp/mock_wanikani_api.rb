@@ -5,12 +5,10 @@ require 'fileutils'
 
 require_relative 'get_local_data'
 require_relative '../lib/db/database'
-require_relative '../lib/error/rate_limit_error'
-require_relative '../lib/error/invalid_api_key_error'
 require_relative '../lib/error/missing_api_key_error'
 
 module WaniKaniTUI
-  # Handles the interaction between the app and the WaniKani API
+  # Mocks interaction between the app and the WaniKani API
   class MockWaniKaniAPI
     def initialize(db, api_key: nil)
       GetLocalData.new
