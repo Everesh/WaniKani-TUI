@@ -6,7 +6,7 @@ module WaniKaniTUI
   module TUI
     # Renders main menu dialog
     class MainMenu
-      MENU_OPTIONS = %w[Review Lesson Home Exit].freeze
+      MENU_OPTIONS = %w[Review Lesson Report Home Exit].freeze
 
       attr_accessor :win
 
@@ -51,6 +51,9 @@ module WaniKaniTUI
                             when 'Lesson'
                               # TODO
                               ''
+                            when 'Report'
+                              # TODO
+                              ''
                             else
                               ''
                             end
@@ -64,13 +67,16 @@ module WaniKaniTUI
       def change_window(option)
         case option
         when 'Exit', nil
-          nil
+          raise Interrupt
         when 'Review'
+          # TODO
+          nil
+        when 'Report'
           # TODO
           nil
         when 'Home'
           @main.window = TitleScreen.new(@main.preferences, @main.cjk_renderer)
-          MainMenu.new(@main)
+          @main.main_menu
         when 'Lesson'
           # TODO
           nil

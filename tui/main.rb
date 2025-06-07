@@ -28,11 +28,15 @@ module WaniKaniTUI
         @window = TitleScreen.new(@preferences, @cjk_renderer)
 
         @engine = init_engine
-        MainMenu.new(self)
+        main_menu
       rescue Interrupt
         @status_line.state('Exiting...')
       ensure
         Curses.close_screen
+      end
+
+      def main_menu
+        MainMenu.new(self)
       end
 
       private
