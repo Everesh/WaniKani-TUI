@@ -8,8 +8,7 @@ module WaniKaniTUI
     class StatusLine
       attr_accessor :win
 
-      def initialize(main, preferences, cjk_renderer)
-        @main = main
+      def initialize(preferences, cjk_renderer)
         @preferences = preferences
         @cjk_renderer = cjk_renderer
         @win = Curses::Window.new(3, Curses.cols, Curses.lines - 3, 0)

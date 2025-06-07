@@ -16,16 +16,19 @@ module WaniKaniTUI
         custom_cjk_font = @preferences['cjk_font_path']
         @cjk_renderer = custom_cjk_font ? CJKRendererBridge.new(font_path: custom_cjk_font) : CJKRendererBridge.new
 
-        @main = Curses.init_screen
+        Curses.init_screen
         Curses.noecho
         Curses.curs_set(0)
-        @status_line = StatusLine.new(@main, @preferences, @cjk_renderer)
+
+        @status_line = StatusLine.new(@preferences, @cjk_renderer)
         @layout = []
-        @layout << TitleScreen.new(@main, @preferences, @cjk_renderer)
+        @layout << TitleScreen.new(@preferences, @cjk_renderer)
 
         @engine = init_engine
 
         sleep(10)
+      ensure
+        Curses.close_screen
       end
 
       private
@@ -39,8 +42,14 @@ module WaniKaniTUI
         init_engine(force_db_regen: true)
       rescue MissingApiKeyError
         @status_line.state('API key not set!')
-        api_key = @status_line.win.getch
-        @status_line.state("Captured #{api_key}!")
+        sleep(1)
+        @status_line.state('Enter an API key: ')
+        Curses.echo
+        @status_line.win.setpos(1, 24)
+        api_key = @status_line.win.getstr.strip
+        Curses.noecho
+        @status_line.state("Captured '#{api_key}'!")
+        sleep(1)
         init_engine(api_key: api_key, force_db_regen: force_db_regen)
       end
 
