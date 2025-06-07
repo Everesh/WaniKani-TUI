@@ -6,6 +6,7 @@ require_relative 'cjk_renderer/cjk_renderer_bridge'
 require_relative '../lib/util/data_dir'
 require_relative 'windows/title_screen'
 require_relative 'windows/status_line'
+require_relative 'components/main_menu'
 
 module WaniKaniTUI
   module TUI
@@ -24,7 +25,7 @@ module WaniKaniTUI
         @window = TitleScreen.new(@preferences, @cjk_renderer)
 
         @engine = init_engine
-        main_menu
+        raise Interrupt if MainMenu.new(@window, @engine) == 'Exit'
       rescue Interrupt
         @status_line.state('Exiting...')
       ensure
@@ -36,7 +37,6 @@ module WaniKaniTUI
       def init_engine(force_db_regen: false, api_key: nil)
         @status_line.status('Initializing the engine...')
         Engine.new(force_db_regen: force_db_regen, api_key: api_key)
-        @status_line.clear
       rescue SchemaCorruptedError
         count_down('Corrupted schema detected. Regenerating', 5)
         init_engine(force_db_regen: true)
@@ -51,6 +51,8 @@ module WaniKaniTUI
         @status_line.state("Captured '#{api_key}'!")
         sleep(1)
         init_engine(api_key: api_key, force_db_regen: force_db_regen)
+      ensure
+        @status_line.clear
       end
 
       def count_down(message, time, counted: 0)
@@ -59,17 +61,6 @@ module WaniKaniTUI
         @status_line.status("#{message} in #{time - counted} seconds...")
         sleep(1)
         count_down(message, time, counted: counted + 1)
-      end
-
-      def main_menu
-        case @window.main_menu
-        when 'Exit'
-          nil
-        when 'Review'
-          @window = ReviewWindow.new # TODO
-        when 'Lesson'
-          @window = LessonWindow.new # TODO
-        end
       end
     end
   end
