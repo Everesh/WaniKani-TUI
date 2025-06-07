@@ -11,7 +11,7 @@ module WaniKaniTUI
       def initialize(window, engine)
         @window = window
         @engine = engine
-        win = Curses::Window.new((MENU_OPTIONS.length * 2) + 1, 20, (Curses.lines / 5) * 3, (Curses.cols - 20) / 2)
+        win = Curses::Window.new((MENU_OPTIONS.length * 2) + 3, 20, (Curses.lines / 5) * 3, (Curses.cols - 20) / 2)
         win.keypad(true)
         position = 0
 
@@ -53,7 +53,7 @@ module WaniKaniTUI
                             else
                               ''
                             end
-          menu.setpos(1 + (i * 2), 1)
+          menu.setpos((1 + i) * 2, 1)
           menu.addstr("#{count_available} ".rjust(6, ' '))
           menu.addstr(label.ljust(12, ' '))
         end
