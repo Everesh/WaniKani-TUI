@@ -3,8 +3,9 @@ require 'curses'
 require_relative '../lib/engine'
 require_relative '../lib/error/missing_api_key_error'
 require_relative 'cjk_renderer/cjk_renderer_bridge'
-require_relative 'components/spinner'
 require_relative '../lib/util/data_dir'
+require_relative 'windows/title_screen'
+require_relative 'windows/status_line'
 
 module WaniKaniTUI
   module TUI
@@ -18,29 +19,38 @@ module WaniKaniTUI
         @main = Curses.init_screen
         Curses.noecho
         Curses.curs_set(0)
+        @status_line = StatusLine.new(@main, @preferences, @cjk_renderer)
+        @layout = []
+        @layout << TitleScreen.new(@main, @preferences, @cjk_renderer)
 
-        text = '鰐蟹トゥイ'
-        top_offset = Curses.lines / 4
-        zero_gap = DataDir.preferences['no_line_spacing_correction']
-        width = (Curses.cols * 2) / 3
-        title = @cjk_renderer.get_braille(text, width, zero_gap: zero_gap, size_as_width: true)
-        title.each_with_index do |row, i|
-          Curses.setpos(top_offset + i, ((Curses.cols - width) / 2) + 1)
-          Curses.addstr(row.join(''))
-        end
+        @engine = init_engine
+        sleep(2)
+      end
 
-        spinner = Spinner.new(@main, Curses.lines - 2, 2)
-        Curses.setpos(Curses.lines - 2, 5)
-        Curses.addstr('loading...')
-        sleep(15)
-        spinner.stop
-        Curses.setpos(Curses.lines - 2, 5)
-        Curses.addstr('           ')
-        Curses.setpos(top_offset + height + top_offset, ((Curses.cols - 'loaded!'.length) / 2) + 1)
-        Curses.addstr('Loaded!')
-        Curses.setpos(top_offset + height + top_offset + 2, ((Curses.cols - 'Press ANY button to exit'.length) / 2) + 1)
-        Curses.addstr('Press ANY button to exit')
-        Curses.getch
+      private
+
+      def init_engine(force_db_regen: false, api_key: nil)
+        @status_line.status('Initializing the engine...')
+        sleep(2)
+        Engine.new(force_db_regen: force_db_regen, api_key: api_key)
+        @status_line.clear
+      rescue SchemaCorruptedError
+        count_down('Corrupted schema detected. Regenerating', 5)
+        init_engine(force_db_regen: true)
+      rescue MissingApiKeyError
+        @status_line.state('API key not set!')
+        api_key = @status_line.win.getch
+        @status_line.state("Captured #{api_key}!")
+        sleep(2)
+        init_engine(api_key: api_key)
+      end
+
+      def count_down(message, time, counted: 0)
+        return if counted >= time
+
+        @status_line.status("#{message} in #{time - counted} seconds...")
+        sleep(1)
+        count_down(message, time, counted: counted + 1)
       end
     end
   end
