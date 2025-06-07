@@ -55,5 +55,3 @@ module WaniKaniTUI
     end
   end
 end
-
-WaniKaniTUI::TUI::Main.new
