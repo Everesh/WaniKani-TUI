@@ -21,15 +21,12 @@ module WaniKaniTUI
         Curses.curs_set(0)
 
         @status_line = StatusLine.new(@preferences, @cjk_renderer)
-        @layout = []
-        @layout << TitleScreen.new(@preferences, @cjk_renderer)
+        @window = TitleScreen.new(@preferences, @cjk_renderer)
 
         @engine = init_engine
-
-        sleep(10)
+        main_menu
       rescue Interrupt
         @status_line.state('Exiting...')
-        sleep(1)
       ensure
         Curses.close_screen
       end
@@ -62,6 +59,17 @@ module WaniKaniTUI
         @status_line.status("#{message} in #{time - counted} seconds...")
         sleep(1)
         count_down(message, time, counted: counted + 1)
+      end
+
+      def main_menu
+        case @window.main_menu
+        when 'Exit'
+          nil
+        when 'Review'
+          @window = ReviewWindow.new # TODO
+        when 'Lesson'
+          @window = LessonWindow.new # TODO
+        end
       end
     end
   end
