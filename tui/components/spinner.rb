@@ -2,7 +2,7 @@
 
 module WaniKaniTUI
   module TUI
-    # Creates a single char spinner for loadtimes e.g. api fetching, db init, review reporting
+    # Creates a single-char spinner for loadtimes e.g. API fetching, DB init, review reporting
     class Spinner
       BRAILLE_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'].freeze
 
@@ -12,7 +12,13 @@ module WaniKaniTUI
         @col = col
         @frame = 0
         @should_stop = false
+        @spinner_thread = nil
+      end
 
+      def start
+        return if @spinner_thread&.alive?
+
+        @should_stop = false
         @spinner_thread = Thread.new do
           until @should_stop
             render
