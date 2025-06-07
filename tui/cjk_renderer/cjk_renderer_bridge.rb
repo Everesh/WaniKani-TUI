@@ -13,11 +13,13 @@ module WaniKaniTUI
         @renderer = font_path ? cjk_renderer.CJKRenderer.new(font_path) : cjk_renderer.CJKRenderer.new
       end
 
-      def get_braille(chars, height, zero_gap: false)
+      def get_braille(chars, size, zero_gap: false, size_as_width: false)
+        size /= (chars.length * 2) if size_as_width
+        zero_gap = false unless size_as_width # zero_gap with restricted height is just resolution downgrade
         matrix = if zero_gap
-                   matrix = @renderer.render_text(chars, height, use_braille: true, no_line_spacing: true)
+                   matrix = @renderer.render_text(chars, size, use_braille: true, no_line_spacing: true)
                  else
-                   @renderer.render_text(chars, height, use_braille: true)
+                   @renderer.render_text(chars, size, use_braille: true)
                  end
         deep_to_a(matrix)
       end

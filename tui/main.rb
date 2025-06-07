@@ -20,10 +20,10 @@ module WaniKaniTUI
         Curses.curs_set(0)
 
         text = '鰐蟹トゥイ'
-        width = (Curses.cols * 2) / 3
-        height = width / (text.length * 2)
         top_offset = Curses.lines / 4
-        title = @cjk_renderer.get_braille(text, height, zero_gap: DataDir.preferences['no_line_spacing_correction'])
+        zero_gap = DataDir.preferences['no_line_spacing_correction']
+        width = (Curses.cols * 2) / 3
+        title = @cjk_renderer.get_braille(text, width, zero_gap: zero_gap, size_as_width: true)
         title.each_with_index do |row, i|
           Curses.setpos(top_offset + i, ((Curses.cols - width) / 2) + 1)
           Curses.addstr(row.join(''))
