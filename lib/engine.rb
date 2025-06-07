@@ -125,6 +125,8 @@ module WaniKaniTUI
 
     def fetch_api_key
       Database.new(check_bypass: true).get_first_row('SELECT value FROM meta WHERE key = ?', ['api_key'])&.first
+    rescue SQLite3::SQLException
+      nil
     end
   end
 end
