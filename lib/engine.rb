@@ -124,7 +124,7 @@ module WaniKaniTUI
     private
 
     def fetch_api_key
-      Database.new.get_first_row('SELECT value FROM meta WHERE key = ?', ['api_key'])&.first
+      Database.new(check_bypass: true).get_first_row('SELECT value FROM meta WHERE key = ?', ['api_key'])&.first
     end
   end
 end

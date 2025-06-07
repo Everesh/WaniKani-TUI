@@ -13,7 +13,7 @@ module WaniKaniTUI
     DROP_SQL = File.expand_path('drop.sql', __dir__)
     DB_FILE_NAME = 'db.sqlite3'
 
-    def initialize(force_db_regen: false)
+    def initialize(force_db_regen: false, check_bypass: false)
       DataDir.ensure!
 
       db_file = File.join(DataDir.path, DB_FILE_NAME)
@@ -21,7 +21,7 @@ module WaniKaniTUI
 
       @db.execute('PRAGMA foreign_keys = ON;')
 
-      force_db_regen ? db_init : check_schema!
+      force_db_regen ? db_init : (check_schema! unless check_bypass)
     end
 
     def execute(sql, params = [])
