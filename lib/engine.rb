@@ -11,6 +11,8 @@ require_relative 'util/data_dir'
 require_relative 'error/missing_api_key_error'
 require_relative 'db/common_query'
 
+require_relative '../tmp/mock_wanikani_api'
+
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
@@ -24,7 +26,14 @@ module WaniKaniTUI
       end
 
       @db = Database.new(force_db_regen: force_db_regen)
-      @api = WaniKaniAPI.new(@db, api_key: api_key)
+      #
+      #
+      #
+      # TEMPORARY SUBVERSION OF REAL API CALLS
+      #   Dont Forget to reverth back to non Mock WaniKaniAPI in production!
+      #
+      #
+      @api = MockWaniKaniAPI.new(@db, api_key: api_key)
       @common_query = CommonQuery.new(@db)
       fetch!
 
