@@ -33,7 +33,7 @@ module WaniKaniTUI
       #   Dont Forget to reverth back to non Mock WaniKaniAPI in production!
       #
       #
-      @api = MockWaniKaniAPI.new(@db, api_key: api_key)
+      @api = WaniKaniAPI.new(@db, api_key: api_key)
       @common_query = CommonQuery.new(@db)
       fetch!
 

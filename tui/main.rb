@@ -40,8 +40,8 @@ module WaniKaniTUI
       rescue SchemaCorruptedError
         count_down('Corrupted schema detected. Regenerating', 5)
         init_engine(force_db_regen: true)
-      rescue MissingApiKeyError
-        @status_line.state('API key not set!')
+      rescue MissingApiKeyError, InvalidApiKeyError => e
+        @status_line.state(e.message)
         sleep(1)
         @status_line.state('Enter an API key: ')
         Curses.echo
