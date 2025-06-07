@@ -19,12 +19,12 @@ module WaniKaniTUI
       private
 
       def header
-        top_offset = Curses.lines / 4
+        top_offset = Curses.lines / 5
         zero_gap = @preferences['no_line_spacing_correction']
         width = (Curses.cols * 2) / 3
         title = @cjk_renderer.get_braille(APP_TITLE, width, zero_gap: zero_gap, size_as_width: true)
         title.each_with_index do |row, i|
-          @win.setpos(top_offset + i, ((Curses.cols - width) / 2) + 1)
+          @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
           @win.addstr(row.join(''))
         end
       end
