@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# rubocop: disable all
+
 require 'curses'
 
 require_relative '../windows/title_screen'
@@ -35,7 +39,7 @@ module WaniKaniTUI
           end
 
           # Clamp position within valid range
-          position = MENU_OPTIONS.length - 1 if position < 0
+          position = MENU_OPTIONS.length - 1 if position.negative?
           position = 0 if position >= MENU_OPTIONS.length
 
           draw_menu(win, position)
@@ -95,3 +99,5 @@ module WaniKaniTUI
     end
   end
 end
+
+# rubocop: enable all

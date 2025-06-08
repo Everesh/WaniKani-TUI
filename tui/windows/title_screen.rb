@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'curses'
 
 module WaniKaniTUI
@@ -22,6 +24,7 @@ module WaniKaniTUI
 
       private
 
+      # rubocop: disable Metrics/AbcSize
       def header
         top_offset = Curses.lines / 5
         zero_gap = @preferences['no_line_spacing_correction']
@@ -32,6 +35,7 @@ module WaniKaniTUI
           @win.addstr(row.join(''))
         end
       end
+      # rubocop: enable Metrics/AbcSize
     end
   end
 end

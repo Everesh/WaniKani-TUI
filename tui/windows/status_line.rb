@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'curses'
 require 'time'
 
@@ -43,10 +45,8 @@ module WaniKaniTUI
         time = Time.iso8601(@main.engine.common_query.get_last_sync_time).getlocal.strftime('%b %d, %H:%M')
         offset = Curses.cols - time.length - 14
         @win.setpos(2, offset)
-        @win.addstr('⢊ Last Sync:')
-        @win.setpos(2, offset + 13)
         @win.clrtoeol
-        @win.addstr(time)
+        @win.addstr("⢊ Last Sync: #{time} ")
         @win.refresh
       end
     end

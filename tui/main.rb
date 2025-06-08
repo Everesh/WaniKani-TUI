@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'curses'
 
 require_relative '../lib/engine'
@@ -15,6 +17,7 @@ module WaniKaniTUI
       attr_reader :preferences, :cjk_renderer, :status_line, :engine
       attr_accessor :window
 
+      # rubocop: disable Metrics/MethodLength
       def initialize
         @preferences = DataDir.preferences
         custom_cjk_font = @preferences['cjk_font_path']
@@ -35,6 +38,7 @@ module WaniKaniTUI
       ensure
         Curses.close_screen
       end
+      # rubocop: enable Metrics/MethodLength
 
       def main_menu
         MainMenu.new(self)
@@ -42,6 +46,7 @@ module WaniKaniTUI
 
       private
 
+      # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
       def init_engine(force_db_regen: false, api_key: nil)
         @status_line.status('Initializing the engine...')
         Engine.new(force_db_regen: force_db_regen, api_key: api_key)
@@ -62,6 +67,7 @@ module WaniKaniTUI
       ensure
         @status_line.clear
       end
+      # rubocop: enable Metrics/AbcSize, Metrics/MethodLength
 
       def count_down(message, time, counted: 0)
         return if counted >= time
