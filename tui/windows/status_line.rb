@@ -43,10 +43,10 @@ module WaniKaniTUI
 
       def update_last_sync
         time = Time.iso8601(@main.engine.common_query.get_last_sync_time).getlocal.strftime('%b %d, %H:%M')
-        offset = Curses.cols - time.length - 14
+        offset = Curses.cols - time.length - 15
         @win.setpos(2, offset)
         @win.clrtoeol
-        @win.addstr("⢊ Last Sync: #{time} ")
+        @win.addstr("⢊ Last Fetch: #{time} ")
         @win.refresh
       end
     end

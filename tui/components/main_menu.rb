@@ -10,7 +10,7 @@ module WaniKaniTUI
   module TUI
     # Renders main menu dialog
     class MainMenu
-      MENU_OPTIONS = %w[Review Lesson Report Sync Home Exit].freeze
+      MENU_OPTIONS = %w[Review Lesson Report Fetch Home Exit].freeze
 
       attr_accessor :win
 
@@ -83,7 +83,7 @@ module WaniKaniTUI
         when 'Report'
           # TODO
           nil
-        when 'Sync'
+        when 'Fetch'
           # TODO
           nil
         when 'Home'

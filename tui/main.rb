@@ -35,6 +35,7 @@ module WaniKaniTUI
         main_menu
       rescue Interrupt
         @status_line.state('Exiting...')
+        # Could bind reporting on exit here :shrug:
       ensure
         Curses.close_screen
       end
