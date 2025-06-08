@@ -1,4 +1,5 @@
 require 'curses'
+require 'time'
 
 require_relative '../components/spinner'
 
@@ -8,9 +9,8 @@ module WaniKaniTUI
     class StatusLine
       attr_accessor :win
 
-      def initialize(preferences, cjk_renderer)
-        @preferences = preferences
-        @cjk_renderer = cjk_renderer
+      def initialize(main)
+        @main = main
         @win = Curses::Window.new(3, Curses.cols, Curses.lines - 3, 0)
         @spinner = Spinner.new(@win, 1, 2)
       end
@@ -36,6 +36,17 @@ module WaniKaniTUI
       def clear
         @spinner.stop
         @win.clear
+        @win.refresh
+      end
+
+      def update_last_sync
+        time = Time.iso8601(@main.engine.common_query.get_last_sync_time).getlocal.strftime('%b %d, %H:%M')
+        offset = Curses.cols - time.length - 14
+        @win.setpos(2, offset)
+        @win.addstr('⢊ Last Sync:')
+        @win.setpos(2, offset + 13)
+        @win.clrtoeol
+        @win.addstr(time)
         @win.refresh
       end
     end

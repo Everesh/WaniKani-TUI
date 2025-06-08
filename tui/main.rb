@@ -24,10 +24,11 @@ module WaniKaniTUI
         Curses.noecho
         Curses.curs_set(0)
 
-        @status_line = StatusLine.new(@preferences, @cjk_renderer)
+        @status_line = StatusLine.new(self)
         @window = TitleScreen.new(@preferences, @cjk_renderer)
 
         @engine = init_engine
+        @status_line.update_last_sync
         main_menu
       rescue Interrupt
         @status_line.state('Exiting...')

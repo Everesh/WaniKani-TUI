@@ -117,7 +117,15 @@ module WaniKaniTUI
     def count_pending_lesson_reports
       @db.get_first_row(
         "SELECT COUNT(*)
-        FROM lesson"
+         FROM lesson"
+      ).first
+    end
+
+    def get_last_sync_time
+      @db.get_first_row(
+        "SELECT value
+         FROM meta
+         WHERE key = 'updated_after'"
       ).first
     end
 
