@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop: disable Metrics/ClassLength
+
 require 'time'
 
 require_relative 'database'
@@ -121,6 +123,7 @@ module WaniKaniTUI
       ).first
     end
 
+    # rubocop: disable Naming/AccessorMethodName
     def get_last_sync_time
       @db.get_first_row(
         "SELECT value
@@ -128,8 +131,7 @@ module WaniKaniTUI
          WHERE key = 'updated_after'"
       ).first
     end
-
-    private
+    # rubocop: enable Naming/AccessorMethodName
 
     # Provides *_as_hash suffixed methods that return hashes instead of arrays
     def self.define_as_hash_variant(method_name)
@@ -152,3 +154,5 @@ module WaniKaniTUI
     define_as_hash_variant :get_lesson_by_assignment_id
   end
 end
+
+# rubocop: enable Metrics/ClassLength
