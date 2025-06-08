@@ -13,7 +13,7 @@ module WaniKaniTUI
       def initialize(preferences, cjk_renderer)
         @preferences = preferences
         @cjk_renderer = cjk_renderer
-        @win = Curses::Window.new(Curses.lines - 3, Curses.cols, 0, 0)
+        @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         draw
         @win.refresh
       end

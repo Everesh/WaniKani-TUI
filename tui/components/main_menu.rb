@@ -16,7 +16,7 @@ module WaniKaniTUI
 
       def initialize(main)
         @main = main
-        top_offset = [(Curses.lines / 5) * 3, Curses.lines - (MENU_OPTIONS.length * 2) - 6].min
+        top_offset = [(Curses.lines / 5) * 3, Curses.lines - (MENU_OPTIONS.length * 2) - 4].min
         win = Curses::Window.new((MENU_OPTIONS.length * 2) + 3, 20, top_offset, (Curses.cols - 20) / 2)
         win.keypad(true)
         position = 0
