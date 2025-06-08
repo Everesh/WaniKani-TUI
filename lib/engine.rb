@@ -47,6 +47,7 @@ module WaniKaniTUI
     # Review section
     # ==============
 
+    # rubocop: disable Metrics/AbcSize
     def get_review(peek_at_last: false)
       peek = peek_at_last ? @review.peek_last_as_hash : @review.peek_as_hash
       review = @common_query.get_review_by_assignment_id_as_hash(peek[:assignment_id])
@@ -59,10 +60,13 @@ module WaniKaniTUI
       { review: review, assignment: assignment, subject: subject, readings: readings, meanings: meanings,
         components: components, amalgamations: amalgamations }
       # Return structured hash with all the relevant data from the front of the buffer
-      # e.g {review: {}, assignment: {}, subject: {}, readings: [{},..], meanings: [{},..], components: [{},..], amalgamations: [{},..]}}
+      # e.g {review: {}, assignment: {}, subject: {}, readings: [{},..], meanings: [{},..],
+      #      components: [{},..], amalgamations: [{},..]}}
     end
+    # rubocop: enable Metrics/AbcSize
 
-    def answer_review_meaning!(answer) # Expect a string (bang since this is will modify the db)
+    # Expect a string (bang since this is will modify the db)
+    def answer_review_meaning!(answer)
       is_correct = get_review[:meanings].any? { |reading_hash| reading_hash['meaning'].downcase == answer.downcase }
 
       if is_correct
@@ -75,7 +79,8 @@ module WaniKaniTUI
       # Return bool, whether the asnwer was correct
     end
 
-    def answer_review_reading!(answer) # Expect a string (bang since this is will modify the db)
+    # Expect a string (bang since this is will modify the db)
+    def answer_review_reading!(answer)
       is_correct = get_review[:readings].any? { |reading_hash| reading_hash['reading'] == answer }
 
       if is_correct
@@ -92,7 +97,7 @@ module WaniKaniTUI
       available_reviews = @common_query.count_available_reviews
       return 0 if available_reviews.zero?
 
-      @common_query.count_pending_review_reports.to_f / available_reviews.to_f
+      @common_query.count_pending_review_reports / available_reviews.to_f
       # Return float, 0.0 - 1.0 representing % of all available reviews completed and unreported
     end
 
