@@ -79,6 +79,9 @@ module WaniKaniTUI
         when 'Report'
           # TODO
           nil
+        when 'Sync'
+          # TODO
+          nil
         when 'Home'
           @main.window = TitleScreen.new(@main.preferences, @main.cjk_renderer)
           @main.main_menu
