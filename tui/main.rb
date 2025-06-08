@@ -52,6 +52,9 @@ module WaniKaniTUI
         @status_line.status('Initializing the engine...')
         Engine.new(force_db_regen: force_db_regen, api_key: api_key)
       rescue SchemaCorruptedError
+        @status_line.state('Corrupted schema detected. Do you want to regenereate it?: [y/N]')
+        raise SchemaCorruptedError, 'Did not attemp to regenerate it.' unless @status_line.win.getch.downcase == 'y'
+
         count_down('Corrupted schema detected. Regenerating', 5)
         init_engine(force_db_regen: true)
       rescue MissingApiKeyError, InvalidApiKeyError => e
