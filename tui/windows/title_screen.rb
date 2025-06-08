@@ -12,8 +12,12 @@ module WaniKaniTUI
         @preferences = preferences
         @cjk_renderer = cjk_renderer
         @win = Curses::Window.new(Curses.lines - 3, Curses.cols, 0, 0)
-        header
+        draw
         @win.refresh
+      end
+
+      def draw
+        header
       end
 
       private

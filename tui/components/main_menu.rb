@@ -6,7 +6,7 @@ module WaniKaniTUI
   module TUI
     # Renders main menu dialog
     class MainMenu
-      MENU_OPTIONS = %w[Review Lesson Report Home Exit].freeze
+      MENU_OPTIONS = %w[Review Lesson Report Sync Home Exit].freeze
 
       attr_accessor :win
 
@@ -27,6 +27,10 @@ module WaniKaniTUI
           when Curses::Key::ENTER, 10, 13, 'l', Curses::Key::RIGHT
             return change_window(MENU_OPTIONS[position])
           when 27 # The escape key
+            win.close
+            @main.window.win.clear
+            @main.window.draw
+            @main.window.win.refresh
             return nil
           end
 
