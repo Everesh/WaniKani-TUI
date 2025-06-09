@@ -117,7 +117,7 @@ module WaniKaniTUI
     # ==============
 
     def fetch!
-      updated_after = @db.get_first_row("SELECT value FROM meta WHERE key='updated_after'")
+      updated_after = @common_query.get_last_sync_time
 
       subjects = DataNormalizer.subjects(@api.fetch_subjects(updated_after))
       assignments = DataNormalizer.assignments(@api.fetch_assignments(updated_after))

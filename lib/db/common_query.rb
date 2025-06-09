@@ -130,6 +130,8 @@ module WaniKaniTUI
          FROM meta
          WHERE key = 'updated_after'"
       ).first
+    rescue NoMethodError # ~ if no record found
+      nil
     end
     # rubocop: enable Naming/AccessorMethodName
 
