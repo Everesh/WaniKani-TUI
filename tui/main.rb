@@ -28,7 +28,7 @@ module WaniKaniTUI
         Curses.curs_set(0)
 
         @status_line = StatusLine.new(self)
-        @window = TitleScreen.new(@preferences, @cjk_renderer)
+        @window = TitleScreen.new(self)
 
         @engine = init_engine
         @status_line.update_last_sync

@@ -14,12 +14,12 @@ module WaniKaniTUI
       def initialize(main)
         @main = main
         @win = Curses::Window.new(1, Curses.cols, Curses.lines - 1, 0)
-        @spinner = Spinner.new(@win, 0, 2)
+        @spinner = Spinner.new(@win, 0, 1)
       end
 
       def status(process_message)
         @spinner.start
-        @win.setpos(0, 5)
+        @win.setpos(0, 3)
         @win.clrtoeol
         @win.addstr(process_message)
         @win.refresh
