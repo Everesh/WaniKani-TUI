@@ -1,5 +1,7 @@
 require 'curses'
 
+require_relative '../../lib/error/attempting_already_passed_subject_error'
+
 module WaniKaniTUI
   module TUI
     # The main Curses TUI application class.
@@ -12,7 +14,10 @@ module WaniKaniTUI
       end
 
       def open
+        @subject = @main.engine.get_review
         draw
+        mode = get_mode
+        draw_task(mode)
         while ch = @win.getch
           case ch
           when 27
@@ -38,8 +43,8 @@ module WaniKaniTUI
       end
 
       def draw_chars
-        chars = @main.engine.get_review[:subject]['characters']
-        chars = @main.engine.get_review[:subject]['slug'] if chars.nil?
+        chars = @subject[:subject]['characters']
+        chars = @subject[:subject]['slug'] if chars.nil?
         zero_gap = @main.preferences['no_line_spacing_correction']
 
         height = [Curses.lines / 2, @main.preferences['max_char_height']].min
@@ -60,8 +65,10 @@ module WaniKaniTUI
         @win.setpos(Curses.lines - 8, 0)
         @win.addstr('_' * Curses.cols)
 
-        @win.setpos(Curses.lines - 5, 0)
-        @win.addstr('_' * Curses.cols)
+        chars = @subject[:subject]['characters']
+        chars = @subject[:subject]['slug'] if chars.nil?
+        @win.setpos(2, 3)
+        @win.addstr(chars)
 
         @win.setpos(Curses.lines - 2, 0)
         @win.addstr('_' * Curses.cols)
@@ -75,8 +82,34 @@ module WaniKaniTUI
         @win.addstr('░' * (Curses.cols - last_col))
 
         progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_available_reviews}"
-        @win.setpos(1, Curses.cols - 1 - progress_string.length)
+        @win.setpos(2, Curses.cols - 3 - progress_string.length)
         @win.addstr(progress_string)
+      end
+
+      def get_mode
+        options = []
+        options << 'meaning' unless @subject[:review]['meaning_passsed']
+        options << 'reading' unless @subject[:review]['reading_passsed']
+        raise AttemptingAlreadyPassedSubjectError if options.empty?
+
+        options.sample
+      end
+
+      def draw_task(mode)
+        object = "#{@subject[:subject]['object'].capitalize} "
+        @win.attron(Curses::A_REVERSE) if mode == 'meaning'
+        @win.setpos(Curses.lines - 7, 0)
+        @win.addstr(' ' * Curses.cols)
+        @win.setpos(Curses.lines - 6, 0)
+        @win.addstr(' ' * Curses.cols)
+        @win.setpos(Curses.lines - 6, (Curses.cols - object.length - 1 - mode.length) / 2)
+        @win.addstr(object)
+        @win.attron(Curses::A_BOLD)
+        @win.addstr(mode.capitalize)
+        @win.attroff(Curses::A_BOLD)
+        @win.setpos(Curses.lines - 5, 0)
+        @win.addstr('_' * Curses.cols)
+        @win.attroff(Curses::A_REVERSE) if mode == 'meaning'
       end
     end
   end
