@@ -85,11 +85,13 @@ module WaniKaniTUI
           # TODO
           nil
         when 'Fetch'
-          # TODO
-          nil
+          @main.status_line.status('Fetching from remote...')
+          @main.engine.fetch!
+          @main.status_line.clear
         when 'Home'
           @main.screens['title'].open
           @main.overlays['main_menu'].open
+          @status_line.update_last_sync
         when 'Lesson'
           # TODO
           nil
