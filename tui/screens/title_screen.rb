@@ -13,18 +13,18 @@ module WaniKaniTUI
       def initialize(main)
         @main = main
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
-        draw
       end
 
-      def draw
-        header
+      def open
+        @win.clear
+        draw_title
         @win.refresh
       end
 
       private
 
       # rubocop: disable Metrics/AbcSize
-      def header
+      def draw_title
         top_offset = Curses.lines / 5
         zero_gap = @main.preferences['no_line_spacing_correction']
         width = (Curses.cols * 2) / 3

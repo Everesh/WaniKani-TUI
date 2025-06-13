@@ -6,33 +6,34 @@ require_relative '../lib/engine'
 require_relative '../lib/error/missing_api_key_error'
 require_relative 'cjk_renderer/cjk_renderer_bridge'
 require_relative '../lib/util/data_dir'
-require_relative 'windows/title_screen'
-require_relative 'windows/status_line'
+require_relative 'components/status_line'
 require_relative 'components/main_menu'
+require_relative 'screens/title_screen'
+require_relative 'screens/review_screen'
 
 module WaniKaniTUI
   module TUI
     # The main Curses TUI application class.
     class Main
       attr_reader :preferences, :cjk_renderer, :status_line, :engine
-      attr_accessor :window
+      attr_accessor :screens, :overlays
 
       # rubocop: disable Metrics/MethodLength
       def initialize
-        @preferences = DataDir.preferences
-        custom_cjk_font = @preferences['cjk_font_path']
-        @cjk_renderer = custom_cjk_font ? CJKRendererBridge.new(font_path: custom_cjk_font) : CJKRendererBridge.new
-
         Curses.init_screen
         Curses.noecho
         Curses.curs_set(0)
-
+        @preferences = DataDir.preferences
+        @cjk_renderer = CJKRendererBridge.new(font_path: @preferences['cjk_font_path'])
+        @screens = {}
+        init_screens
+        @screens['title'].open
         @status_line = StatusLine.new(self)
-        @window = TitleScreen.new(self)
-
         @engine = init_engine
         @status_line.update_last_sync
-        main_menu
+        @overlays = {}
+        init_overlays
+        @overlays['main_menu'].open
       rescue Interrupt
         @status_line.state('Exiting...')
         # Could bind reporting on exit here :shrug:
@@ -40,10 +41,6 @@ module WaniKaniTUI
         Curses.close_screen
       end
       # rubocop: enable Metrics/MethodLength
-
-      def main_menu
-        @window = MainMenu.new(self) || @window
-      end
 
       private
 
@@ -72,6 +69,15 @@ module WaniKaniTUI
         @status_line.clear
       end
       # rubocop: enable Metrics/AbcSize, Metrics/MethodLength
+
+      def init_screens
+        @screens['title'] = TitleScreen.new(self)
+        @screens['review'] = ReviewScreen.new(self)
+      end
+
+      def init_overlays
+        @overlays['main_menu'] = MainMenu.new(self)
+      end
 
       def count_down(message, time, counted: 0)
         return if counted >= time

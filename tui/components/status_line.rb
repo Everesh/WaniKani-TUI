@@ -3,7 +3,7 @@
 require 'curses'
 require 'time'
 
-require_relative '../components/spinner'
+require_relative 'spinner'
 
 module WaniKaniTUI
   module TUI

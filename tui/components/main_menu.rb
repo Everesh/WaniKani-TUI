@@ -4,8 +4,8 @@
 
 require 'curses'
 
-require_relative '../windows/title_screen'
-require_relative '../windows/review'
+require_relative '../screens/title_screen'
+require_relative '../screens/review_screen'
 
 module WaniKaniTUI
   module TUI
@@ -18,12 +18,15 @@ module WaniKaniTUI
       def initialize(main)
         @main = main
         top_offset = [(Curses.lines / 5) * 3, Curses.lines - (MENU_OPTIONS.length * 2) - 4].min
-        win = Curses::Window.new((MENU_OPTIONS.length * 2) + 3, 20, top_offset, (Curses.cols - 20) / 2)
-        win.keypad(true)
+        @win = Curses::Window.new((MENU_OPTIONS.length * 2) + 3, 20, top_offset, (Curses.cols - 20) / 2)
+      end
+
+      def open
+        @win.keypad(true)
         position = 0
 
-        draw_menu(win, position)
-        while (ch = win.getch)
+        draw_menu(position)
+        while (ch = @win.getch)
           case ch
           when 'w', 'k', Curses::Key::UP
             position -= 1
@@ -31,29 +34,28 @@ module WaniKaniTUI
             position += 1
           when Curses::Key::ENTER, 10, 13, 'l', Curses::Key::RIGHT
             change_window(MENU_OPTIONS[position])
+            break
           when 27 # The escape key
-            win.close
-            @main.window.win.clear
-            @main.window.draw
-            return nil
+            break
           end
 
           # Clamp position within valid range
           position = MENU_OPTIONS.length - 1 if position.negative?
           position = 0 if position >= MENU_OPTIONS.length
 
-          draw_menu(win, position)
+          draw_menu(position)
         end
+        @win.keypad(false)
       end
 
       private
 
-      def draw_menu(menu, active_index = nil)
-        menu.clear
-        menu.attrset(Curses::A_NORMAL)
-        menu.box
+      def draw_menu(active_index = nil)
+        @win.clear
+        @win.attrset(Curses::A_NORMAL)
+        @win.box
         MENU_OPTIONS.each_with_index do |label, i|
-          menu.attrset(i == active_index ? Curses::A_STANDOUT : Curses::A_NORMAL)
+          @win.attrset(i == active_index ? Curses::A_STANDOUT : Curses::A_NORMAL)
           count_available = case label
                             when 'Review'
                               @main.engine.common_query.count_available_reviews
@@ -66,11 +68,11 @@ module WaniKaniTUI
                             else
                               ''
                             end
-          menu.setpos((1 + i) * 2, 1)
-          menu.addstr("#{count_available} ".rjust(6, ' '))
-          menu.addstr(label.ljust(12, ' '))
+          @win.setpos((1 + i) * 2, 1)
+          @win.addstr("#{count_available} ".rjust(6, ' '))
+          @win.addstr(label.ljust(12, ' '))
         end
-        menu.refresh
+        @win.refresh
       end
 
       def change_window(option)
@@ -78,7 +80,7 @@ module WaniKaniTUI
         when 'Exit', nil
           raise Interrupt
         when 'Review'
-          TUI::Review.new(@main)
+          @main.screens['review'].open
         when 'Report'
           # TODO
           nil
@@ -86,7 +88,8 @@ module WaniKaniTUI
           # TODO
           nil
         when 'Home'
-          TitleScreen.new(@main)
+          @main.screens['title'].open
+          @main.overlays['main_menu'].open
         when 'Lesson'
           # TODO
           nil
