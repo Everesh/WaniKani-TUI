@@ -11,6 +11,7 @@ module WaniKaniTUI
       def initialize(main)
         @main = main
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
+        @win.bkgd(Curses.color_pair(1))
       end
 
       def open
@@ -36,14 +37,27 @@ module WaniKaniTUI
         @win.keypad(true) # Refocuses keypad to avoid misscapture from main_menu
         @win.clear
 
+        color = if @subject['object'] == 'radical'
+                  3
+                else
+                  @subject['object'] == 'kanji' ? 4 : 5
+                end
+        @win.attron(Curses.color_pair(color))
+        fill_main_bg
         draw_chars
-        draw_answer_box
+        draw_meta
+        @win.attroff(Curses.color_pair(color))
+        @win.attron(Curses.color_pair(6))
         draw_progress_bar
-
+        @win.attroff(Curses.color_pair(6))
+        @win.setpos(Curses.lines - 2, 0)
+        @win.addstr('_' * Curses.cols)
         @win.refresh
       end
 
       def draw_chars
+        @win.attron(Curses::A_BOLD)
+
         chars = @subject[:subject]['characters']
         chars = @subject[:subject]['slug'] if chars.nil?
         zero_gap = @main.preferences['no_line_spacing_correction']
@@ -60,18 +74,8 @@ module WaniKaniTUI
           @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
           @win.addstr(row.join(''))
         end
-      end
-
-      def draw_answer_box
+        @win.attroff(Curses::A_BOLD)
         @win.setpos(Curses.lines - 8, 0)
-        @win.addstr('_' * Curses.cols)
-
-        chars = @subject[:subject]['characters']
-        chars = @subject[:subject]['slug'] if chars.nil?
-        @win.setpos(2, 3)
-        @win.addstr(chars)
-
-        @win.setpos(Curses.lines - 2, 0)
         @win.addstr('_' * Curses.cols)
       end
 
@@ -79,12 +83,18 @@ module WaniKaniTUI
         @win.setpos(0, 0)
         last_col = (@main.engine.progress_statuss_reviews * Curses.cols).floor
         @win.addstr('█' * last_col)
-        @win.setpos(0, last_col)
         @win.addstr('░' * (Curses.cols - last_col))
+      end
 
+      def draw_meta
         progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_available_reviews}"
         @win.setpos(2, Curses.cols - 3 - progress_string.length)
         @win.addstr(progress_string)
+
+        chars = @subject[:subject]['characters']
+        chars = @subject[:subject]['slug'] if chars.nil?
+        @win.setpos(2, 3)
+        @win.addstr(chars)
       end
 
       def get_mode
@@ -98,7 +108,7 @@ module WaniKaniTUI
 
       def draw_task(mode)
         object = "#{@subject[:subject]['object'].capitalize} "
-        @win.attron(Curses::A_REVERSE) if mode == 'meaning'
+        @win.attron(Curses.color_pair(2)) if mode == 'meaning'
         @win.setpos(Curses.lines - 7, 0)
         @win.addstr(' ' * Curses.cols)
         @win.setpos(Curses.lines - 6, 0)
@@ -110,7 +120,15 @@ module WaniKaniTUI
         @win.attroff(Curses::A_BOLD)
         @win.setpos(Curses.lines - 5, 0)
         @win.addstr('_' * Curses.cols)
-        @win.attroff(Curses::A_REVERSE) if mode == 'meaning'
+        @win.attroff(Curses.color_pair(2)) if mode == 'meaning'
+      end
+
+      def fill_main_bg
+        line = ' ' * Curses.cols
+        (1...Curses.lines - 8).each do |i|
+          @win.setpos(i, 0)
+          @win.addstr(line)
+        end
       end
     end
   end

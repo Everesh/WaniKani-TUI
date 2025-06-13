@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'curses'
+require 'yaml'
+require 'fileutils'
 
 require_relative '../lib/engine'
 require_relative '../lib/error/missing_api_key_error'
@@ -24,6 +26,9 @@ module WaniKaniTUI
         Curses.noecho
         Curses.curs_set(0)
         @preferences = DataDir.preferences
+        Curses.start_color
+        init_colors
+        init_pairs
         @cjk_renderer = CJKRendererBridge.new(font_path: @preferences['cjk_font_path'])
         @screens = {}
         init_screens
@@ -85,6 +90,66 @@ module WaniKaniTUI
         @status_line.status("#{message} in #{time - counted} seconds...")
         sleep(1)
         count_down(message, time, counted: counted + 1)
+      end
+
+      def init_colors
+        return unless Curses.can_change_color?
+
+        default = YAML.load_file(File.join(__dir__, 'colors', 'default.yml'))
+
+        Curses.init_color(1, *hex_to_curses_rgb(@preferences['surface-1'] || default['surface-1']))
+        Curses.init_color(2, *hex_to_curses_rgb(@preferences['surface-2'] || default['surface-2']))
+        Curses.init_color(3, *hex_to_curses_rgb(@preferences['surface-3'] || default['surface-3']))
+        Curses.init_color(4, *hex_to_curses_rgb(@preferences['surface-4'] || default['surface-4']))
+        Curses.init_color(5, *hex_to_curses_rgb(@preferences['surface-inv'] || default['surface-inv']))
+
+        Curses.init_color(6, *hex_to_curses_rgb(@preferences['text'] || default['text']))
+        Curses.init_color(7, *hex_to_curses_rgb(@preferences['text-inv'] || default['text-inv']))
+        Curses.init_color(8, *hex_to_curses_rgb(@preferences['text-hl'] || default['text-hl']))
+        Curses.init_color(9, *hex_to_curses_rgb(@preferences['text-grayed'] || default['text-grayed']))
+
+        Curses.init_color(10, *hex_to_curses_rgb(@preferences['radical'] || default['radical']))
+        Curses.init_color(11, *hex_to_curses_rgb(@preferences['kanji'] || default['kanji']))
+        Curses.init_color(12, *hex_to_curses_rgb(@preferences['vocab'] || default['vocab']))
+
+        Curses.init_color(13, *hex_to_curses_rgb(@preferences['apprentice'] || default['apprentice']))
+        Curses.init_color(14, *hex_to_curses_rgb(@preferences['guru'] || default['guru']))
+        Curses.init_color(15, *hex_to_curses_rgb(@preferences['master'] || default['master']))
+        Curses.init_color(16, *hex_to_curses_rgb(@preferences['enlightened'] || default['enlightened']))
+        Curses.init_color(17, *hex_to_curses_rgb(@preferences['burned'] || default['burned']))
+
+        Curses.init_color(18, *hex_to_curses_rgb(@preferences['lesson'] || default['lesson']))
+        Curses.init_color(19, *hex_to_curses_rgb(@preferences['review'] || default['review']))
+        Curses.init_color(20, *hex_to_curses_rgb(@preferences['correct'] || default['correct']))
+        Curses.init_color(21, *hex_to_curses_rgb(@preferences['incorrect'] || default['incorrect']))
+
+        Curses.init_color(22, *hex_to_curses_rgb(@preferences['brand'] || default['brand']))
+        Curses.init_color(23, *hex_to_curses_rgb(@preferences['progress'] || default['progress']))
+        Curses.init_color(24, *hex_to_curses_rgb(@preferences['alert'] || default['alert']))
+      end
+
+      def init_pairs
+        if Curses.can_change_color?
+          Curses.init_pair(1, 6, 2) # default fg bg
+          Curses.init_pair(2, 7, 5) # inverted fg bg
+          Curses.init_pair(3, 6, 10) # radical
+          Curses.init_pair(4, 6, 11) # kanji
+          Curses.init_pair(5, 6, 12) # vocab
+          Curses.init_pair(6, 23, 2) # progress
+        else
+          Curses.init_pair(1, Curses::COLOR_WHITE, Curses::COLOR_BLACK) # default fg bg
+          Curses.init_pair(2, Curses::COLOR_BLACK, Curses::COLOR_WHILE) # inverted fg bg
+          Curses.init_pair(3, Curses::COLOR_WHITE, Curses::COLOR_BLUE) # radical
+          Curses.init_pair(4, Curses::COLOR_WHITE, Curses::COLOR_RED) # kanji
+          Curses.init_pair(5, Curses::COLOR_WHITE, Curses::COLOR_GREEN) # vocab
+          Curses.init_pair(6, Curses::COLOR_YELLOW, Curses::COLOR_BLACK) # progress
+        end
+      end
+
+      def hex_to_curses_rgb(hex)
+        hex = hex.delete('#')
+        r, g, b = hex.scan(/../).map { |c| c.to_i(16) }
+        [r, g, b].map { |val| (val / 255.0 * 1000).round }
       end
     end
   end

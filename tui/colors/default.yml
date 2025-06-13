@@ -1,0 +1,29 @@
+surface-1: "#151515"
+surface-2: "#282828"
+surface-3: "#303030"
+surface-4: "#535353"
+surface-inv: "#bababa"
+
+text: "#eeeeee"
+text-inv: "#151515"
+text-hl: "#c29354"
+text-grayed: "#aaaaaa"
+
+radical: "#56638a"
+kanji: "#9c4644"
+vocab: "#58896f"
+
+apprentice: "#47454e"
+guru: "#605c74"
+master: "#9A815d"
+enlightened: "#934c3f"
+burned: "#303030"
+
+lesson: "#9c4644"
+review: "#56638a"
+correct: "#58896f"
+incorrect: "#9c4644"
+
+brand: "#9c4644"
+progress: "#a97e42"
+alert: "#9c4644"

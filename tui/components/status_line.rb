@@ -14,6 +14,7 @@ module WaniKaniTUI
       def initialize(main)
         @main = main
         @win = Curses::Window.new(1, Curses.cols, Curses.lines - 1, 0)
+        @win.bkgd(Curses.color_pair(1))
         @spinner = Spinner.new(@win, 0, 1)
       end
 
