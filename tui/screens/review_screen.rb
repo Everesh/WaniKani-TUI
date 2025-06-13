@@ -26,6 +26,7 @@ module WaniKaniTUI
             # TODO
           end
           draw
+          draw_task(mode)
         end
       end
 
