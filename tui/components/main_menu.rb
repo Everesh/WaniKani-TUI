@@ -5,6 +5,7 @@
 require 'curses'
 
 require_relative '../windows/title_screen'
+require_relative '../windows/review'
 
 module WaniKaniTUI
   module TUI
@@ -29,12 +30,11 @@ module WaniKaniTUI
           when 's', 'j', Curses::Key::DOWN
             position += 1
           when Curses::Key::ENTER, 10, 13, 'l', Curses::Key::RIGHT
-            return change_window(MENU_OPTIONS[position])
+            change_window(MENU_OPTIONS[position])
           when 27 # The escape key
             win.close
             @main.window.win.clear
             @main.window.draw
-            @main.window.win.refresh
             return nil
           end
 
@@ -78,8 +78,7 @@ module WaniKaniTUI
         when 'Exit', nil
           raise Interrupt
         when 'Review'
-          # TODO
-          nil
+          TUI::Review.new(@main)
         when 'Report'
           # TODO
           nil
@@ -87,8 +86,7 @@ module WaniKaniTUI
           # TODO
           nil
         when 'Home'
-          @main.window = TitleScreen.new(@main.preferences, @main.cjk_renderer)
-          @main.main_menu
+          TitleScreen.new(@main)
         when 'Lesson'
           # TODO
           nil

@@ -42,7 +42,7 @@ module WaniKaniTUI
       # rubocop: enable Metrics/MethodLength
 
       def main_menu
-        MainMenu.new(self)
+        @window = MainMenu.new(self) || @window
       end
 
       private

@@ -14,11 +14,11 @@ module WaniKaniTUI
         @main = main
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         draw
-        @win.refresh
       end
 
       def draw
         header
+        @win.refresh
       end
 
       private
