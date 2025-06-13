@@ -8,8 +8,7 @@ module WaniKaniTUI
 
       def initialize(main)
         @main = main
-        @last_line = Curses.lines - 2
-        @win = Curses::Window.new(@last_line + 1, Curses.cols, 0, 0)
+        @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
       end
 
       def open
@@ -43,15 +42,14 @@ module WaniKaniTUI
         chars = @main.engine.get_review[:subject]['slug'] if chars.nil?
         zero_gap = @main.preferences['no_line_spacing_correction']
 
-        if chars.length > 2
-          width = (Curses.cols * 2) / 3
-          subject = @main.cjk_renderer.get_braille(chars, width, zero_gap: zero_gap, size_as_width: true)
-        else
-          height = Curses.lines / 2
-          subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
+        height = [Curses.lines / 2, @main.preferences['max_char_height']].min
+        max_width = (Curses.cols * 2) / 3
+        subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
+        if subject.first.length > max_width
+          subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
         end
 
-        top_offset = Curses.lines / 6
+        top_offset = ((Curses.lines - 8 - subject.length) / 2) + 1
         subject.each_with_index do |row, i|
           @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
           @win.addstr(row.join(''))
@@ -59,13 +57,13 @@ module WaniKaniTUI
       end
 
       def draw_answer_box
-        @win.setpos(@last_line - 6, 0)
+        @win.setpos(Curses.lines - 8, 0)
         @win.addstr('_' * Curses.cols)
 
-        @win.setpos(@last_line - 3, 0)
+        @win.setpos(Curses.lines - 5, 0)
         @win.addstr('_' * Curses.cols)
 
-        @win.setpos(@last_line, 0)
+        @win.setpos(Curses.lines - 2, 0)
         @win.addstr('_' * Curses.cols)
       end
 
