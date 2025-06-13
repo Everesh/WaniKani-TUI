@@ -35,11 +35,10 @@ module WaniKaniTUI
       #
       @api = MockWaniKaniAPI.new(@db, api_key: api_key)
       @common_query = CommonQuery.new(@db)
-      fetch!
-
       @preferences = DataDir.preferences
       custom_buffer_size = @preferences['buffer_size']
       @review = custom_buffer_size ? Review.new(@db, buffer_size: custom_buffer_size) : Review.new(@db)
+      fetch!
     end
     # rubocop: enable Metrics/MethodLength
 
@@ -124,6 +123,7 @@ module WaniKaniTUI
       Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
+      @review.update_review_table!
     end
 
     private
