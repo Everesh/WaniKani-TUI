@@ -28,9 +28,9 @@ module WaniKaniTUI
 
       def state(state_message)
         clear
-        @win.setpos(0, 2)
+        @win.setpos(0, 1)
         @win.addstr('⢊')
-        @win.setpos(0, 5)
+        @win.setpos(0, 3)
         @win.clrtoeol
         @win.addstr(state_message)
         @win.refresh
