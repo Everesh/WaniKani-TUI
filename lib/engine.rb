@@ -33,7 +33,7 @@ module WaniKaniTUI
       #   Dont Forget to reverth back to non Mock WaniKaniAPI in production!
       #
       #
-      @api = MockWaniKaniAPI.new(@db, api_key: api_key)
+      @api = WaniKaniAPI.new(@db, api_key: api_key)
       @common_query = CommonQuery.new(@db)
       @preferences = DataDir.preferences
       custom_buffer_size = @preferences['buffer_size']
@@ -121,6 +121,8 @@ module WaniKaniTUI
       subjects = DataNormalizer.subjects(@api.fetch_subjects(updated_after))
       assignments = DataNormalizer.assignments(@api.fetch_assignments(updated_after))
       Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
+
+      Persister.update_user_data(@db, @api.fetch_user_data(updated_after))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
       @review.update_review_table!

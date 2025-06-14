@@ -32,7 +32,7 @@ module WaniKaniTUI
         # Boolean to int conversion due to sqlite3 boolean representation
         normalized << [a['id'], a['data']['subject_id'], a['data']['srs_stage'],
                        a['data']['hidden'] ? 1 : 0, a['data']['available_at'],
-                       a['data']['started_at']]
+                       a['data']['started_at'], a['data']['unlocked_at']]
       end
       normalized
     end
@@ -66,7 +66,8 @@ module WaniKaniTUI
       def extract_subject(subject)
         [subject['id'], subject['data']['characters'], subject['data']['level'],
          subject['object'], subject['data']['slug'], subject['data']['document_url'],
-         subject['data']['reading_mnemonic'], subject['data']['meaning_mnemonic']]
+         subject['data']['reading_mnemonic'], subject['data']['meaning_mnemonic'],
+         subject['data']['hidden_at']]
       end
 
       # Boolean to int conversion due to sqlite3 boolean representation

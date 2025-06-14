@@ -17,6 +17,10 @@ module WaniKaniTUI
       end
     end
 
+    def self.update_user_data(db, hash)
+      persist_user_level(db, hash['data']['level'])
+    end
+
     # privatized methods of the static class
     class << self
       private
@@ -26,8 +30,8 @@ module WaniKaniTUI
         subjects.each do |subject|
           db.execute(
             "INSERT INTO subject
-             (id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             (id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning, hidden_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
              ON CONFLICT(id) DO UPDATE SET
               characters = excluded.characters,
               level = excluded.level,
@@ -35,7 +39,8 @@ module WaniKaniTUI
               slug = excluded.slug,
               url = excluded.url,
               mnemonic_reading = excluded.mnemonic_reading,
-              mnemonic_meaning = excluded.mnemonic_meaning",
+              mnemonic_meaning = excluded.mnemonic_meaning,
+              hidden_at = hidden_at",
             subject
           )
         end
@@ -81,11 +86,17 @@ module WaniKaniTUI
         assignments.each do |assignment|
           db.execute(
             "INSERT OR REPLACE INTO assignment
-             (assignment_id, subject_id, srs, hidden, available_at, started_at)
-             VALUES (?, ?, ?, ?, ?, ?)",
+             (assignment_id, subject_id, srs, hidden, available_at, started_at, unlocked_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?)",
             assignment
           )
         end
+      end
+
+      def persist_user_level(db, level)
+        db.execute(
+          'INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['user_level', level]
+        )
       end
     end
   end

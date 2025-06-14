@@ -27,6 +27,10 @@ module WaniKaniTUI
       JSON.load_file(File.join(__dir__, 'assignments.json'))
     end
 
+    def fetch_user_data(updated_after)
+      {'data': { 'level': 18 }}
+    end
+
     private
 
     def fetch_api_key

@@ -6,7 +6,8 @@ CREATE TABLE subject (
 	slug TEXT NOT NULL,
 	url TEXT NOT NULL,
 	mnemonic_meaning TEXT,
-	mnemonic_reading TEXT
+	mnemonic_reading TEXT,
+	hidden_at TEXT
 );
 
 CREATE TABLE components (
@@ -53,6 +54,7 @@ CREATE TABLE assignment (
 	hidden BOOLEAN NOT NULL,
 	available_at TIMESTAMP,
 	started_at TIMESTAMP,
+	unlocked_at TIMESTAMP,
 	FOREIGN KEY (subject_id) REFERENCES subject(id) ON DELETE RESTRICT
 );
 CREATE INDEX idx_assignment_subject_id ON assignment(subject_id);

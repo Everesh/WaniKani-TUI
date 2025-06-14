@@ -30,6 +30,11 @@ module WaniKaniTUI
       request_bulk(url, updated_after)
     end
 
+    def fetch_user_data(updated_after)
+      url = 'https://api.wanikani.com/v2/user'
+      attempt_request(url, updated_after)
+    end
+
     private
 
     def fetch_api_key

@@ -92,9 +92,14 @@ module WaniKaniTUI
     def count_available_reviews
       @db.get_first_row(
         "SELECT COUNT(*)
-         FROM assignment
-         WHERE available_at <= ?
-         AND started_at IS NOT NULL", [Time.now.utc.iso8601]
+         FROM assignment a
+         JOIN subject s
+         ON a.subject_id = s.id
+         WHERE a.available_at <= ?
+         AND a.started_at IS NOT NULL
+         AND a.hidden = 0
+         AND s.hidden_at IS NULL
+         AND a.unlocked_at IS NOT NULL", [Time.now.utc.iso8601]
       ).first
     end
 
@@ -110,9 +115,14 @@ module WaniKaniTUI
     def count_available_lessons
       @db.get_first_row(
         "SELECT COUNT(*)
-         FROM assignment
-         WHERE available_at <= ?
-         AND started_at IS NULL", [Time.now.utc.iso8601]
+         FROM assignment a
+         JOIN subject s
+         ON a.subject_id = s.id
+         WHERE a.started_at IS NULL
+         AND a.hidden = 0
+         AND s.level <= ?
+         AND s.hidden_at IS NULL
+         AND a.unlocked_at IS NOT NULL", [get_user_level]
       ).first
     end
 
@@ -121,6 +131,16 @@ module WaniKaniTUI
         "SELECT COUNT(*)
          FROM lesson"
       ).first
+    end
+
+    def get_user_level
+      @db.get_first_row(
+        "SELECT value
+         FROM meta
+         WHERE key = 'user_level'"
+      ).first
+    rescue NoMethodError # ~ if no record found
+      nil
     end
 
     # rubocop: disable Naming/AccessorMethodName

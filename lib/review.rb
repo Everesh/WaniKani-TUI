@@ -102,10 +102,15 @@ module WaniKaniTUI
 
     def update_review_table!
       available_reviews = @db.execute(
-        "SELECT assignment_id
-         FROM assignment
-         WHERE started_at IS NOT NULL
-         AND available_at <= ?", [Time.now.utc.iso8601]
+        "SELECT a.assignment_id
+         FROM assignment a
+         JOIN subject s
+         ON a.subject_id = s.id
+         WHERE a.started_at IS NOT NULL
+         AND a.available_at <= ?
+         AND a.hidden = 0
+         AND s.hidden_at IS NULL
+         AND a.unlocked_at IS NOT NULL", [Time.now.utc.iso8601]
       )
       populate_review(available_reviews)
       pass_radical_readings!
