@@ -21,8 +21,8 @@ max_char_height: 50
 dark_cjk: False
 
 # Sets default color group
-# - Available: default, wanikani
-theme: "default"
+# - Available: elementary_dark, wanikani
+theme: "elementary_dark"
 
 # Defines custom colors
 # - if partially defined, rest will be filled from base_colors group

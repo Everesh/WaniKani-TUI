@@ -95,7 +95,7 @@ module WaniKaniTUI
       def init_colors
         return unless Curses.can_change_color?
 
-        base = YAML.load_file(File.join(__dir__, 'colors', "#{@preferences['theme'] || 'default'}.yml"))
+        base = YAML.load_file(File.join(__dir__, 'colors', "#{@preferences['theme'] || 'elementary_dark'}.yml"))
         custom_colors = @preferences['colors'] || {}
         merged = {
           background: custom_colors['background'] || base['background'],
