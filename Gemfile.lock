@@ -18,6 +18,7 @@ GEM
     rainbow (3.1.1)
     rake (13.3.0)
     regexp_parser (2.10.0)
+    romkan (0.4.0)
     rubocop (1.75.8)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -49,6 +50,7 @@ DEPENDENCIES
   minitest (~> 5.25)
   pycall (~> 1.5)
   rake (~> 13.3)
+  romkan (~> 0.4.0)
   rubocop (~> 1.75)
   sqlite3 (~> 2.6)
 

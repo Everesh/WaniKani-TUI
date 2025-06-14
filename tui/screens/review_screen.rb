@@ -1,4 +1,5 @@
 require 'curses'
+require 'romkan'
 
 require_relative '../../lib/error/attempting_already_passed_subject_error'
 
@@ -12,22 +13,36 @@ module WaniKaniTUI
         @main = main
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         @win.bkgd(Curses.color_pair(1))
+        @answer = ''
       end
 
       def open
         @subject = @main.engine.get_review
-        draw
         mode = get_mode
+        draw
         draw_task(mode)
+        draw_answer
         while ch = @win.getch
           case ch
           when 27
             @main.overlays['main_menu'].open
+          when 127, 8, 263
+            @answer = @answer[0...-1] unless @answer.empty?
+          when 10, 13
+            correct_answer = if mode == 'meaning'
+                               @main.engine.answer_review_meaning!(@answer)
+                             else
+                               @main.engine.answer_review_reading!(@answer)
+                             end
+            @answer = "#{correct_answer}" # TMP ANSWER DUMP
+            open
           else
-            # TODO
+            @answer << ch
+            @answer = @answer.to_kana if mode == 'reading'
           end
           draw
           draw_task(mode)
+          draw_answer
         end
       end
 
@@ -129,6 +144,13 @@ module WaniKaniTUI
           @win.setpos(i, 0)
           @win.addstr(line)
         end
+      end
+
+      def draw_answer
+        @win.setpos(Curses.lines - 3, 0)
+        @win.addstr(' ' * Curses.cols)
+        @win.setpos(Curses.lines - 3, (Curses.cols - @answer.length) / 2)
+        @win.addstr(@answer)
       end
     end
   end
