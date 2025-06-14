@@ -30,7 +30,7 @@ module WaniKaniTUI
       assert_equal 1, result[:subjects].length
       subject = result[:subjects][0]
       assert_equal [1, '一', 1, 'radical', 'ground',
-                   'https://www.wanikani.com/radicals/ground', nil, 'This is the ground'], subject
+                   'https://www.wanikani.com/radicals/ground', nil, 'This is the ground', nil], subject
 
       # Test meanings extraction
       assert_equal 2, result[:meanings].length
@@ -63,7 +63,8 @@ module WaniKaniTUI
           'component_subject_ids' => [1, 2],
           'amalgamation_subject_ids' => [500, 501],
           'meaning_mnemonic' => 'Person mnemonic',
-          'reading_mnemonic' => 'Reading mnemonic'
+          'reading_mnemonic' => 'Reading mnemonic',
+          'hidden_at' => nil
         }
       }]
 
@@ -73,7 +74,7 @@ module WaniKaniTUI
       assert_equal 1, result[:subjects].length
       subject = result[:subjects][0]
       assert_equal [440, '人', 1, 'kanji', 'person',
-                   'https://www.wanikani.com/kanji/person', 'Reading mnemonic', 'Person mnemonic'], subject
+                   'https://www.wanikani.com/kanji/person', 'Reading mnemonic', 'Person mnemonic', nil], subject
 
       # Test meanings
       assert_equal 1, result[:meanings].length
@@ -118,7 +119,7 @@ module WaniKaniTUI
       assert_equal 1, result[:subjects].length
       subject = result[:subjects][0]
       assert_equal [2467, '人', 1, 'vocabulary', 'person',
-                   'https://www.wanikani.com/vocabulary/person', 'Vocab reading mnem', 'Vocab meaning mnem'], subject
+                   'https://www.wanikani.com/vocabulary/person', 'Vocab reading mnem', 'Vocab meaning mnem', nil], subject
 
       # Test meanings
       assert_equal 1, result[:meanings].length
@@ -155,7 +156,7 @@ module WaniKaniTUI
       assert_equal 1, result[:subjects].length
       subject = result[:subjects][0]
       assert_equal [8770, 'ひとつ', 2, 'kana_vocabulary', 'one-thing',
-                   'https://www.wanikani.com/vocabulary/one-thing', nil, 'Kana vocab meaning'], subject
+                   'https://www.wanikani.com/vocabulary/one-thing', nil, 'Kana vocab meaning', nil], subject
 
       # Test meanings
       assert_equal 1, result[:meanings].length
@@ -199,7 +200,7 @@ module WaniKaniTUI
       result = DataNormalizer.subjects(minimal_subject)
 
       subject = result[:subjects][0]
-      assert_equal [999, nil, 5, 'radical', 'test', 'https://example.com', nil, nil], subject
+      assert_equal [999, nil, 5, 'radical', 'test', 'https://example.com', nil, nil, nil], subject
       assert_equal [], result[:components]
     end
 
@@ -244,7 +245,8 @@ module WaniKaniTUI
             'srs_stage' => 5,
             'hidden' => false,
             'available_at' => '2017-09-05T23:04:00.000000Z',
-            'started_at' => '2017-08-30T23:04:00.000000Z'
+            'started_at' => '2017-08-30T23:04:00.000000Z',
+            'unlocked_at' => '2017-08-30T23:04:00.000000Z'
           }
         },
         {
@@ -255,7 +257,8 @@ module WaniKaniTUI
             'srs_stage' => 8,
             'hidden' => true,
             'available_at' => nil,
-            'started_at' => nil
+            'started_at' => nil,
+            'unlocked_at' => nil
           }
         }
       ]
@@ -266,11 +269,11 @@ module WaniKaniTUI
 
       # Test first assignment
       first_assignment = result[0]
-      assert_equal [80463006, 440, 5, 0, '2017-09-05T23:04:00.000000Z', '2017-08-30T23:04:00.000000Z'], first_assignment
+      assert_equal [80463006, 440, 5, 0, '2017-09-05T23:04:00.000000Z', '2017-08-30T23:04:00.000000Z', '2017-08-30T23:04:00.000000Z'], first_assignment
 
       # Test second assignment with null values and hidden=true
       second_assignment = result[1]
-      assert_equal [80463007, 441, 8, 1, nil, nil], second_assignment
+      assert_equal [80463007, 441, 8, 1, nil, nil, nil], second_assignment
     end
 
     def test_unite_method
