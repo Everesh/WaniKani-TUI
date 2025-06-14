@@ -39,7 +39,9 @@ module WaniKaniTUI
             open
           else
             @answer << ch
-            @answer = @answer.to_kana if mode == 'reading'
+            if mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
+              @answer = @answer.to_kana
+            end
           end
           draw
           draw_task(mode)
