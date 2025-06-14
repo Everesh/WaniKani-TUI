@@ -10,6 +10,8 @@ module WaniKaniTUI
 
       db.transaction do
         persist_subjects(db, hash[:subjects])
+        persist_meanings(db, hash[:meanings])
+        persist_readings(db, hash[:readings])
         persist_components(db, hash[:components])
         persist_assignments(db, hash[:assignments])
       end

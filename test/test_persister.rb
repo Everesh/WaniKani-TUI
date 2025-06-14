@@ -41,24 +41,13 @@ module WaniKaniTUI
       # Verify subjects were inserted
       subjects = @db.execute('SELECT * FROM subject ORDER BY id')
       assert_equal 2, subjects.length
-      assert_equal [1, '一', 1, 'radical', 'ground', 'https://example.com/radical', 'Ground mnemonic', nil], subjects[0]
-      assert_equal [440, '人', 1, 'kanji', 'person', 'https://example.com/kanji', 'Person mnemonic', 'Reading mnemonic'], subjects[1]
-
-      # Verify meanings were inserted
-      meanings_lookup = @db.execute('SELECT * FROM meaning ORDER BY meaning')
-      assert_equal 2, meanings_lookup.length
-      assert_equal ['Ground'], meanings_lookup[0]
-      assert_equal ['Person'], meanings_lookup[1]
+      assert_equal [1, '一', 1, 'radical', 'ground', 'https://example.com/radical', 'Ground mnemonic', nil, nil], subjects[0]
+      assert_equal [440, '人', 1, 'kanji', 'person', 'https://example.com/kanji', 'Person mnemonic', 'Reading mnemonic', nil], subjects[1]
 
       subject_meanings = @db.execute('SELECT * FROM subject_meaning ORDER BY id, meaning')
       assert_equal 2, subject_meanings.length
       assert_equal [1, 'Ground', 1, 1], subject_meanings[0]
       assert_equal [440, 'Person', 1, 1], subject_meanings[1]
-
-      # Verify readings were inserted
-      readings_lookup = @db.execute('SELECT * FROM reading ORDER BY reading')
-      assert_equal 1, readings_lookup.length
-      assert_equal ['じん'], readings_lookup[0]
 
       subject_readings = @db.execute('SELECT * FROM subject_reading ORDER BY id, reading')
       assert_equal 1, subject_readings.length
@@ -72,7 +61,7 @@ module WaniKaniTUI
       # Verify assignments were inserted
       assignments = @db.execute('SELECT * FROM assignment ORDER BY assignment_id')
       assert_equal 1, assignments.length
-      assert_equal [123, 440, 5, 0, '2023-01-01T00:00:00Z', '2023-01-01T00:00:00Z'], assignments[0]
+      assert_equal [123, 440, 5, 0, '2023-01-01T00:00:00Z', '2023-01-01T00:00:00Z', nil], assignments[0]
     end
 
     def test_persist_empty_data
@@ -90,8 +79,6 @@ module WaniKaniTUI
 
       # Verify no data was inserted
       assert_equal [], @db.execute('SELECT * FROM subject')
-      assert_equal [], @db.execute('SELECT * FROM meaning')
-      assert_equal [], @db.execute('SELECT * FROM reading')
       assert_equal [], @db.execute('SELECT * FROM components')
       assert_equal [], @db.execute('SELECT * FROM assignment')
     end
@@ -112,7 +99,7 @@ module WaniKaniTUI
       end
 
       subject = @db.execute('SELECT * FROM subject WHERE id = 1')[0]
-      assert_equal [1, nil, 1, 'radical', 'test', 'https://example.com', 'Test mnemonic', nil], subject
+      assert_equal [1, nil, 1, 'radical', 'test', 'https://example.com', 'Test mnemonic', nil, nil], subject
     end
 
     def test_persist_meanings_with_duplicate_text
@@ -133,11 +120,6 @@ module WaniKaniTUI
       assert_silent do
         Persister.persist(@db, test_data)
       end
-
-      # Should only have one meaning entry in lookup table
-      meanings = @db.execute('SELECT * FROM meaning')
-      assert_equal 1, meanings.length
-      assert_equal ['Ground'], meanings[0]
 
       # But two subject_meaning entries
       subject_meanings = @db.execute('SELECT * FROM subject_meaning ORDER BY id')
@@ -165,11 +147,6 @@ module WaniKaniTUI
         Persister.persist(@db, test_data)
       end
 
-      # Should only have one reading entry in lookup table
-      readings = @db.execute('SELECT * FROM reading')
-      assert_equal 1, readings.length
-      assert_equal ['にん'], readings[0]
-
       # But two subject_reading entries
       subject_readings = @db.execute('SELECT * FROM subject_reading ORDER BY id')
       assert_equal 2, subject_readings.length
@@ -181,7 +158,7 @@ module WaniKaniTUI
       # Insert initial data
       initial_data = {
         subjects: [
-          [1, '一', 1, 'radical', 'ground', 'https://example.com', nil, 'Old mnemonic']
+          [1, '一', 1, 'radical', 'ground', 'https://example.com', nil, 'Old mnemonic', nil]
         ],
         meanings: [
           [1, 'Ground', 1, 1]
@@ -226,7 +203,7 @@ module WaniKaniTUI
       meanings = []
 
       (1..100).each do |i|
-        subjects << [i, "字#{i}", 1, 'kanji', "test#{i}", "https://example.com/#{i}", nil, "Mnemonic #{i}"]
+        subjects << [i, "字#{i}", 1, 'kanji', "test#{i}", "https://example.com/#{i}", nil, "Mnemonic #{i}", nil]
         meanings << [i, "Meaning #{i}", 1, 1]
       end
 
@@ -244,7 +221,6 @@ module WaniKaniTUI
 
       # Verify all data was inserted
       assert_equal 100, @db.execute('SELECT COUNT(*) FROM subject')[0][0]
-      assert_equal 100, @db.execute('SELECT COUNT(*) FROM meaning')[0][0]
       assert_equal 100, @db.execute('SELECT COUNT(*) FROM subject_meaning')[0][0]
     end
 
@@ -312,7 +288,7 @@ module WaniKaniTUI
       end
 
       assignment = @db.execute('SELECT * FROM assignment WHERE assignment_id = 123')[0]
-      assert_equal [123, 440, 0, 0, nil, nil], assignment
+      assert_equal [123, 440, 0, 0, nil, nil, nil], assignment
     end
 
     private
@@ -320,8 +296,8 @@ module WaniKaniTUI
     def create_test_data
       {
         subjects: [
-          [1, '一', 1, 'radical', 'ground', 'https://example.com/radical', nil, 'Ground mnemonic'],
-          [440, '人', 1, 'kanji', 'person', 'https://example.com/kanji', 'Reading mnemonic', 'Person mnemonic']
+          [1, '一', 1, 'radical', 'ground', 'https://example.com/radical', nil, 'Ground mnemonic', nil],
+          [440, '人', 1, 'kanji', 'person', 'https://example.com/kanji', 'Reading mnemonic', 'Person mnemonic', nil]
         ],
         meanings: [
           [1, 'Ground', 1, 1],
