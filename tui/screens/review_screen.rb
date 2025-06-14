@@ -34,7 +34,8 @@ module WaniKaniTUI
                              else
                                @main.engine.answer_review_reading!(@answer)
                              end
-            @answer = "#{correct_answer}" # TMP ANSWER DUMP
+            @main.screens['detail'].open(@subject) unless correct_answer
+            @answer = ''
             open
           else
             @answer << ch

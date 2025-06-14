@@ -12,6 +12,7 @@ require_relative 'components/status_line'
 require_relative 'components/main_menu'
 require_relative 'screens/title_screen'
 require_relative 'screens/review_screen'
+require_relative 'screens/detail_screen'
 
 module WaniKaniTUI
   module TUI
@@ -82,6 +83,7 @@ module WaniKaniTUI
       def init_screens
         @screens['title'] = TitleScreen.new(self)
         @screens['review'] = ReviewScreen.new(self)
+        @screens['detail'] = DetailScreen.new(self)
       end
 
       def init_overlays
