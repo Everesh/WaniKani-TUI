@@ -18,10 +18,6 @@ CREATE TABLE components (
 	PRIMARY KEY (id_component, id_product)
 );
 
-CREATE TABLE reading (
-	reading TEXT PRIMARY KEY
-);
-
 CREATE TABLE subject_reading (
 	id INTEGER NOT NULL,
 	reading TEXT NOT NULL,
@@ -29,12 +25,7 @@ CREATE TABLE subject_reading (
 	accepted BOOLEAN NOT NULL,
 	type TEXT,
 	FOREIGN KEY (id) REFERENCES subject(id) ON DELETE CASCADE,
-	FOREIGN KEY (reading) REFERENCES reading(reading) ON DELETE CASCADE,
 	PRIMARY KEY (id, reading)
-);
-
-CREATE TABLE meaning (
-	meaning TEXT PRIMARY KEY
 );
 
 CREATE TABLE subject_meaning (
@@ -43,7 +34,6 @@ CREATE TABLE subject_meaning (
 	"primary" BOOLEAN NOT NULL,
 	accepted BOOLEAN NOT NULL,
 	FOREIGN KEY (id) REFERENCES subject(id) ON DELETE CASCADE,
-	FOREIGN KEY (meaning) REFERENCES meaning(meaning) ON DELETE CASCADE,
 	PRIMARY KEY (id, meaning)
 );
 
