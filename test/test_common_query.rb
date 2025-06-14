@@ -31,7 +31,7 @@ module WaniKaniTUI
       create_subject(2, 1, 'radical', 'two', 'url2', characters: '二')
 
       subject = @query.get_subject_by_id(1)
-      assert_equal [1, '一', 1, 'radical', 'ground', 'url1', nil, nil], subject
+      assert_equal [1, '一', 1, 'radical', 'ground', 'url1', nil, nil, nil], subject
 
       subject = @query.get_subject_by_id(99) # Non-existent ID
       assert_nil subject
@@ -224,11 +224,11 @@ module WaniKaniTUI
     private
 
     # Helper methods to insert data
-    def create_subject(id, level, object, slug, url, characters: nil, mnemonic_reading: nil, mnemonic_meaning: nil)
+    def create_subject(id, level, object, slug, url, characters: nil, mnemonic_reading: nil, mnemonic_meaning: nil, hidden_at: nil)
       @db.execute(
-        "INSERT INTO subject (id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        [id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning]
+        "INSERT INTO subject (id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning, hidden_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [id, characters, level, object, slug, url, mnemonic_reading, mnemonic_meaning, hidden_at]
       )
     end
 
@@ -242,7 +242,6 @@ module WaniKaniTUI
 
 
     def create_reading(id, reading, primary, accepted, type = nil)
-      @db.execute("INSERT OR IGNORE INTO reading (reading) VALUES (?)", [reading])
       @db.execute(
         "INSERT INTO subject_reading (id, reading, \"primary\", accepted, type) VALUES (?, ?, ?, ?, ?)",
         [id, reading, primary ? 1 : 0, accepted ? 1 : 0, type]
@@ -251,7 +250,6 @@ module WaniKaniTUI
 
 
     def create_meaning(id, meaning, primary, accepted)
-      @db.execute("INSERT OR IGNORE INTO meaning (meaning) VALUES (?)", [meaning])
       @db.execute(
         "INSERT INTO subject_meaning (id, meaning, \"primary\", accepted) VALUES (?, ?, ?, ?)",
         [id, meaning, primary ? 1 : 0, accepted ? 1 : 0]
@@ -259,10 +257,10 @@ module WaniKaniTUI
     end
 
 
-    def create_assignment(assignment_id, subject_id, srs, hidden, available_at, started_at)
+    def create_assignment(assignment_id, subject_id, srs, hidden, available_at, started_at, unlocked_at: nil)
       @db.execute(
-        "INSERT INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at) VALUES (?, ?, ?, ?, ?, ?)",
-        [assignment_id, subject_id, srs, hidden ? 1 : 0, available_at, started_at]
+        "INSERT INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at, unlocked_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [assignment_id, subject_id, srs, hidden ? 1 : 0, available_at, started_at, unlocked_at]
       )
     end
   end
