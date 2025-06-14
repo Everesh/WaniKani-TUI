@@ -150,7 +150,8 @@ module WaniKaniTUI
       def draw_answer
         @win.setpos(Curses.lines - 3, 0)
         @win.addstr(' ' * Curses.cols)
-        @win.setpos(Curses.lines - 3, (Curses.cols - @answer.length) / 2)
+        real_string_width = @answer.each_char.sum { |ch| ch.ord.between?(0x2E80, 0x9FFF) ? 2 : 1 }
+        @win.setpos(Curses.lines - 3, (Curses.cols - real_string_width) / 2)
         @win.addstr(@answer)
       end
     end
