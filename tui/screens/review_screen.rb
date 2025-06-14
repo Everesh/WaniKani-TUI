@@ -37,6 +37,7 @@ module WaniKaniTUI
             @main.screens['detail'].open(@subject) unless correct_answer
             @answer = ''
             open
+            break
           else
             @answer << ch
             if mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
@@ -55,10 +56,10 @@ module WaniKaniTUI
         @win.keypad(true) # Refocuses keypad to avoid misscapture from main_menu
         @win.clear
 
-        color = if @subject['object'] == 'radical'
+        color = if @subject[:subject]['object'] == 'radical'
                   3
                 else
-                  @subject['object'] == 'kanji' ? 4 : 5
+                  @subject[:subject]['object'] == 'kanji' ? 4 : 5
                 end
         @win.attron(Curses.color_pair(color))
         fill_main_bg
@@ -117,8 +118,8 @@ module WaniKaniTUI
 
       def get_mode
         options = []
-        options << 'meaning' unless @subject[:review]['meaning_passsed']
-        options << 'reading' unless @subject[:review]['reading_passsed']
+        options << 'meaning' unless @subject[:review]['meaning_passed'] == 1
+        options << 'reading' unless @subject[:review]['reading_passed'] == 1
         raise AttemptingAlreadyPassedSubjectError if options.empty?
 
         options.sample
