@@ -95,7 +95,7 @@ module WaniKaniTUI
       def init_colors
         return unless Curses.can_change_color?
 
-        base = YAML.load_file(File.join(__dir__, 'colors', 'default.yml'))
+        base = YAML.load_file(File.join(__dir__, 'colors', "#{@preferences['theme'] || 'default'}.yml"))
         custom_colors = @preferences['colors'] || {}
         merged = {
           background: custom_colors['background'] || base['background'],
@@ -127,7 +127,11 @@ module WaniKaniTUI
             Curses.init_pair(4, 2, 4) # kanji
             Curses.init_pair(5, 2, 5) # vocab
           end
-          Curses.init_pair(6, 6, 1) # progress
+          if @preferences['theme'] && @preferences['theme'] == 'wanikani'
+            Curses.init_pair(6, 6, 2) # progress - inverted bg
+          else
+            Curses.init_pair(6, 6, 1) # progress
+          end
         else
           Curses.init_pair(1, Curses::COLOR_WHITE, Curses::COLOR_BLACK) # default fg bg
           Curses.init_pair(2, Curses::COLOR_BLACK, Curses::COLOR_WHILE) # inverted fg bg

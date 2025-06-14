@@ -83,7 +83,7 @@ module WaniKaniTUI
         @win.setpos(0, 0)
         last_col = (@main.engine.progress_statuss_reviews * Curses.cols).floor
         @win.addstr('█' * last_col)
-        @win.addstr('░' * (Curses.cols - last_col))
+        @win.addstr(' ' * (Curses.cols - last_col))
       end
 
       def draw_meta

@@ -20,7 +20,12 @@ max_char_height: 50
 # Switches CJK pane to use dark text
 dark_cjk: False
 
-# Custom colors
+# Sets default color group
+# - Available: default, wanikani
+theme: "default"
+
+# Defines custom colors
+# - if partially defined, rest will be filled from base_colors group
 colors:
   background: "#282828"
   foreground: "#eeeeee"

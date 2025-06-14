@@ -1,0 +1,19 @@
+background: "#efefef"
+foreground: "#333333"
+
+radical: "#00aaff"
+kanji: "#ff00aa"
+vocab: "#aa00ff"
+
+#apprentice: "#47454e"
+#guru: "#605c74"
+#master: "#9A815d"
+#enlightened: "#934c3f"
+#burned: "#303030"
+
+#lesson: "#9c4644"
+#review: "#56638a"
+#correct: "#58896f"
+#incorrect: "#9c4644"
+
+progress: "#59c274"
