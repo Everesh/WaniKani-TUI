@@ -38,7 +38,7 @@ module WaniKaniTUI
               url = excluded.url,
               mnemonic_reading = excluded.mnemonic_reading,
               mnemonic_meaning = excluded.mnemonic_meaning,
-              hidden_at = hidden_at",
+              hidden_at = excluded.hidden_at",
             subject
           )
         end
