@@ -16,3 +16,15 @@ no_line_spacing_correction: False
 # - Below 10, the characters become significantly distorted.
 # - Below 5, the characters are illegible.
 max_char_height: 50
+
+# Switches CJK pane to use dark text
+dark_cjk: False
+
+# Custom colors
+colors:
+  background: "#282828"
+  foreground: "#eeeeee"
+  radical: "#56638a"
+  kanji: "#9c4644"
+  vocab: "#58896f"
+  progress: "#a97e42"

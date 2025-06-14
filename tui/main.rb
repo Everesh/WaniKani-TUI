@@ -95,47 +95,39 @@ module WaniKaniTUI
       def init_colors
         return unless Curses.can_change_color?
 
-        default = YAML.load_file(File.join(__dir__, 'colors', 'default.yml'))
+        base = YAML.load_file(File.join(__dir__, 'colors', 'default.yml'))
+        custom_colors = @preferences['colors'] || {}
+        merged = {
+          background: custom_colors['background'] || base['background'],
+          foreground: custom_colors['foreground'] || base['foreground'],
+          radical: custom_colors['radical'] || base['radical'],
+          kanji: custom_colors['kanji'] || base['kanji'],
+          vocab: custom_colors['vocab'] || base['vocab'],
+          progress: custom_colors['progress'] || base['progress']
+        }
 
-        Curses.init_color(1, *hex_to_curses_rgb(@preferences['surface-1'] || default['surface-1']))
-        Curses.init_color(2, *hex_to_curses_rgb(@preferences['surface-2'] || default['surface-2']))
-        Curses.init_color(3, *hex_to_curses_rgb(@preferences['surface-3'] || default['surface-3']))
-        Curses.init_color(4, *hex_to_curses_rgb(@preferences['surface-4'] || default['surface-4']))
-        Curses.init_color(5, *hex_to_curses_rgb(@preferences['surface-inv'] || default['surface-inv']))
-
-        Curses.init_color(6, *hex_to_curses_rgb(@preferences['text'] || default['text']))
-        Curses.init_color(7, *hex_to_curses_rgb(@preferences['text-inv'] || default['text-inv']))
-        Curses.init_color(8, *hex_to_curses_rgb(@preferences['text-hl'] || default['text-hl']))
-        Curses.init_color(9, *hex_to_curses_rgb(@preferences['text-grayed'] || default['text-grayed']))
-
-        Curses.init_color(10, *hex_to_curses_rgb(@preferences['radical'] || default['radical']))
-        Curses.init_color(11, *hex_to_curses_rgb(@preferences['kanji'] || default['kanji']))
-        Curses.init_color(12, *hex_to_curses_rgb(@preferences['vocab'] || default['vocab']))
-
-        Curses.init_color(13, *hex_to_curses_rgb(@preferences['apprentice'] || default['apprentice']))
-        Curses.init_color(14, *hex_to_curses_rgb(@preferences['guru'] || default['guru']))
-        Curses.init_color(15, *hex_to_curses_rgb(@preferences['master'] || default['master']))
-        Curses.init_color(16, *hex_to_curses_rgb(@preferences['enlightened'] || default['enlightened']))
-        Curses.init_color(17, *hex_to_curses_rgb(@preferences['burned'] || default['burned']))
-
-        Curses.init_color(18, *hex_to_curses_rgb(@preferences['lesson'] || default['lesson']))
-        Curses.init_color(19, *hex_to_curses_rgb(@preferences['review'] || default['review']))
-        Curses.init_color(20, *hex_to_curses_rgb(@preferences['correct'] || default['correct']))
-        Curses.init_color(21, *hex_to_curses_rgb(@preferences['incorrect'] || default['incorrect']))
-
-        Curses.init_color(22, *hex_to_curses_rgb(@preferences['brand'] || default['brand']))
-        Curses.init_color(23, *hex_to_curses_rgb(@preferences['progress'] || default['progress']))
-        Curses.init_color(24, *hex_to_curses_rgb(@preferences['alert'] || default['alert']))
+        Curses.init_color(1, *hex_to_curses_rgb(merged[:background]))
+        Curses.init_color(2, *hex_to_curses_rgb(merged[:foreground]))
+        Curses.init_color(3, *hex_to_curses_rgb(merged[:radical]))
+        Curses.init_color(4, *hex_to_curses_rgb(merged[:kanji]))
+        Curses.init_color(5, *hex_to_curses_rgb(merged[:vocab]))
+        Curses.init_color(6, *hex_to_curses_rgb(merged[:progress]))
       end
 
       def init_pairs
         if Curses.can_change_color?
-          Curses.init_pair(1, 6, 2) # default fg bg
-          Curses.init_pair(2, 7, 5) # inverted fg bg
-          Curses.init_pair(3, 6, 10) # radical
-          Curses.init_pair(4, 6, 11) # kanji
-          Curses.init_pair(5, 6, 12) # vocab
-          Curses.init_pair(6, 23, 2) # progress
+          Curses.init_pair(1, 2, 1) # default fg bg
+          Curses.init_pair(2, 1, 2) # inverted fg bg
+          if @preferences['dark_cjk']
+            Curses.init_pair(3, 1, 3) # radical
+            Curses.init_pair(4, 1, 4) # kanji
+            Curses.init_pair(5, 1, 5) # vocab
+          else
+            Curses.init_pair(3, 2, 3) # radical
+            Curses.init_pair(4, 2, 4) # kanji
+            Curses.init_pair(5, 2, 5) # vocab
+          end
+          Curses.init_pair(6, 6, 1) # progress
         else
           Curses.init_pair(1, Curses::COLOR_WHITE, Curses::COLOR_BLACK) # default fg bg
           Curses.init_pair(2, Curses::COLOR_BLACK, Curses::COLOR_WHILE) # inverted fg bg
