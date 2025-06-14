@@ -61,11 +61,10 @@ module WaniKaniTUI
                             when 'Review'
                               @main.engine.common_query.count_available_reviews
                             when 'Lesson'
-                              # TODO
-                              ''
+                              @main.engine.common_query.count_available_lessons
                             when 'Report'
-                              # TODO
-                              ''
+                              @main.engine.common_query.count_pending_review_reports +
+                              @main.engine.common_query.count_pending_lesson_reports
                             else
                               ''
                             end

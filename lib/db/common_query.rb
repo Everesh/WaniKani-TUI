@@ -113,7 +113,7 @@ module WaniKaniTUI
          FROM assignment
          WHERE available_at <= ?
          AND started_at IS NULL", [Time.now.utc.iso8601]
-      )
+      ).first
     end
 
     def count_pending_lesson_reports

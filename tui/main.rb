@@ -38,7 +38,11 @@ module WaniKaniTUI
         @status_line.update_last_sync
         @overlays = {}
         init_overlays
-        @overlays['main_menu'].open
+
+        # make sure non-openers like fetch, dont close the app
+        loop do
+          @overlays['main_menu'].open
+        end
       rescue Interrupt
         @status_line.state('Exiting...')
         # Could bind reporting on exit here :shrug:
