@@ -28,7 +28,7 @@ module WaniKaniTUI
     end
 
     def fetch_user_data(updated_after)
-      {'data': { 'level': 18 }}
+      JSON.load_file(File.join(__dir__, 'user.json'))
     end
 
     private

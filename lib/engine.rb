@@ -33,7 +33,7 @@ module WaniKaniTUI
       #   Dont Forget to reverth back to non Mock WaniKaniAPI in production!
       #
       #
-      @api = WaniKaniAPI.new(@db, api_key: api_key)
+      @api = MockWaniKaniAPI.new(@db, api_key: api_key)
       @common_query = CommonQuery.new(@db)
       @preferences = DataDir.preferences
       custom_buffer_size = @preferences['buffer_size']
