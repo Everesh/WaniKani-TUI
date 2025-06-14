@@ -402,8 +402,8 @@ module WaniKaniTUI
       end
 
       @db.execute(
-        "INSERT INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at) VALUES (?, ?, ?, ?, ?, ?)",
-        [assignment_id, subject_id, 4, 0, available_at, Time.now.utc.iso8601]
+        "INSERT INTO assignment (assignment_id, subject_id, srs, hidden, available_at, started_at, unlocked_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [assignment_id, subject_id, 4, 0, available_at, Time.now.utc.iso8601, Time.now.utc.iso8601]
       )
     end
 
