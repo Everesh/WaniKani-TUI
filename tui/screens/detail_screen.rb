@@ -167,6 +167,8 @@ module WaniKaniTUI
                          when 'radical' then 3
                          when 'kanji' then 4
                          when 'vocabulary' then 5
+                         when 'reading' then 2
+                         when 'meaning' then 2
                          end
 
             window_mnemonic_meaning.attron(Curses.color_pair(color_pair)) if color_pair
@@ -214,6 +216,8 @@ module WaniKaniTUI
                          when 'radical' then 3
                          when 'kanji' then 4
                          when 'vocabulary' then 5
+                         when 'reading' then 2
+                         when 'meaning' then 2
                          end
 
             window_mnemonic_reading.attron(Curses.color_pair(color_pair)) if color_pair
