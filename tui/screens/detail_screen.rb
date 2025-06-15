@@ -155,6 +155,7 @@ module WaniKaniTUI
 
       def draw_mnemonics(subject)
         # I am sorry dear God for this unholy mess I have brought uppon this land
+        # Gomena sorry dayo 人(_ _*)
         @win.setpos(15, 3)
         @win.addstr('Meaning mnemonic:')
         window_mnemonic_meaning = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, 17, 5)
