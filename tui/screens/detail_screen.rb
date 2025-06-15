@@ -1,3 +1,5 @@
+require 'curses'
+
 module WaniKaniTUI
   module TUI
     # Detail overview screen of a subject
@@ -24,6 +26,7 @@ module WaniKaniTUI
         draw_dialog(subject, answer, mode)
         draw_details(subject)
         @win.refresh
+        draw_mnemonics(subject)
       end
 
       def draw_compact_main(subject)
@@ -118,37 +121,94 @@ module WaniKaniTUI
         @win.addstr(', ') if !meanings.empty? && !meanings_not_accepted.empty?
         @win.addstr(meanings_not_accepted.join(', '))
 
-        unless subject[:readings].empty?
-          @win.setpos(13, 3)
-          @win.addstr('Reading:')
+        return if subject[:readings].empty?
 
-          @win.attron(Curses.color_pair(8))
-          @win.attron(Curses::A_BOLD)
-          readings = subject[:readings].filter do |reading|
-            reading['accepted'] == 1
-          end.map { |reading| reading['reading'] }
-          @win.setpos(13, 12)
-          @win.addstr(readings.join(', '))
-          @win.attroff(Curses::A_BOLD)
-          @win.attroff(Curses.color_pair(8))
-          readings_not_accepted = subject[:readings].filter do |reading|
-            reading['accepted'] == 0
-          end.map { |readings| readings['reading'] }
-          @win.addstr(', ') if !readings.empty? && !readings_not_accepted.empty?
-          @win.addstr(readings_not_accepted.join(', '))
-        end
+        @win.setpos(13, 3)
+        @win.addstr('Reading:')
 
+        @win.attron(Curses.color_pair(8))
+        @win.attron(Curses::A_BOLD)
+        readings = subject[:readings].filter do |reading|
+          reading['accepted'] == 1
+        end.map { |reading| reading['reading'] }
+        @win.setpos(13, 12)
+        @win.addstr(readings.join(', '))
+        @win.attroff(Curses::A_BOLD)
+        @win.attroff(Curses.color_pair(8))
+        readings_not_accepted = subject[:readings].filter do |reading|
+          reading['accepted'] == 0
+        end.map { |readings| readings['reading'] }
+        @win.addstr(', ') if !readings.empty? && !readings_not_accepted.empty?
+        @win.addstr(readings_not_accepted.join(', '))
+      end
+
+      def draw_mnemonics(subject)
         @win.setpos(15, 3)
         @win.addstr('Meaning mnemonic:')
-        @win.setpos(16, 0)
-        @win.addstr(subject[:subject]['mnemonic_meaning'])
+        window_mnemonic_meaning = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, 17, 5)
+        window_mnemonic_meaning.bkgd(Curses.color_pair(1))
+        window_mnemonic_meaning.setpos(0, 0)
+        subject[:subject]['mnemonic_meaning'].split(%r{(<\w+>.*?</\w+>)})
+                                             .map do |part|
+          if part =~ %r{<(\w+)>(.*?)</\1>}
+            [::Regexp.last_match(1),
+             ::Regexp.last_match(2)]
+          else
+            [
+              '', part
+            ]
+          end
+        end
+                                             .each do |segment|
+          case segment.first
+          when 'radical' then window_mnemonic_meaning.attron(Curses.color_pair(3))
+          when 'kanji' then window_mnemonic_meaning.attron(Curses.color_pair(4))
+          when 'vocabulary' then window_mnemonic_meaning.attron(Curses.color_pair(5))
+          end
+          window_mnemonic_meaning.addstr(segment.last)
+          case segment.first
+          when 'radical' then window_mnemonic_meaning.attroff(Curses.color_pair(3))
+          when 'kanji' then window_mnemonic_meaning.attroff(Curses.color_pair(4))
+          when 'vocabulary' then window_mnemonic_meaning.attroff(Curses.color_pair(5))
+          end
+        end
+        window_mnemonic_meaning.refresh
+        window_mnemonic_meaning.close
 
         return unless subject[:subject]['mnemonic_reading']
 
-        @win.setpos(20, 3)
+        readmnem_offset = ((Curses.lines - 19) / 2) + 17
+        @win.setpos(readmnem_offset, 3)
         @win.addstr('Reading mnemonic:')
-        @win.setpos(21, 0)
-        @win.addstr(subject[:subject]['mnemonic_reading'])
+        window_mnemonic_reading = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, readmnem_offset + 2, 5)
+        window_mnemonic_reading.bkgd(Curses.color_pair(1))
+        window_mnemonic_reading.setpos(0, 0)
+        subject[:subject]['mnemonic_reading'].split(%r{(<\w+>.*?</\w+>)})
+                                             .map do |part|
+          if part =~ %r{<(\w+)>(.*?)</\1>}
+            [::Regexp.last_match(1),
+             ::Regexp.last_match(2)]
+          else
+            [
+              '', part
+            ]
+          end
+        end
+                                             .each do |segment|
+          case segment.first
+          when 'radical' then window_mnemonic_reading.attron(Curses.color_pair(3))
+          when 'kanji' then window_mnemonic_reading.attron(Curses.color_pair(4))
+          when 'vocabulary' then window_mnemonic_reading.attron(Curses.color_pair(5))
+          end
+          window_mnemonic_reading.addstr(segment.last)
+          case segment.first
+          when 'radical' then window_mnemonic_reading.attroff(Curses.color_pair(3))
+          when 'kanji' then window_mnemonic_reading.attroff(Curses.color_pair(4))
+          when 'vocabulary' then window_mnemonic_reading.attroff(Curses.color_pair(5))
+          end
+        end
+        window_mnemonic_reading.refresh
+        window_mnemonic_reading.close
       end
     end
   end
