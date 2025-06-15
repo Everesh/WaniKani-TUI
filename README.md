@@ -15,7 +15,7 @@
 ```sh
 ./setup.sh
 ```
-2. If it yells at you, that you are missing either ruby or python... fix that •ᴗ•
+2. If it yells at you, that you are missing either `Ruby` or `Python`... fix that •ᴗ•
 3. Get yourself the required `NotoSansJP-Regular.ttf` at [fonts.google](https://fonts.google.com/noto/specimen/Noto+Sans+JP) and copy it to `./tui/cjk_renderer/`
 
 ### Manual
@@ -37,10 +37,13 @@ bundle exec ruby bin/tui.rb
 
 #### First Run
 The app will most definitely ask you for your [WK api key](https://www.wanikani.com/settings/personal_access_tokens). Simply create one, grant it `all_data:read`, `assignments:start` and `reviews:create` and paste it into the prompt(ctrl + shift + V). Or type it out manually, if you are into that.
-- .ᐟ If you ever get stuck in engine initialization loop, report it here and delete your db.sqlite3 located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
+- .ᐟ If you ever get stuck in engine initialization loop, report it here and delete your `db.sqlite3` located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
 
 ### Additional customization
 Don't like the colors? or just a single one? What about the braille rendering, is it spaced correctly?
-You can change all that and more. Simple create your own config file and save it to `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
+
+You can change all that and more!
+
+Simple create your own config file and save it to `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
 
 Example with all the available flags at `./examples/config.yml`
