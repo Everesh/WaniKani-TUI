@@ -6,5 +6,5 @@
 ### WaniKani theme
 ![preview gif wanikani theme](https://github.com/user-attachments/assets/e66685ab-366a-4ec9-b005-7557622efd12)
 
-### Additional costumisation
+### Additional customization
 viz. `./examples/config.yml`
