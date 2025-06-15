@@ -28,7 +28,7 @@ invert_progress_bar_bg: False
 theme: "elementary_dark"
 
 # Defines custom colors
-# - if partially defined, rest will be filled from base_colors group
+# - if partially defined, rest will be filled from theme group
 colors:
   background: "#282828"
   foreground: "#eeeeee"
