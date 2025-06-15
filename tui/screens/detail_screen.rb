@@ -143,35 +143,50 @@ module WaniKaniTUI
       end
 
       def draw_mnemonics(subject)
+        # I am sorry dear God for this unholy mess I have brought uppon this land
         @win.setpos(15, 3)
         @win.addstr('Meaning mnemonic:')
         window_mnemonic_meaning = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, 17, 5)
         window_mnemonic_meaning.bkgd(Curses.color_pair(1))
         window_mnemonic_meaning.setpos(0, 0)
-        subject[:subject]['mnemonic_meaning'].split(%r{(<\w+>.*?</\w+>)})
-                                             .map do |part|
-          if part =~ %r{<(\w+)>(.*?)</\1>}
-            [::Regexp.last_match(1),
-             ::Regexp.last_match(2)]
-          else
-            [
-              '', part
-            ]
+        meaning_max_width = window_mnemonic_meaning.maxx
+        meaning_x = window_mnemonic_meaning.cury
+        meaning_y = window_mnemonic_meaning.curx
+
+        subject[:subject]['mnemonic_meaning']
+          .split(%r{(<\w+>.*?</\w+>)})
+          .map do |part|
+            if part =~ %r{<(\w+)>(.*?)</\1>}
+              [Regexp.last_match(1), Regexp.last_match(2)]
+            else
+              ['', part]
+            end
           end
-        end
-                                             .each do |segment|
-          case segment.first
-          when 'radical' then window_mnemonic_meaning.attron(Curses.color_pair(3))
-          when 'kanji' then window_mnemonic_meaning.attron(Curses.color_pair(4))
-          when 'vocabulary' then window_mnemonic_meaning.attron(Curses.color_pair(5))
+          .each do |tag, text|
+            color_pair = case tag
+                         when 'radical' then 3
+                         when 'kanji' then 4
+                         when 'vocabulary' then 5
+                         end
+
+            window_mnemonic_meaning.attron(Curses.color_pair(color_pair)) if color_pair
+
+            text.scan(/\S+\s*|\n/).each do |word|
+              word.chomp!
+
+              if meaning_x + word.length >= meaning_max_width || word == "\n"
+                meaning_y += 1
+                meaning_x = 0
+                window_mnemonic_meaning.setpos(meaning_y, meaning_x)
+              end
+
+              window_mnemonic_meaning.addstr(word)
+              meaning_x += word.length
+            end
+
+            window_mnemonic_meaning.attroff(Curses.color_pair(color_pair)) if color_pair
           end
-          window_mnemonic_meaning.addstr(segment.last)
-          case segment.first
-          when 'radical' then window_mnemonic_meaning.attroff(Curses.color_pair(3))
-          when 'kanji' then window_mnemonic_meaning.attroff(Curses.color_pair(4))
-          when 'vocabulary' then window_mnemonic_meaning.attroff(Curses.color_pair(5))
-          end
-        end
+
         window_mnemonic_meaning.refresh
         window_mnemonic_meaning.close
 
@@ -183,30 +198,44 @@ module WaniKaniTUI
         window_mnemonic_reading = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, readmnem_offset + 2, 5)
         window_mnemonic_reading.bkgd(Curses.color_pair(1))
         window_mnemonic_reading.setpos(0, 0)
-        subject[:subject]['mnemonic_reading'].split(%r{(<\w+>.*?</\w+>)})
-                                             .map do |part|
-          if part =~ %r{<(\w+)>(.*?)</\1>}
-            [::Regexp.last_match(1),
-             ::Regexp.last_match(2)]
-          else
-            [
-              '', part
-            ]
+        reading_max_width = window_mnemonic_reading.maxx
+        reading_x = window_mnemonic_reading.cury
+        reading_y = window_mnemonic_reading.curx
+
+        subject[:subject]['mnemonic_reading']
+          .split(%r{(<\w+>.*?</\w+>)})
+          .map do |part|
+            if part =~ %r{<(\w+)>(.*?)</\1>}
+              [Regexp.last_match(1), Regexp.last_match(2)]
+            else
+              ['', part]
+            end
           end
-        end
-                                             .each do |segment|
-          case segment.first
-          when 'radical' then window_mnemonic_reading.attron(Curses.color_pair(3))
-          when 'kanji' then window_mnemonic_reading.attron(Curses.color_pair(4))
-          when 'vocabulary' then window_mnemonic_reading.attron(Curses.color_pair(5))
+          .each do |tag, text|
+            color_pair = case tag
+                         when 'radical' then 3
+                         when 'kanji' then 4
+                         when 'vocabulary' then 5
+                         end
+
+            window_mnemonic_reading.attron(Curses.color_pair(color_pair)) if color_pair
+
+            text.scan(/\S+\s*|\n/).each do |word|
+              word.chomp!
+
+              if reading_x + word.length >= reading_max_width || word == "\n"
+                reading_y += 1
+                reading_x = 0
+                window_mnemonic_reading.setpos(reading_y, reading_x)
+              end
+
+              window_mnemonic_reading.addstr(word)
+              reading_x += word.length
+            end
+
+            window_mnemonic_reading.attroff(Curses.color_pair(color_pair)) if color_pair
           end
-          window_mnemonic_reading.addstr(segment.last)
-          case segment.first
-          when 'radical' then window_mnemonic_reading.attroff(Curses.color_pair(3))
-          when 'kanji' then window_mnemonic_reading.attroff(Curses.color_pair(4))
-          when 'vocabulary' then window_mnemonic_reading.attroff(Curses.color_pair(5))
-          end
-        end
+
         window_mnemonic_reading.refresh
         window_mnemonic_reading.close
       end
