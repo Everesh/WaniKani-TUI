@@ -81,7 +81,7 @@ module WaniKaniTUI
         chars = @subject[:subject]['slug'] if chars.nil?
         zero_gap = @main.preferences['no_line_spacing_correction']
 
-        height = [Curses.lines / 2, @main.preferences['max_char_height']].min
+        height = [Curses.lines / 2, @main.preferences['max_char_height'] || Curses.lines / 2].min
         max_width = (Curses.cols * 2) / 3
         subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
         if subject.first.length > max_width
