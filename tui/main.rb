@@ -128,7 +128,8 @@ module WaniKaniTUI
         if Curses.can_change_color?
           Curses.init_pair(1, 2, 1) # default fg bg
           Curses.init_pair(2, 1, 2) # inverted fg bg
-          if @preferences['dark_cjk']
+          if (@preferences['invert_cjk_color'] && !(@preferences['theme'] && @preferences['theme'] == 'wanikani')) ||
+             (!@preferences['invert_cjk_color'] && @preferences['theme'] && @preferences['theme'] == 'wanikani')
             Curses.init_pair(3, 1, 3) # radical
             Curses.init_pair(4, 1, 4) # kanji
             Curses.init_pair(5, 1, 5) # vocab
@@ -137,7 +138,8 @@ module WaniKaniTUI
             Curses.init_pair(4, 2, 4) # kanji
             Curses.init_pair(5, 2, 5) # vocab
           end
-          if @preferences['theme'] && @preferences['theme'] == 'wanikani'
+          if (@preferences['invert_progress_bar_bg'] && !(@preferences['theme'] && @preferences['theme'] == 'wanikani')) ||
+             (!@preferences['invert_progress_bar_bg'] && @preferences['theme'] && @preferences['theme'] == 'wanikani')
             Curses.init_pair(6, 6, 2) # progress - inverted bg
           else
             Curses.init_pair(6, 6, 1) # progress

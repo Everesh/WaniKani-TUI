@@ -17,8 +17,11 @@ no_line_spacing_correction: False
 # - Below 5, the characters are illegible.
 max_char_height: 50
 
-# Switches CJK pane to use dark text
-dark_cjk: False
+# Switches CJK pane to use background color for text
+invert_cjk_color: False
+
+# Inverts progress bar bg
+invert_progress_bar_bg: False
 
 # Sets default color group
 # - Available: elementary_dark, wanikani
