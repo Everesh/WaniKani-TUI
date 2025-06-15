@@ -158,7 +158,7 @@ module WaniKaniTUI
         # Gomena sorry dayo 人(_ _*)
         @win.setpos(15, 3)
         @win.addstr('Meaning mnemonic:')
-        window_mnemonic_meaning = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, 17, 5)
+        window_mnemonic_meaning = Curses::Window.new((Curses.lines - 22) / 2, Curses.cols - 10, 17, 5)
         window_mnemonic_meaning.bkgd(Curses.color_pair(1))
         window_mnemonic_meaning.setpos(0, 0)
         meaning_max_width = window_mnemonic_meaning.maxx
@@ -204,10 +204,10 @@ module WaniKaniTUI
 
         return unless subject[:subject]['mnemonic_reading']
 
-        readmnem_offset = ((Curses.lines - 19) / 2) + 17
+        readmnem_offset = ((Curses.lines - 22) / 2) + 18
         @win.setpos(readmnem_offset, 3)
         @win.addstr('Reading mnemonic:')
-        window_mnemonic_reading = Curses::Window.new((Curses.lines - 19) / 2, Curses.cols - 10, readmnem_offset + 2, 5)
+        window_mnemonic_reading = Curses::Window.new((Curses.lines - 22) / 2, Curses.cols - 10, readmnem_offset + 2, 5)
         window_mnemonic_reading.bkgd(Curses.color_pair(1))
         window_mnemonic_reading.setpos(0, 0)
         reading_max_width = window_mnemonic_reading.maxx
