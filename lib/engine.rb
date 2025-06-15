@@ -10,6 +10,7 @@ require_relative 'review'
 require_relative 'util/data_dir'
 require_relative 'error/missing_api_key_error'
 require_relative 'db/common_query'
+require_relative 'util/payload_generator'
 
 require_relative '../tmp/mock_wanikani_api'
 
@@ -127,6 +128,14 @@ module WaniKaniTUI
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
       @review.update_review_table!
+    end
+
+    def submit!
+      reviews = @common_query.get_all_passed_reviews_as_hash
+      reviews.each do |review|
+        payload = PayloadGenerator.make(review)
+        @api.send_review(payload)
+      end
     end
 
     private
