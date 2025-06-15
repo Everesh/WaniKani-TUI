@@ -66,9 +66,7 @@ module WaniKaniTUI
         draw_chars
         draw_meta
         @win.attroff(Curses.color_pair(color))
-        @win.attron(Curses.color_pair(6))
         draw_progress_bar
-        @win.attroff(Curses.color_pair(6))
         @win.setpos(Curses.lines - 2, 0)
         @win.addstr('_' * Curses.cols)
         @win.refresh
@@ -99,10 +97,12 @@ module WaniKaniTUI
       end
 
       def draw_progress_bar
+        @win.attron(Curses.color_pair(6))
         @win.setpos(0, 0)
         last_col = (@main.engine.progress_statuss_reviews * Curses.cols).floor
         @win.addstr('█' * last_col)
         @win.addstr(' ' * (Curses.cols - last_col))
+        @win.attroff(Curses.color_pair(6))
       end
 
       def draw_meta

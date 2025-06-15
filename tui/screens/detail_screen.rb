@@ -71,10 +71,12 @@ module WaniKaniTUI
       end
 
       def draw_progress_bar
+        @win.attron(Curses.color_pair(6))
         @win.setpos(0, 0)
         last_col = (@main.engine.progress_statuss_reviews * Curses.cols).floor
         @win.addstr('█' * last_col)
         @win.addstr(' ' * (Curses.cols - last_col))
+        @win.attroff(Curses.color_pair(6))
       end
 
       def draw_dialog(subject, answer, mode)
