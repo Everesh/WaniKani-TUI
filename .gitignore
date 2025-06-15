@@ -1,6 +1,5 @@
 tmp/*
-!tmp/mock_wanikani_api.rb
-!tmp/get_local_data.rb
+venv/*
 tui/cjk_renderer/*
 !tui/cjk_renderer/cjk_renderer*
 !tui/cjk_renderer/README.md
