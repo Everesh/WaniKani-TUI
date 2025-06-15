@@ -1,5 +1,6 @@
 background: "#efefef"
 foreground: "#333333"
+highlight: "#111111"
 
 radical: "#00aaff"
 kanji: "#ff00aa"
@@ -14,6 +15,6 @@ vocab: "#aa00ff"
 #lesson: "#9c4644"
 #review: "#56638a"
 #correct: "#58896f"
-#incorrect: "#9c4644"
 
+incorrect: "#ff0033"
 progress: "#59c274"

@@ -33,3 +33,5 @@ colors:
   kanji: "#9c4644"
   vocab: "#58896f"
   progress: "#a97e42"
+  incorrect: "#9c4644"
+  highlight: "#c29354"

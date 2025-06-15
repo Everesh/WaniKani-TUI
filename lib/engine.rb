@@ -31,6 +31,7 @@ module WaniKaniTUI
       #
       # TEMPORARY SUBVERSION OF REAL API CALLS
       #   Dont Forget to reverth back to non Mock WaniKaniAPI in production!
+      #   THIS DOES FUCK UP CROSS SESSION PENDING REVIEWS
       #
       #
       @api = MockWaniKaniAPI.new(@db, api_key: api_key)

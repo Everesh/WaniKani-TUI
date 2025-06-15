@@ -109,7 +109,9 @@ module WaniKaniTUI
           radical: custom_colors['radical'] || base['radical'],
           kanji: custom_colors['kanji'] || base['kanji'],
           vocab: custom_colors['vocab'] || base['vocab'],
-          progress: custom_colors['progress'] || base['progress']
+          progress: custom_colors['progress'] || base['progress'],
+          incorrect: custom_colors['incorrect'] || base ['incorrect'],
+          highlight: custom_colors['highlight'] || base['highlight']
         }
 
         Curses.init_color(1, *hex_to_curses_rgb(merged[:background]))
@@ -118,6 +120,8 @@ module WaniKaniTUI
         Curses.init_color(4, *hex_to_curses_rgb(merged[:kanji]))
         Curses.init_color(5, *hex_to_curses_rgb(merged[:vocab]))
         Curses.init_color(6, *hex_to_curses_rgb(merged[:progress]))
+        Curses.init_color(7, *hex_to_curses_rgb(merged[:incorrect]))
+        Curses.init_color(8, *hex_to_curses_rgb(merged[:highlight]))
       end
 
       def init_pairs
@@ -138,6 +142,8 @@ module WaniKaniTUI
           else
             Curses.init_pair(6, 6, 1) # progress
           end
+          Curses.init_pair(7, 2, 7) # incorrect
+          Curses.init_pair(8, 8, 1) # highlight
         else
           Curses.init_pair(1, Curses::COLOR_WHITE, Curses::COLOR_BLACK) # default fg bg
           Curses.init_pair(2, Curses::COLOR_BLACK, Curses::COLOR_WHILE) # inverted fg bg
@@ -145,6 +151,8 @@ module WaniKaniTUI
           Curses.init_pair(4, Curses::COLOR_WHITE, Curses::COLOR_RED) # kanji
           Curses.init_pair(5, Curses::COLOR_WHITE, Curses::COLOR_GREEN) # vocab
           Curses.init_pair(6, Curses::COLOR_YELLOW, Curses::COLOR_BLACK) # progress
+          Curses.init_pair(7, Curses::COLOR_WHITE, Curses::COLOR_RED) # incorrect
+          Curses.init_pair(8, Curses::COLOR_YELLOW, Curses::COLOR_BLACK) # highlight
         end
       end
 

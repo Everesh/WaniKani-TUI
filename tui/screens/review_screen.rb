@@ -34,7 +34,7 @@ module WaniKaniTUI
                              else
                                @main.engine.answer_review_reading!(@answer)
                              end
-            @main.screens['detail'].open(@subject) unless correct_answer
+            @main.screens['detail'].open(@subject, @answer, mode) unless correct_answer
             @answer = ''
             open
             break
