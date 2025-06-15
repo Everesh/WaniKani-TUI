@@ -14,12 +14,21 @@ module WaniKaniTUI
 
       def open(subject, answer, mode)
         draw(subject, answer, mode)
-        @win.getch
+        while ch = @win.getch
+          case ch
+          when 27
+            @main.overlays['main_menu'].open
+            draw(subject, answer, mode)
+          else
+            break
+          end
+        end
       end
 
       private
 
       def draw(subject, answer, mode)
+        @win.keypad(true) # Refocuses keypad to avoid misscapture from main_menu
         @win.clear
         draw_progress_bar
         draw_compact_main(subject)
