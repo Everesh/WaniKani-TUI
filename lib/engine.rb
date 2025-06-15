@@ -92,11 +92,6 @@ module WaniKaniTUI
       # Return float, 0.0 - 1.0 representing % of all available reviews completed and unreported
     end
 
-    def report_reviews!
-      # TODO
-      # Return bool whether report completed successfuly (beware of wanikaniAPI overloading)
-    end
-
     # ==============
     # Lesson section
     # ==============
