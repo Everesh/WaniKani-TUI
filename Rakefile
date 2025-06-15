@@ -15,7 +15,7 @@ task :setup do
   puts 'Installing Ruby gems...'
   system('bundle install') || abort('Failed to install Ruby gems!')
 
-  puts 'Installing Python packages...'
+  puts 'Setting up Python env...'
 
   venv_dir = './venv'
   venv_pip = "#{venv_dir}/bin/pip"
@@ -33,9 +33,9 @@ task :setup do
   system("#{venv_pip} install --upgrade pip") # upgrade pip first
   system("#{venv_pip} install numpy pillow") || abort('Failed to install Python packages!')
 
-  puts 'Installation complete!'
+  puts "\nInstallation complete!\n\n"
   puts "To activate Python venv: '$ source #{venv_dir}/bin/activate'"
-  puts "To run the app with: '$ bundle exec ruby bin/tui.rb'"
+  puts "To run the app: '$ bundle exec ruby bin/tui.rb'\n\n"
 end
 
 task default: :test
