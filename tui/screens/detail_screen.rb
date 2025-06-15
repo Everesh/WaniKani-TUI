@@ -171,9 +171,7 @@ module WaniKaniTUI
 
             window_mnemonic_meaning.attron(Curses.color_pair(color_pair)) if color_pair
 
-            text.scan(/\S+\s*|\n/).each do |word|
-              word.chomp!
-
+            text.scan(/\s*\S+\s*|\n/).each do |word|
               if meaning_x + word.length >= meaning_max_width || word == "\n"
                 meaning_y += 1
                 meaning_x = 0
@@ -220,9 +218,7 @@ module WaniKaniTUI
 
             window_mnemonic_reading.attron(Curses.color_pair(color_pair)) if color_pair
 
-            text.scan(/\S+\s*|\n/).each do |word|
-              word.chomp!
-
+            text.scan(/\s*\S+\s*|\n/).each do |word|
               if reading_x + word.length >= reading_max_width || word == "\n"
                 reading_y += 1
                 reading_x = 0
