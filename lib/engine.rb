@@ -12,8 +12,6 @@ require_relative 'error/missing_api_key_error'
 require_relative 'db/common_query'
 require_relative 'util/payload_generator'
 
-require_relative '../tmp/mock_wanikani_api'
-
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
@@ -27,15 +25,7 @@ module WaniKaniTUI
       end
 
       @db = Database.new(force_db_regen: force_db_regen)
-      #
-      #
-      #
-      # TEMPORARY SUBVERSION OF REAL API CALLS
-      #   Dont Forget to reverth back to non Mock WaniKaniAPI in production!
-      #   THIS DOES FUCK UP CROSS SESSION PENDING REVIEWS
-      #
-      #
-      @api = MockWaniKaniAPI.new(@db, api_key: api_key)
+      @api = WaniKaniAPI.new(@db, api_key: api_key)
       @common_query = CommonQuery.new(@db)
       @preferences = DataDir.preferences
       custom_buffer_size = @preferences['buffer_size']
