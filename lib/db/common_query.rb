@@ -74,7 +74,7 @@ module WaniKaniTUI
     end
 
     def get_all_passed_reviews
-      @db.get_first_row(
+      @db.execute(
         "SELECT *
          FROM review
          WHERE created_at IS NOT NULL"
@@ -182,7 +182,17 @@ module WaniKaniTUI
     define_as_hash_variant :get_assignment_by_subject_id
     define_as_hash_variant :get_review_by_assignment_id
     define_as_hash_variant :get_lesson_by_assignment_id
-    define_as_hash_variant :get_all_passed_reviews
+
+    def self.define_as_hash_variant_no_param(method_name)
+      define_method("#{method_name}_as_hash") do
+        @db.results_as_hash = true
+        send(method_name)
+      ensure
+        @db.results_as_hash = false
+      end
+    end
+
+    define_as_hash_variant_no_param :get_all_passed_reviews
   end
 end
 

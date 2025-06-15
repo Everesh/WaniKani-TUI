@@ -119,7 +119,7 @@ module WaniKaniTUI
       reviews = @common_query.get_all_passed_reviews_as_hash
       reviews.each do |review|
         payload = PayloadGenerator.make(review)
-        @api.send_review(payload)
+        @api.submit_review(payload)
       end
     end
 

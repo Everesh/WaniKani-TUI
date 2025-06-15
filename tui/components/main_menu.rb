@@ -82,7 +82,13 @@ module WaniKaniTUI
         when 'Review'
           @main.screens['review'].open
         when 'Report'
-          # TODO
+          @main.status_line.status('Reporting to remote...')
+          @main.engine.submit!
+          @main.status_line.clear
+          @main.status_line.status('Fetching from remote...')
+          @main.engine.fetch!
+          @main.status_line.clear
+          @main.status_line.update_last_sync
           nil
         when 'Fetch'
           @main.status_line.status('Fetching from remote...')

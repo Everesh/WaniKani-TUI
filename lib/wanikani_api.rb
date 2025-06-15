@@ -35,6 +35,11 @@ module WaniKaniTUI
       attempt_request(url, updated_after)
     end
 
+    def submit_review(review)
+      url = 'https://api.wanikani.com/v2/reviews/'
+      attempt_submit(url, review)
+    end
+
     private
 
     def fetch_api_key
@@ -88,6 +93,24 @@ module WaniKaniTUI
       end
 
       JSON.parse(response.body)
+    end
+
+    def attempt_submit(url, review)
+      response = submit(URI(url), review)
+      parse_response(response)
+    rescue RateLimitError
+      sleep(60)
+      retry
+    end
+
+    def submit(uri, review)
+      Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        req = Net::HTTP::Post.new(uri)
+        req['Content-Type'] = 'application/json; charset=utf-8'
+        req['Authorization'] = "Bearer #{@api_key}"
+        req.body = review.to_json
+        http.request(req)
+      end
     end
   end
 end
