@@ -30,16 +30,16 @@ pip install pillow numpy
 ```
 4. Get yourself the required `NotoSansJP-Regular.ttf` at [fonts.google](https://fonts.google.com/noto/specimen/Noto+Sans+JP) and copy it to `./tui/cjk_renderer/`
 
-### Running the App
+## Running the App
 ```sh
 bundle exec ruby bin/tui.rb
 ```
 
-#### First Run
+### First Run
 The app will most definitely ask you for your [WK api key](https://www.wanikani.com/settings/personal_access_tokens). Simply create one, grant it `all_data:read`, `assignments:start` and `reviews:create` and paste it into the prompt(ctrl + shift + V). Or type it out manually, if you are into that.
 - .ᐟ If you ever get stuck in engine initialization loop, report it here and delete your `db.sqlite3` located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
 
-### Additional Customization
+## Additional Customization
 Don't like the colors? or just a single one? What about the braille rendering, is it spaced correctly?
 
 You can change all that and more!
@@ -48,7 +48,7 @@ Simple create your own config file and save it to `~/.local/share/WaniKaniTUI/` 
 
 Example with all the available flags at `./examples/config.yml`
 
-### Internal Structure
+## Internal Structure
 
-#### Database
+### Database
 ![database img](https://github.com/user-attachments/assets/7b3752d4-695c-46a2-843c-2ffb4720c945)
