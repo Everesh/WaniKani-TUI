@@ -123,7 +123,7 @@ module WaniKaniTUI
 
       call_count = 0
       sleep_called = false
-      sleep_duration = nil
+      sleep_duration = 0
 
       api.define_singleton_method(:request) do |uri, updated_after|
         call_count += 1
@@ -141,7 +141,7 @@ module WaniKaniTUI
 
       api.define_singleton_method(:sleep) do |duration|
         sleep_called = true
-        sleep_duration = duration
+        sleep_duration += duration
       end
 
       result = api.fetch_subjects(nil)

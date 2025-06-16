@@ -117,7 +117,7 @@ module WaniKaniTUI
     def count_down(message, time, counted: 0)
       return if counted >= time
 
-      @status_line.status("#{message} in #{time - counted} seconds...")
+      @status_line.status("#{message} in #{time - counted} seconds...") unless @status_line.nil?
       sleep(1)
       count_down(message, time, counted: counted + 1)
     end
