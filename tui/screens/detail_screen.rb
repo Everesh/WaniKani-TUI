@@ -19,6 +19,8 @@ module WaniKaniTUI
           when 27
             @main.overlays['main_menu'].open
             draw(subject, answer, mode)
+          when 410
+            draw(subject, answer, mode)
           else
             break
           end
@@ -159,6 +161,7 @@ module WaniKaniTUI
         @win.setpos(15, 3)
         @win.addstr('Meaning mnemonic:')
         window_mnemonic_meaning = Curses::Window.new((Curses.lines - 22) / 2, Curses.cols - 10, 17, 5)
+        window_mnemonic_meaning.clear
         window_mnemonic_meaning.bkgd(Curses.color_pair(1))
         window_mnemonic_meaning.setpos(0, 0)
         meaning_max_width = window_mnemonic_meaning.maxx
@@ -208,6 +211,7 @@ module WaniKaniTUI
         @win.setpos(readmnem_offset, 3)
         @win.addstr('Reading mnemonic:')
         window_mnemonic_reading = Curses::Window.new((Curses.lines - 22) / 2, Curses.cols - 10, readmnem_offset + 2, 5)
+        window_mnemonic_reading.clear
         window_mnemonic_reading.bkgd(Curses.color_pair(1))
         window_mnemonic_reading.setpos(0, 0)
         reading_max_width = window_mnemonic_reading.maxx
