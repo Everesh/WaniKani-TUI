@@ -81,6 +81,18 @@ module WaniKaniTUI
       )
     end
 
+    def get_all_passed_reviews_with_chars
+      @db.execute(
+        "SELECT r.*, s.characters, s.slug
+         FROM review r
+         JOIN assignment a
+         ON a.assignment_id = r.assignment_id
+         JOIN subject s
+         on a.subject_id = s.id
+         WHERE created_at IS NOT NULL"
+      )
+    end
+
     def get_review_by_assignment_id(id)
       @db.get_first_row(
         "SELECT *
@@ -193,6 +205,7 @@ module WaniKaniTUI
     end
 
     define_as_hash_variant_no_param :get_all_passed_reviews
+    define_as_hash_variant_no_param :get_all_passed_reviews_with_chars
   end
 end
 

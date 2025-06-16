@@ -57,7 +57,7 @@ module WaniKaniTUI
       # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
       def init_engine(force_db_regen: false, api_key: nil)
         @status_line.status('Initializing the engine...')
-        Engine.new(force_db_regen: force_db_regen, api_key: api_key)
+        Engine.new(force_db_regen: force_db_regen, api_key: api_key, status_line: @status_line)
       rescue SchemaCorruptedError
         @status_line.state('Corrupted schema detected. Do you want to regenereate it?: [y/N]')
         raise SchemaCorruptedError, 'Did not attemp to regenerate it.' unless @status_line.win.getch.downcase == 'y'

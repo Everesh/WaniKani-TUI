@@ -18,19 +18,28 @@ module WaniKaniTUI
     attr_reader :common_query
 
     # rubocop: disable Metrics/MethodLength
-    def initialize(force_db_regen: false, api_key: nil)
+    def initialize(force_db_regen: false, api_key: nil, status_line: nil)
       if force_db_regen && api_key.nil?
         api_key = fetch_api_key # Attempts to carry over the previous API key to the new DB
         raise MissingApiKeyError, 'Could not fetch existing API key, new one is required' if api_key.nil?
       end
 
+      @status_line = status_line
+      @status_line.status('Initializing the database...') unless @status_line.nil?
       @db = Database.new(force_db_regen: force_db_regen)
-      @api = WaniKaniAPI.new(@db, api_key: api_key)
+      @status_line.status('Initializing the api module...') unless @status_line.nil?
+      @api = WaniKaniAPI.new(@db, api_key: api_key, status_line: @status_line)
+      @status_line.status('Initializing the query module...') unless @status_line.nil?
       @common_query = CommonQuery.new(@db)
+      @status_line.status('Loading user preferences...') unless @status_line.nil?
       @preferences = DataDir.preferences
       custom_buffer_size = @preferences['buffer_size']
+      @status_line.status('Initializing the review module...') unless @status_line.nil?
       @review = custom_buffer_size ? Review.new(@db, buffer_size: custom_buffer_size) : Review.new(@db)
+      @status_line.status('Fetching from remote...') unless @status_line.nil?
       fetch!
+    ensure
+      @status_line.clear
     end
     # rubocop: enable Metrics/MethodLength
 
@@ -103,24 +112,39 @@ module WaniKaniTUI
     # ==============
 
     def fetch!
+      @status_line.status('Getting last sync time...') unless @status_line.nil?
       updated_after = @common_query.get_last_sync_time
 
+      @status_line.status('Fetching subjects...') unless @status_line.nil?
       subjects = DataNormalizer.subjects(@api.fetch_subjects(updated_after))
+      @status_line.status('Fetching assignments...') unless @status_line.nil?
       assignments = DataNormalizer.assignments(@api.fetch_assignments(updated_after))
+      @status_line.status('Persisting data...') unless @status_line.nil?
       Persister.persist(@db, DataNormalizer.unite!(subjects, assignments))
 
+      @status_line.status('Updating metadata...') unless @status_line.nil?
       Persister.update_user_data(@db, @api.fetch_user_data(updated_after))
 
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['updated_after', Time.now.utc.iso8601])
+      @status_line.status('Updating review table...') unless @status_line.nil?
       @review.update_review_table!
+    ensure
+      @status_line.clear
     end
 
     def submit!
-      reviews = @common_query.get_all_passed_reviews_as_hash
+      @status_line.status('Fetching finished reviews...') unless @status_line.nil?
+      reviews = @common_query.get_all_passed_reviews_with_chars_as_hash
       reviews.each do |review|
+        unless @status_line.nil?
+          @status_line.status("Preparing payload for '#{review['characters'] || review['slug']}'...")
+        end
         payload = PayloadGenerator.make(review)
+        @status_line.status("Reporting '#{review['characters'] || review['slug']}'...") unless @status_line.nil?
         @api.submit_review(payload)
       end
+    ensure
+      @status_line.clear
     end
 
     private

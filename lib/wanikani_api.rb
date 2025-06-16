@@ -12,9 +12,10 @@ require_relative 'error/missing_api_key_error'
 module WaniKaniTUI
   # Handles the interaction between the app and the WaniKani API
   class WaniKaniAPI
-    def initialize(db, api_key: nil)
+    def initialize(db, api_key: nil, status_line: nil)
       @db = db
       @api_key = api_key || fetch_api_key
+      @status_line = status_line
       raise MissingApiKeyError, 'API key not set!' unless @api_key
 
       store_api_key(@api_key) if api_key
@@ -65,7 +66,7 @@ module WaniKaniTUI
       response = request(URI(url), updated_after)
       parse_response(response)
     rescue RateLimitError
-      sleep(60)
+      count_down('Ratelimited, attempting again', 60)
       retry
     end
 
@@ -99,7 +100,7 @@ module WaniKaniTUI
       response = submit(URI(url), review)
       parse_response(response)
     rescue RateLimitError
-      sleep(60)
+      count_down('Ratelimited, attempting again', 60)
       retry
     end
 
@@ -111,6 +112,14 @@ module WaniKaniTUI
         req.body = review.to_json
         http.request(req)
       end
+    end
+
+    def count_down(message, time, counted: 0)
+      return if counted >= time
+
+      @status_line.status("#{message} in #{time - counted} seconds...")
+      sleep(1)
+      count_down(message, time, counted: counted + 1)
     end
   end
 end
