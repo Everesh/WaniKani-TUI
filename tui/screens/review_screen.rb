@@ -38,6 +38,8 @@ module WaniKaniTUI
             @answer = ''
             open
             break
+          when 410
+            # Nothing.... This is the resize char
           else
             @answer << ch
             if mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
