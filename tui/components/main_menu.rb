@@ -6,6 +6,7 @@ require 'curses'
 
 require_relative '../screens/title_screen'
 require_relative '../screens/review_screen'
+require_relative '../../lib/error/empty_buffer_error'
 
 module WaniKaniTUI
   module TUI
@@ -47,6 +48,9 @@ module WaniKaniTUI
           draw_menu(position)
         end
         @win.keypad(false)
+      rescue EmptyBufferError
+        @main.status_line.state('No more pending items!')
+        retry
       end
 
       private
