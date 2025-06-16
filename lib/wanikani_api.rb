@@ -91,7 +91,7 @@ module WaniKaniTUI
       when 429
         raise RateLimitError, "Rate limited: #{response.body}"
       when 400..499
-        raise StandardError, "Error during GET request: #{response.code}"
+        raise StandardError, "Error during request: #{response.code}"
       end
 
       JSON.parse(response.body)
