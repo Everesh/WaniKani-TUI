@@ -176,15 +176,24 @@ module WaniKaniTUI
     def update_buffer!
       return if @buffer.length >= @buffer_size
 
-      @buffer.concat(@db.execute(
-                       "SELECT r.assignment_id, s.id
-                        FROM review r
-                        JOIN assignment a ON r.assignment_id = a.assignment_id
-                        JOIN subject s ON s.id = a.subject_id
-                        WHERE NOT (r.meaning_passed = 1 AND r.reading_passed = 1)
-                        ORDER BY RANDOM()
-                        LIMIT ?", [@buffer_size - @buffer.length]
-                     ))
+      buffer_assignment_ids = @buffer.map(&:first)
+
+      not_in_clause = if buffer_assignment_ids.empty?
+                        ''
+                      else
+                        "AND r.assignment_id NOT IN (#{buffer_assignment_ids.join(', ')})"
+                      end
+
+      query = "SELECT r.assignment_id, s.id
+                     FROM review r
+                     JOIN assignment a ON r.assignment_id = a.assignment_id
+                     JOIN subject s ON s.id = a.subject_id
+                     WHERE NOT (r.meaning_passed = 1 AND r.reading_passed = 1)
+                     #{not_in_clause}
+                     ORDER BY RANDOM()
+                     LIMIT #{@buffer_size - @buffer.length}"
+
+      @buffer.concat(@db.execute(query))
     end
   end
 end
