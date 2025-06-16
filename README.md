@@ -10,16 +10,6 @@
 
 ## Installation
 
-### Automated
-1. Set up the environment:
-```sh
-./setup.sh
-```
-2. If it yells at you, that you are missing either `Ruby` or `Python`... fix that •ᴗ•
-3. Get yourself the required `NotoSansJP-Regular.ttf` at [fonts.google](https://fonts.google.com/noto/specimen/Noto+Sans+JP) and copy it to `./tui/cjk_renderer/`
-
-### Manual
-If... let's be honest, when... the automated installation inevitably fails
 1. Get yourself `Ruby` and `Python` interpreters
 2. Move to the project dir
 3. Install all the dependencies:
