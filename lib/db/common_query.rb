@@ -127,8 +127,7 @@ module WaniKaniTUI
       @db.get_first_row(
         "SELECT COUNT(*)
          FROM review
-         WHERE meaning_passed = 1
-         AND reading_passed = 1"
+         WHERE created_at IS NOT NULL"
       ).first
     end
 
