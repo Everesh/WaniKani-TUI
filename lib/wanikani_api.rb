@@ -78,6 +78,7 @@ module WaniKaniTUI
 
       Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
         req = Net::HTTP::Get.new(uri)
+        req['Wanikani-Revision'] = '20170710'
         req['Authorization'] = "Bearer #{@api_key}"
         http.request(req)
       end
@@ -108,6 +109,7 @@ module WaniKaniTUI
       Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
         req = Net::HTTP::Post.new(uri)
         req['Content-Type'] = 'application/json; charset=utf-8'
+        req['Wanikani-Revision'] = '20170710'
         req['Authorization'] = "Bearer #{@api_key}"
         req.body = review.to_json
         http.request(req)
