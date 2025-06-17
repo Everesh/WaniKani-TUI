@@ -53,8 +53,7 @@ module WaniKaniTUI
           @win.addstr(' ' * Curses.cols)
         end
 
-        chars = subject[:subject]['characters']
-        chars = subject[:subject]['slug'] if chars.nil?
+        chars = subject[:subject]['characters'] || subject[:subject]['slug']
         @win.setpos(2, 3)
         @win.addstr(chars)
 

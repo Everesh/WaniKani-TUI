@@ -77,8 +77,7 @@ module WaniKaniTUI
       def draw_chars
         @win.attron(Curses::A_BOLD)
 
-        chars = @subject[:subject]['characters']
-        chars = @subject[:subject]['slug'] if chars.nil?
+        chars = @subject[:subject]['characters'] || @subject[:subject]['slug']
         zero_gap = @main.preferences['no_line_spacing_correction']
 
         height = [Curses.lines / 2, @main.preferences['max_char_height'] || Curses.lines / 2].min
@@ -112,8 +111,7 @@ module WaniKaniTUI
         @win.setpos(2, Curses.cols - 3 - progress_string.length)
         @win.addstr(progress_string)
 
-        chars = @subject[:subject]['characters']
-        chars = @subject[:subject]['slug'] if chars.nil?
+        chars = @subject[:subject]['characters'] || @subject[:subject]['slug']
         @win.setpos(2, 3)
         @win.addstr(chars)
       end
