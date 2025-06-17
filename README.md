@@ -1,5 +1,9 @@
 # WanikaniTUI
 
+Terminal-based client for the [WaniKani web app](https://www.wanikani.com/about), built using the curses library.
+
+For when you need to do your reviews over SSH for ... reasosns ... ¬‿¬
+
 ## Preview
 
 ### Default Theme
@@ -26,13 +30,15 @@ bundle exec ruby bin/tui.rb
 ```
 
 ### First Run
-The app will most definitely ask you for your [WK api key](https://www.wanikani.com/settings/personal_access_tokens). Simply create one, grant it `all_data:read`, `assignments:start` and `reviews:create` and paste it into the prompt(ctrl + shift + V). Or type it out manually, if you are into that.
-- .ᐟ If you ever get stuck in engine initialization loop, report it here and delete your `db.sqlite3` located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
+For the app to initialize, you will have to provide it with a [WK api key](https://www.wanikani.com/settings/personal_access_tokens). Simply create one, grant it `all_data:read`, `assignments:start` and `reviews:create` and paste it into the prompt(ctrl + shift + V)... Or type it out manually, if you are into that.
+- .ᐟ If something breaks, report it here and try deleting your `db.sqlite3` file, located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
 
 ## Additional Customization
-Don't like the colors? or just a single one? What about the braille rendering, is it spaced correctly?
+Don't like the colors? What about the braille rendering, is it spaced correctly?
 
 You can change all that and more!
+
+![preview custom theme](https://github.com/user-attachments/assets/fa590a77-5a73-4487-8a1b-7bf664412494)
 
 Simple create your own config file and save it to `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
 
