@@ -19,38 +19,40 @@ module WaniKaniTUI
       def open
         # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
         @win.keypad(true)
-        @subject = @main.engine.get_review
-        mode = get_mode
-        draw
-        draw_task(mode)
-        draw_answer
-        while ch = @win.getch
-          case ch
-          when 27
-            @main.open_menu
-          when 127, 8, 263
-            @answer = @answer[0...-1] unless @answer.empty?
-          when 10, 13
-            correct_answer = if mode == 'meaning'
-                               @main.engine.answer_review_meaning!(@answer)
-                             else
-                               @main.engine.answer_review_reading!(@answer)
-                             end
-            @main.screens['detail'].open(@subject, @answer, mode) unless correct_answer
-            @answer = ''
-            open
-            break
-          when 410
-            # Nothing.... This is the resize char
-          else
-            @answer << ch
-            if mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
-              @answer = @answer.to_kana
-            end
-          end
+
+        loop do
+          @subject = @main.engine.get_review
+          mode = get_mode
           draw
           draw_task(mode)
           draw_answer
+          while ch = @win.getch
+            case ch
+            when 27
+              @main.open_menu
+            when 127, 8, 263
+              @answer = @answer[0...-1] unless @answer.empty?
+            when 10, 13
+              correct_answer = if mode == 'meaning'
+                                @main.engine.answer_review_meaning!(@answer)
+                              else
+                                @main.engine.answer_review_reading!(@answer)
+                              end
+              @main.screens['detail'].open(@subject, @answer, mode) unless correct_answer
+              @answer = ''
+              break
+            when 410
+              # Nothing.... This is the resize char
+            else
+              @answer << ch
+              if mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
+                @answer = @answer.to_kana
+              end
+            end
+            draw
+            draw_task(mode)
+            draw_answer
+          end
         end
       ensure
         @win.keypad(true)
