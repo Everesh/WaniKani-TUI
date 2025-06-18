@@ -25,7 +25,7 @@ module WaniKaniTUI
         while ch = @win.getch
           case ch
           when 27
-            @main.overlays['main_menu'].open
+            @main.open_menu
           when 127, 8, 263
             @answer = @answer[0...-1] unless @answer.empty?
           when 10, 13
@@ -55,7 +55,6 @@ module WaniKaniTUI
       private
 
       def draw
-        @win.keypad(true) # Refocuses keypad to avoid misscapture from main_menu
         @win.clear
 
         color = if @subject[:subject]['object'] == 'radical'

@@ -18,6 +18,8 @@ module WaniKaniTUI
   module TUI
     # The main Curses TUI application class.
     class Main
+      MENU_OPTIONS = %w[Review Lesson Report Fetch Home Exit].freeze
+
       attr_reader :preferences, :cjk_renderer, :status_line, :engine
       attr_accessor :screens, :overlays
 
@@ -37,12 +39,10 @@ module WaniKaniTUI
         @status_line = StatusLine.new(self)
         @engine = init_engine
         @status_line.update_last_sync
-        @overlays = {}
-        init_overlays
 
         # make sure non-openers like fetch, dont close the app
         loop do
-          @overlays['main_menu'].open
+          open_menu
         end
       rescue Interrupt
         @status_line.state('Exiting...')
@@ -51,6 +51,38 @@ module WaniKaniTUI
         Curses.close_screen
       end
       # rubocop: enable Metrics/MethodLength
+
+      def open_menu
+        option = MainMenu.open(self, MENU_OPTIONS)
+        case option
+        when 'Review'
+          @screens['review'].open
+        when 'Lesson'
+          nil
+        when 'Report'
+          @status_line.status('Reporting to remote...')
+          @engine.submit!
+          @status_line.clear
+          @status_line.status('Fetching from remote...')
+          @engine.fetch!
+          @status_line.clear
+          @status_line.update_last_sync
+        when 'Fetch'
+          @status_line.status('Fetching from remote...')
+          @engine.fetch!
+          @status_line.clear
+          @status_line.update_last_sync
+        when 'Home'
+          @screens['title'].open
+          main_menu
+        when 'Exit'
+          raise Interrupt
+        when nil
+          nil
+        else
+          raise ArgumentError, 'Option out of scope!'
+        end
+      end
 
       private
 
@@ -84,10 +116,6 @@ module WaniKaniTUI
         @screens['title'] = TitleScreen.new(self)
         @screens['review'] = ReviewScreen.new(self)
         @screens['detail'] = DetailScreen.new(self)
-      end
-
-      def init_overlays
-        @overlays['main_menu'] = MainMenu.new(self)
       end
 
       def count_down(message, time, counted: 0)
@@ -162,6 +190,9 @@ module WaniKaniTUI
         hex = hex.delete('#')
         r, g, b = hex.scan(/../).map { |c| c.to_i(16) }
         [r, g, b].map { |val| (val / 255.0 * 1000).round }
+      end
+
+      def open_screen(screen)
       end
     end
   end
