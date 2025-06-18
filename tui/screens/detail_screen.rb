@@ -10,16 +10,23 @@ module WaniKaniTUI
         @main = main
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         @win.bkgd(Curses.color_pair(1))
+        @should_exit = false
       end
 
-      def open(subject, answer, mode)
+      def open(subject, answer, mode, caller: nil)
         # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
         @win.keypad(true)
+        @should_exit = false
         draw(subject, answer, mode)
         while ch = @win.getch
           case ch
           when 27
-            @main.open_menu
+            @main.open_menu(source: 'detail')
+            if @should_exit
+              @main.screens[caller].close if caller
+              return
+            end
+
             draw(subject, answer, mode)
           when 410
             draw(subject, answer, mode)
@@ -29,6 +36,10 @@ module WaniKaniTUI
         end
       ensure
         @win.keypad(true)
+      end
+
+      def close
+        @should_exit = true
       end
 
       private

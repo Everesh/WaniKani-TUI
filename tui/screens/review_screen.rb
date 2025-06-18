@@ -14,11 +14,13 @@ module WaniKaniTUI
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         @win.bkgd(Curses.color_pair(1))
         @answer = ''
+        @should_exit = false
       end
 
       def open
         # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
         @win.keypad(true)
+        @should_exit = false
 
         loop do
           @subject = @main.engine.get_review
@@ -29,7 +31,9 @@ module WaniKaniTUI
           while ch = @win.getch
             case ch
             when 27
-              @main.open_menu
+              @main.open_menu(source: 'review')
+
+              return if @should_exit
             when 127, 8, 263
               @answer = @answer[0...-1] unless @answer.empty?
             when 10, 13
@@ -38,7 +42,7 @@ module WaniKaniTUI
                               else
                                 @main.engine.answer_review_reading!(@answer)
                               end
-              @main.screens['detail'].open(@subject, @answer, mode) unless correct_answer
+              @main.screens['detail'].open(@subject, @answer, mode, caller: 'review') unless correct_answer
               @answer = ''
               break
             when 410
@@ -56,6 +60,10 @@ module WaniKaniTUI
         end
       ensure
         @win.keypad(true)
+      end
+
+      def close
+        @should_exit = true
       end
 
       private

@@ -52,12 +52,14 @@ module WaniKaniTUI
       end
       # rubocop: enable Metrics/MethodLength
 
-      def open_menu
+      def open_menu(source: nil)
         option = MainMenu.open(self, MENU_OPTIONS)
         case option
         when 'Review'
+          @screens[source].close if source
           @screens['review'].open
         when 'Lesson'
+          @screens[source].close if source
           nil
         when 'Report'
           @status_line.status('Reporting to remote...')
@@ -73,8 +75,8 @@ module WaniKaniTUI
           @status_line.clear
           @status_line.update_last_sync
         when 'Home'
+          @screens[source].close if source
           @screens['title'].open
-          open_menu
         when 'Exit'
           raise Interrupt
         when nil
