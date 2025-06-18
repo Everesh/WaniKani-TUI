@@ -30,6 +30,7 @@ module WaniKaniTUI
             draw(subject, answer, mode)
           when 410
             draw(subject, answer, mode)
+            @main.status_line.resize
           else
             break
           end

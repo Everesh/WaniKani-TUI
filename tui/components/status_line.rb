@@ -50,6 +50,13 @@ module WaniKaniTUI
         @win.addstr("⢊ Last Fetch: #{time} ")
         @win.refresh
       end
+
+      def resize
+        @spinner.stop
+        @win = Curses::Window.new(1, Curses.cols, Curses.lines - 1, 0)
+        @win.bkgd(Curses.color_pair(1))
+        @spinner = Spinner.new(@win, 0, 1)
+      end
     end
   end
 end
