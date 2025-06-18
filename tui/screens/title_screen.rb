@@ -16,7 +16,7 @@ module WaniKaniTUI
         @win.bkgd(Curses.color_pair(1))
       end
 
-      def open
+      def show
         @win.clear
         draw_title
         @win.refresh

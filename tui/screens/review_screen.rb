@@ -14,6 +14,8 @@ module WaniKaniTUI
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         @win.bkgd(Curses.color_pair(1))
         @answer = ''
+        @mode = 'meaning'
+
         @should_exit = false
       end
 
@@ -24,9 +26,9 @@ module WaniKaniTUI
 
         loop do
           @subject = @main.engine.get_review
-          mode = get_mode
+          @mode = get_mode
           draw
-          draw_task(mode)
+          draw_task
           draw_answer
           while ch = @win.getch
             case ch
@@ -37,12 +39,12 @@ module WaniKaniTUI
             when 127, 8, 263
               @answer = @answer[0...-1] unless @answer.empty?
             when 10, 13
-              correct_answer = if mode == 'meaning'
+              correct_answer = if @mode == 'meaning'
                                 @main.engine.answer_review_meaning!(@answer)
                               else
                                 @main.engine.answer_review_reading!(@answer)
                               end
-              @main.screens['detail'].open(@subject, @answer, mode, caller: 'review') unless correct_answer
+              @main.screens['detail'].open(@subject, @answer, @mode, caller: 'review') unless correct_answer
               return if @should_exit
 
               @answer = ''
@@ -51,12 +53,12 @@ module WaniKaniTUI
               @main.status_line.resize
             else
               @answer << ch
-              if mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
+              if @mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
                 @answer = @answer.to_kana
               end
             end
             draw
-            draw_task(mode)
+            draw_task
             draw_answer
           end
         end
@@ -66,6 +68,13 @@ module WaniKaniTUI
 
       def close
         @should_exit = true
+      end
+
+      def resize
+        draw
+        draw_task
+        draw_answer
+        @win.refresh
       end
 
       private
@@ -140,21 +149,21 @@ module WaniKaniTUI
         options.sample
       end
 
-      def draw_task(mode)
+      def draw_task
         object = "#{@subject[:subject]['object'].capitalize} "
-        @win.attron(Curses.color_pair(2)) if mode == 'meaning'
+        @win.attron(Curses.color_pair(2)) if @mode == 'meaning'
         @win.setpos(Curses.lines - 7, 0)
         @win.addstr(' ' * Curses.cols)
         @win.setpos(Curses.lines - 6, 0)
         @win.addstr(' ' * Curses.cols)
-        @win.setpos(Curses.lines - 6, (Curses.cols - object.length - 1 - mode.length) / 2)
+        @win.setpos(Curses.lines - 6, (Curses.cols - object.length - 1 - @mode.length) / 2)
         @win.addstr(object)
         @win.attron(Curses::A_BOLD)
-        @win.addstr(mode.capitalize)
+        @win.addstr(@mode.capitalize)
         @win.attroff(Curses::A_BOLD)
         @win.setpos(Curses.lines - 5, 0)
         @win.addstr('_' * Curses.cols)
-        @win.attroff(Curses.color_pair(2)) if mode == 'meaning'
+        @win.attroff(Curses.color_pair(2)) if @mode == 'meaning'
       end
 
       def fill_main_bg

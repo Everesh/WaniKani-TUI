@@ -35,7 +35,7 @@ module WaniKaniTUI
         @cjk_renderer = CJKRendererBridge.new(font_path: @preferences['cjk_font_path'])
         @screens = {}
         init_screens
-        @screens['title'].open
+        @screens['title'].show
         @status_line = StatusLine.new(self)
         @engine = init_engine
         @status_line.update_last_sync
@@ -53,36 +53,47 @@ module WaniKaniTUI
       # rubocop: enable Metrics/MethodLength
 
       def open_menu(source: nil)
-        option = MainMenu.open(self, MENU_OPTIONS)
-        case option
-        when 'Review'
-          @screens[source].close if source
-          @screens['review'].open
-        when 'Lesson'
-          @screens[source].close if source
-          nil
-        when 'Report'
-          @status_line.status('Reporting to remote...')
-          @engine.submit!
-          @status_line.clear
-          @status_line.status('Fetching from remote...')
-          @engine.fetch!
-          @status_line.clear
-          @status_line.update_last_sync
-        when 'Fetch'
-          @status_line.status('Fetching from remote...')
-          @engine.fetch!
-          @status_line.clear
-          @status_line.update_last_sync
-        when 'Home'
-          @screens[source].close if source
-          @screens['title'].open
-        when 'Exit'
-          raise Interrupt
-        when nil
-          nil
-        else
-          raise ArgumentError, 'Option out of scope!'
+        loop do
+          option = MainMenu.open(self, MENU_OPTIONS)
+          case option
+          when 'Review'
+            @screens[source].close if source
+            @screens['review'].open
+            break
+          when 'Lesson'
+            @screens[source].close if source
+            # TO DO
+            break
+          when 'Report'
+            @status_line.status('Reporting to remote...')
+            @engine.submit!
+            @status_line.clear
+            @status_line.status('Fetching from remote...')
+            @engine.fetch!
+            @status_line.clear
+            @status_line.update_last_sync
+            break
+          when 'Fetch'
+            @status_line.status('Fetching from remote...')
+            @engine.fetch!
+            @status_line.clear
+            @status_line.update_last_sync
+            break
+          when 'Home'
+            @screens[source].close if source
+            @screens['title'].show
+            break
+          when 'Exit'
+            raise Interrupt
+          when nil
+            nil
+            break
+          when 'Resize'
+            source ? @screens[source].resize : @screens['title'].show
+            @status_line.resize
+          else
+            raise ArgumentError, 'Option out of scope!'
+          end
         end
       end
 

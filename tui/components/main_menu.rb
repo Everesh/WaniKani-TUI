@@ -28,6 +28,8 @@ module WaniKaniTUI
             position += 1
           when Curses::Key::ENTER, 10, 13, 'l', Curses::Key::RIGHT
             return menu_options[position]
+          when 410
+            return 'Resize'
           when 27 # The escape key
             break
           end

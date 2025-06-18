@@ -43,9 +43,15 @@ module WaniKaniTUI
         @should_exit = true
       end
 
+      def resize
+        draw(@last_state[0], @last_state[1], @last_state[2])
+      end
+
       private
 
       def draw(subject, answer, mode)
+        @last_state = [subject, answer, mode]
+
         @win.clear
         draw_progress_bar
         draw_compact_main(subject)
