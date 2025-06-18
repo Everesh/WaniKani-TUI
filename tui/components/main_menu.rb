@@ -13,6 +13,12 @@ module WaniKaniTUI
     # Renders main menu dialog
     class MainMenu
       def self.open(main, menu_options)
+        if (menu_options.length * 2) + 3 >= Curses.lines
+          main.status_line.state("Window is too short!")
+          sleep(0.5)
+          return
+        end
+
         top_offset = [(Curses.lines / 5) * 3, Curses.lines - (menu_options.length * 2) - 4].min
         win = Curses::Window.new((menu_options.length * 2) + 3, 20, top_offset, (Curses.cols - 20) / 2)
         win.bkgd(Curses.color_pair(1))
