@@ -27,6 +27,8 @@ module WaniKaniTUI
             break
           end
         end
+      ensure
+        @win.keypad(true)
       end
 
       private

@@ -52,6 +52,8 @@ module WaniKaniTUI
           draw_task(mode)
           draw_answer
         end
+      ensure
+        @win.keypad(true)
       end
 
       private
