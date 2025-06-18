@@ -43,6 +43,8 @@ module WaniKaniTUI
                                 @main.engine.answer_review_reading!(@answer)
                               end
               @main.screens['detail'].open(@subject, @answer, mode, caller: 'review') unless correct_answer
+              return if @should_exit
+
               @answer = ''
               break
             when 410
