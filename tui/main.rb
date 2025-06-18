@@ -74,7 +74,7 @@ module WaniKaniTUI
           @status_line.update_last_sync
         when 'Home'
           @screens['title'].open
-          main_menu
+          open_menu
         when 'Exit'
           raise Interrupt
         when nil

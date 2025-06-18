@@ -27,12 +27,8 @@ module WaniKaniTUI
           when 's', 'j', Curses::Key::DOWN
             position += 1
           when Curses::Key::ENTER, 10, 13, 'l', Curses::Key::RIGHT
-            win.keypad(false)
-            win.close
             return menu_options[position]
           when 27 # The escape key
-            win.keypad(false)
-            win.close
             break
           end
 
@@ -45,6 +41,9 @@ module WaniKaniTUI
       rescue EmptyBufferError
         main.status_line.state('No more pending items!')
         retry
+      ensure
+        win.keypad(false) if win
+        win.close if win
       end
 
       class << self

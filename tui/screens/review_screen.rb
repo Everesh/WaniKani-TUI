@@ -17,6 +17,8 @@ module WaniKaniTUI
       end
 
       def open
+        # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
+        @win.keypad(true)
         @subject = @main.engine.get_review
         mode = get_mode
         draw

@@ -13,6 +13,8 @@ module WaniKaniTUI
       end
 
       def open(subject, answer, mode)
+        # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
+        @win.keypad(true)
         draw(subject, answer, mode)
         while ch = @win.getch
           case ch
