@@ -2,7 +2,7 @@
 
 Terminal-based client for the [WaniKani web app](https://www.wanikani.com/about), built using the curses library.
 
-For when you need to do your reviews over SSH for ... reasosns ... ¬‿¬
+For when you need to do your reviews over SSH
 
 ## Preview
 
