@@ -15,7 +15,7 @@ module WaniKaniTUI
       def self.open(main, menu_options)
         if (menu_options.length * 2) + 3 >= Curses.lines
           main.status_line.state("Window is too short!")
-          sleep(0.5)
+          sleep(0.75)
           return
         end
 

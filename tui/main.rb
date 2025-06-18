@@ -91,6 +91,7 @@ module WaniKaniTUI
           when 'Resize'
             source ? @screens[source].resize : @screens['title'].show
             @status_line.resize
+            @status_line.clear
           else
             raise ArgumentError, 'Option out of scope!'
           end
