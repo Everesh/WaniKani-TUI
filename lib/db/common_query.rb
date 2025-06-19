@@ -73,6 +73,7 @@ module WaniKaniTUI
       )
     end
 
+    # rubocop: disable Naming/AccessorMethodName
     def get_all_passed_reviews
       @db.execute(
         "SELECT *
@@ -92,6 +93,7 @@ module WaniKaniTUI
          WHERE created_at IS NOT NULL"
       )
     end
+    # rubocop: enable Naming/AccessorMethodName
 
     def get_review_by_assignment_id(id)
       @db.get_first_row(
@@ -109,6 +111,7 @@ module WaniKaniTUI
       )
     end
 
+    # rubocop: disable Metrics/MethodLength
     def count_available_reviews
       @db.get_first_row(
         "SELECT COUNT(*)
@@ -122,6 +125,7 @@ module WaniKaniTUI
          AND a.unlocked_at IS NOT NULL", [Time.now.utc.iso8601]
       ).first
     end
+    # rubocop: enable Metrics/MethodLength
 
     def count_pending_review_reports
       @db.get_first_row(
@@ -131,6 +135,7 @@ module WaniKaniTUI
       ).first
     end
 
+    # rubocop: disable Metrics/MethodLength
     def count_available_lessons
       @db.get_first_row(
         "SELECT COUNT(*)
@@ -144,6 +149,7 @@ module WaniKaniTUI
          AND a.unlocked_at IS NOT NULL", [get_user_level]
       ).first
     end
+    # rubocop: enable Metrics/MethodLength
 
     def count_pending_lesson_reports
       @db.get_first_row(
@@ -152,6 +158,7 @@ module WaniKaniTUI
       ).first
     end
 
+    # rubocop: disable Naming/AccessorMethodName
     def get_user_level
       @db.get_first_row(
         "SELECT value
@@ -161,6 +168,7 @@ module WaniKaniTUI
     rescue NoMethodError # ~ if no record found
       nil
     end
+    # rubocop: enable Naming/AccessorMethodName
 
     # rubocop: disable Naming/AccessorMethodName
     def get_last_sync_time
