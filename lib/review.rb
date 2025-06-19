@@ -100,6 +100,7 @@ module WaniKaniTUI
       column_value('incorrect_meaning_answers') || 0
     end
 
+    # rubocop: disable Metrics/MethodLength
     def update_review_table!
       available_reviews = @db.execute(
         "SELECT a.assignment_id
@@ -116,6 +117,7 @@ module WaniKaniTUI
       pass_radical_readings!
       pass_kana_vocab_readings!
     end
+    # rubocop: enable Metrics/MethodLength
 
     private
 
@@ -173,6 +175,7 @@ module WaniKaniTUI
       end
     end
 
+    # rubocop: disable Metrics/MethodLength
     def update_buffer!
       return if @buffer.length >= @buffer_size
 
@@ -195,6 +198,7 @@ module WaniKaniTUI
 
       @buffer.concat(@db.execute(query))
     end
+    # rubocop: enable Metrics/MethodLength
   end
 end
 
