@@ -5,6 +5,11 @@
 # Maximum number of review items the user is working on at once.
 buffer_size: 5
 
+# Typo leniency for meaning questions
+# 0 - everything passes
+# 1 - only exact matches pass (case insensitive)
+typo_strictness: 0.9
+
 # Font used for multiline CJK rendering
 cjk_font_path: "/absolute/path/to/a/JP_font.ttf"
 

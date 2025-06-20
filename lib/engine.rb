@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'amatch'
 
 require_relative 'db/database'
 require_relative 'wanikani_api'
@@ -15,6 +16,8 @@ require_relative 'util/payload_generator'
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
+    DEFAULT_TYPO_STRICTNESS = 0.9
+
     attr_reader :common_query
 
     # rubocop: disable Metrics
@@ -73,7 +76,10 @@ module WaniKaniTUI
 
     # Expect a string (bang since this is will modify the db)
     def answer_review_meaning!(answer)
-      is_correct = get_review[:meanings].any? { |reading_hash| reading_hash['meaning'].downcase == answer.downcase }
+      is_correct = get_review[:meanings].any? do |reading_hash|
+        similarity = reading_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
+        similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
+      end
 
       if is_correct
         @review.pass_meaning!

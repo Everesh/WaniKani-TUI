@@ -15,3 +15,5 @@ gem 'pycall', '~> 1.5'
 gem 'curses', '~> 1.5'
 
 gem "romkan", "~> 0.4.0"
+
+gem "amatch", "~> 0.4.1"
