@@ -93,6 +93,26 @@ module WaniKaniTUI
          WHERE created_at IS NOT NULL"
       )
     end
+
+    def get_all_passed_lessons
+      @db.execute(
+        "SELECT *
+         FROM lesson
+         WHERE started_at IS NOT NULL"
+      )
+    end
+
+    def get_all_passed_lessons_with_chars
+      @db.execute(
+        "SELECT l.*, s.characters, s.slug
+         FROM lesson l
+         JOIN assignment a
+         ON a.assignment_id = l.assignment_id
+         JOIN subject s
+         on a.subject_id = s.id
+         WHERE started_at IS NOT NULL"
+      )
+    end
     # rubocop: enable Naming/AccessorMethodName
 
     def get_review_by_assignment_id(id)
@@ -213,6 +233,8 @@ module WaniKaniTUI
 
     define_as_hash_variant_no_param :get_all_passed_reviews
     define_as_hash_variant_no_param :get_all_passed_reviews_with_chars
+    define_as_hash_variant_no_param :get_all_passed_lessons
+    define_as_hash_variant_no_param :get_all_passed_lessons_with_chars
   end
 end
 

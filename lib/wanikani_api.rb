@@ -41,6 +41,11 @@ module WaniKaniTUI
       attempt_submit(url, review)
     end
 
+    def submit_lesson(lesson_payload, lesson_id)
+      url = "PUT https://api.wanikani.com/v2/assignments/#{lesson_id}/start"
+      attempt_submit(url, lesson_payload)
+    end
+
     private
 
     def fetch_api_key

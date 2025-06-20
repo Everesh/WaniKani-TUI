@@ -204,9 +204,18 @@ module WaniKaniTUI
       reviews = @common_query.get_all_passed_reviews_with_chars_as_hash
       reviews.each do |review|
         @status_line&.status("Preparing payload for '#{review['characters'] || review['slug']}'...")
-        payload = PayloadGenerator.make(review)
+        payload = PayloadGenerator.review(review)
         @status_line&.status("Reporting '#{review['characters'] || review['slug']}'...")
         @api.submit_review(payload)
+      end
+
+      @status_line&.status('Fetching finished lessons...')
+      lessons = @common_query.get_all_passed_lessons_with_chars_as_hash
+      lessons.each do |lesson|
+        @status_line&.status("Preparing payload for '#{lesson['characters'] || lesson['slug']}'...")
+        payload = PayloadGenerator.lesson(lesson)
+        @status_line&.status("Reporting '#{lesson['characters'] || lesson['slug']}'...")
+        @api.submit_lesson(payload, lesson[:assignment_id])
       end
     ensure
       @status_line.clear
