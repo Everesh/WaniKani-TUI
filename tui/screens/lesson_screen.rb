@@ -87,7 +87,7 @@ module WaniKaniTUI
                 end
         @win.attron(Curses.color_pair(color))
 
-        main_height = [(Curses.lines - 2) / 3, 3].max
+        main_height = [(Curses.lines - 2) / 2, 3].max
         main_height.times do |i|
           @win.setpos(1+i, 0)
           @win.addstr(' ' * Curses.cols)
@@ -120,24 +120,24 @@ module WaniKaniTUI
       end
 
       def draw_components
-        top_offset = ((Curses.lines - 2 ) / 3) + 1
-        height = 2 * ((Curses.lines - 2 ) / 3)
+        top_offset = ((Curses.lines - 2 ) / 2) + 1
+        height = 2 * ((Curses.lines - 2 ) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Components:')
       end
 
       def draw_meaning
-        top_offset = ((Curses.lines - 2 ) / 3) + 1
-        height = 2 * ((Curses.lines - 2 ) / 3)
+        top_offset = ((Curses.lines - 2 ) / 2) + 1
+        height = 2 * ((Curses.lines - 2 ) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Meaning:')
       end
 
       def draw_reading
-        top_offset = ((Curses.lines - 2 ) / 3) + 1
-        height = 2 * ((Curses.lines - 2 ) / 3)
+        top_offset = ((Curses.lines - 2 ) / 2) + 1
+        height = 2 * ((Curses.lines - 2 ) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Reading:')
