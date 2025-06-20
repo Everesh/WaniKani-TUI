@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop: disable Metrics/ClassLength
+
 require 'net/http'
 require 'json'
 require 'uri'
@@ -149,3 +151,5 @@ module WaniKaniTUI
     end
   end
 end
+
+# rubocop: enable Metrics/ClassLength

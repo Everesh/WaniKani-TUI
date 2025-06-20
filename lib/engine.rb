@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop: disable Metrics/ClassLength
+
 require 'time'
 require 'amatch'
 
@@ -122,7 +124,7 @@ module WaniKaniTUI
     # Lesson section
     # ==============
 
-    # rubocop: disable Metrics/AbcSize
+    # rubocop: disable Naming/AccessorMethodName
     def get_lesson
       lesson = @lesson.peek_as_hash
       assignment = @common_query.get_assignment_by_assignment_id_as_hash(lesson[:assignment_id])
@@ -137,23 +139,23 @@ module WaniKaniTUI
       # e.g {review: {}, assignment: {}, subject: {}, readings: [{},..], meanings: [{},..],
       #      components: [{},..], amalgamations: [{},..]}}
     end
-    # rubocop: enable Metrics/AbcSize
+    # rubocop: enable Naming/AccessorMethodName
 
     def lesson_seen!
       @lesson.seen!
     end
 
     def answer_lesson_meaning!(answer)
-    is_correct = get_lesson[:meanings].any? do |meaning_hash|
-      similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
-      similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
-    end
+      is_correct = get_lesson[:meanings].any? do |meaning_hash|
+        similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
+        similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
+      end
 
-    if is_correct
-      @lesson.pass_meaning!
-    else
-      @lesson.rotate!
-    end
+      if is_correct
+        @lesson.pass_meaning!
+      else
+        @lesson.rotate!
+      end
 
       is_correct
     end
@@ -197,7 +199,6 @@ module WaniKaniTUI
     ensure
       @status_line.clear
     end
-    # rubocop: enable Metrics
 
     def submit!
       @status_line&.status('Fetching finished reviews...')
@@ -220,6 +221,7 @@ module WaniKaniTUI
     ensure
       @status_line.clear
     end
+    # rubocop: enable Metrics
 
     private
 
@@ -230,3 +232,5 @@ module WaniKaniTUI
     end
   end
 end
+
+# rubocop: enable Metrics/ClassLength
