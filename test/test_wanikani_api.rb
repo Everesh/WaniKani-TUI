@@ -46,7 +46,7 @@ module WaniKaniTUI
     def test_fetch_subjects_success
       api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
 
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { '200' }
         mock_response.define_singleton_method(:body) do
@@ -64,7 +64,7 @@ module WaniKaniTUI
     def test_fetch_assignments_success
       api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
 
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { '200' }
         mock_response.define_singleton_method(:body) do
@@ -82,7 +82,7 @@ module WaniKaniTUI
       api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
 
       call_count = 0
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         call_count += 1
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { '200' }
@@ -106,7 +106,7 @@ module WaniKaniTUI
     def test_invalid_api_key_error
       api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
 
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { '401' }
         mock_response.define_singleton_method(:body) { '{"error":"Invalid API key"}' }
@@ -125,7 +125,7 @@ module WaniKaniTUI
       sleep_called = false
       sleep_duration = 0
 
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         call_count += 1
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { call_count == 1 ? '429' : '200' }
@@ -153,7 +153,7 @@ module WaniKaniTUI
     def test_client_error_raises_standard_error
       api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
 
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { '400' }
         mock_response.define_singleton_method(:body) { '{"error":"Bad request"}' }
@@ -168,7 +168,7 @@ module WaniKaniTUI
     def test_empty_response
       api = WaniKaniAPI.new(@db, api_key: FAKE_KEY)
 
-      api.define_singleton_method(:request) do |uri, updated_after|
+      api.define_singleton_method(:get) do |uri, updated_after|
         mock_response = Object.new
         mock_response.define_singleton_method(:code) { '200' }
         mock_response.define_singleton_method(:body) { '{"data":[],"pages":{"next_url":null}}' }
