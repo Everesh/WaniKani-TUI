@@ -152,7 +152,7 @@ module WaniKaniTUI
     if is_correct
       @lesson.pass_meaning!
     else
-      @lesson.fail_meaning!
+      @lesson.rotate!
     end
 
       is_correct
@@ -164,7 +164,7 @@ module WaniKaniTUI
       if is_correct
         @lesson.pass_reading!
       else
-        @lesson.fail_reading!
+        @lesson.rotate!
       end
 
       is_correct

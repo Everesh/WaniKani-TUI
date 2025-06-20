@@ -65,6 +65,10 @@ module WaniKaniTUI
       !peek_as_hash[:reading_passed].zero?
     end
 
+    def rotate!
+      @buffer.rotate!
+    end
+
     private
 
     # rubocop: disable Metrics/MethodLength
