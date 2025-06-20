@@ -142,6 +142,11 @@ module WaniKaniTUI
          AND a.started_at IS NOT NULL
          AND a.hidden = 0
          AND s.hidden_at IS NULL
+         AND a.assignment_id NOT IN (
+            SELECT assignment_id
+            FROM review
+            WHERE created_at IS NOT NULL
+         )
          AND a.unlocked_at IS NOT NULL", [Time.now.utc.iso8601]
       ).first
     end
