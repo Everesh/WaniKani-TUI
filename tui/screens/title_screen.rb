@@ -26,10 +26,10 @@ module WaniKaniTUI
 
       # rubocop: disable Metrics/AbcSize
       def draw_title
-        top_offset = Curses.lines / 5
         zero_gap = @main.preferences['no_line_spacing_correction']
         width = (Curses.cols * 2) / 3
         title = @main.cjk_renderer.get_braille(APP_TITLE, width, zero_gap: zero_gap, size_as_width: true)
+        top_offset = [[Curses.lines / 5, Curses.lines - 17 - title.length].min, 0].max
         @win.attron(Curses::A_BOLD)
         title.each_with_index do |row, i|
           @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
