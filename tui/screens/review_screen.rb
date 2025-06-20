@@ -99,26 +99,31 @@ module WaniKaniTUI
       end
 
       def draw_chars
+        @win.setpos(Curses.lines - 8, 0)
+        @win.addstr('_' * Curses.cols)
         @win.attron(Curses::A_BOLD)
 
         chars = @subject[:subject]['characters'] || @subject[:subject]['slug']
         zero_gap = @main.preferences['no_line_spacing_correction']
 
         height = [Curses.lines / 2, @main.preferences['max_char_height'] || Curses.lines / 2].min
-        max_width = (Curses.cols * 2) / 3
-        subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
-        if subject.first.length > max_width
-          subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
-        end
+        if height > 7
+          max_width = (Curses.cols * 2) / 3
+          subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
+          if subject.first.length > max_width
+            subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
+          end
 
-        top_offset = ((Curses.lines - 8 - subject.length) / 2) + 1
-        subject.each_with_index do |row, i|
-          @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
-          @win.addstr(row.join(''))
+          top_offset = ((Curses.lines - 8 - subject.length) / 2) + 1
+          subject.each_with_index do |row, i|
+            @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
+            @win.addstr(row.join(''))
+          end
+        else
+          @win.setpos(((Curses.lines - 8) / 2) + 1, ((Curses.cols - chars.length) / 2) + 1)
+          @win.addstr(chars)
         end
         @win.attroff(Curses::A_BOLD)
-        @win.setpos(Curses.lines - 8, 0)
-        @win.addstr('_' * Curses.cols)
       end
 
       def draw_progress_bar

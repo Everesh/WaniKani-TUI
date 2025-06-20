@@ -21,8 +21,7 @@ cjk_font_path: "/absolute/path/to/a/JP_font.ttf"
 no_line_spacing_correction: False
 
 # Sets an upper bound on the size of CJK characters in lines.
-# - Below 10, the characters become significantly distorted.
-# - Below 5, the characters are illegible.
+# - Min. 8, anything bellow will disable the braille font rendering
 max_char_height: 50
 
 # Switches CJK pane to use background color for text
