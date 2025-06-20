@@ -166,6 +166,7 @@ module WaniKaniTUI
          AND a.hidden = 0
          AND s.level <= ?
          AND s.hidden_at IS NULL
+         AND a.assignment_id NOT IN (SELECT assignment_id FROM lesson)
          AND a.unlocked_at IS NOT NULL", [get_user_level]
       ).first
     end
