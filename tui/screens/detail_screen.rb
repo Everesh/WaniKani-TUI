@@ -36,7 +36,7 @@ module WaniKaniTUI
           end
         end
       ensure
-        @win.keypad(true)
+        @win.keypad(false)
       end
 
       def close

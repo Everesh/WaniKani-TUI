@@ -13,6 +13,7 @@ require_relative 'components/main_menu'
 require_relative 'screens/title_screen'
 require_relative 'screens/review_screen'
 require_relative 'screens/detail_screen'
+require_relative 'screens/lesson_screen'
 
 module WaniKaniTUI
   module TUI
@@ -62,7 +63,7 @@ module WaniKaniTUI
             break
           when 'Lesson'
             @screens[source].close if source
-            # TO DO
+            @screens['lesson'].open
             break
           when 'Report'
             @status_line.status('Reporting to remote...')
@@ -130,6 +131,7 @@ module WaniKaniTUI
         @screens['title'] = TitleScreen.new(self)
         @screens['review'] = ReviewScreen.new(self)
         @screens['detail'] = DetailScreen.new(self)
+        @screens['lesson'] = LessonScreen.new(self)
       end
 
       def count_down(message, time, counted: 0)
