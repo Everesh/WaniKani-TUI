@@ -110,7 +110,7 @@ module WaniKaniTUI
          ON a.assignment_id = l.assignment_id
          JOIN subject s
          on a.subject_id = s.id
-         WHERE started_at IS NOT NULL"
+         WHERE l.started_at IS NOT NULL"
       )
     end
     # rubocop: enable Naming/AccessorMethodName
