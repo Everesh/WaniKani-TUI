@@ -1,5 +1,7 @@
 require 'curses'
 
+require_relative '../../lib/error/not_yet_seen_error'
+
 module WaniKaniTUI
   module TUI
     # Detail screen of a subject showing components
@@ -33,7 +35,13 @@ module WaniKaniTUI
           when 410
             draw(@mode)
             @main.status_line.resize
+          when Curses::KEY_LEFT, 'a', 'h'
+            @mode = 'components'
+            @main.engine.lesson_unsee! rescue NotYetSeenError
+            draw(@mode)
           else
+            break unless @main.engine.get_lesson[:lesson][:seen].zero?
+
             @mode = @mode == 'components' ? 'meaning' : @mode == 'meaning' ? 'reading' : 'passed'
             if @mode == 'passed'
               @main.engine.lesson_seen!
@@ -93,7 +101,8 @@ module WaniKaniTUI
         if main_height > 7
           zero_gap = @main.preferences['no_line_spacing_correction']
           subject = @main.cjk_renderer.get_braille(chars, main_height - 2, zero_gap: zero_gap)
-          if subject.first.length > (Curses.cols * 2) / 3
+          max_width = (Curses.cols * 2) / 3
+          if subject.first.length > max_width
             subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
           end
 

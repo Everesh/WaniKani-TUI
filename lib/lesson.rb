@@ -6,6 +6,7 @@ require_relative 'db/database'
 require_relative 'error/attempting_already_passed_subject_error'
 require_relative 'error/empty_buffer_error'
 require_relative 'error/already_seen_error'
+require_relative 'error/not_yet_seen_error'
 
 module WaniKaniTUI
   # Manages lessons: queue, buffer and the lesson db table
@@ -42,6 +43,14 @@ module WaniKaniTUI
       @buffer.first[4] = 1
       @buffer.rotate!
     end
+
+    def unsee!
+      raise NotYetSeenError if @buffer.last.last.zero?
+
+      @buffer.rotate!(-1)
+      @buffer.first[4] = 0
+    end
+
 
     def pass_meaning!
       raise AttemptingAlreadyPassedSubjectError, 'Cannot pass meaning: already marked as passed!' if meaning_passed?

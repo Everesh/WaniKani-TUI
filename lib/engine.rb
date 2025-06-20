@@ -145,6 +145,10 @@ module WaniKaniTUI
       @lesson.seen!
     end
 
+    def lesson_unsee!
+      @lesson.unsee!
+    end
+
     def answer_lesson_meaning!(answer)
       is_correct = get_lesson[:meanings].any? do |meaning_hash|
         similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
