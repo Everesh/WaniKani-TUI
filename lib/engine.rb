@@ -8,6 +8,7 @@ require_relative 'wanikani_api'
 require_relative 'util/data_normalizer'
 require_relative 'db/persister'
 require_relative 'review'
+require_relative 'lesson'
 require_relative 'util/data_dir'
 require_relative 'error/missing_api_key_error'
 require_relative 'db/common_query'
@@ -40,10 +41,14 @@ module WaniKaniTUI
 
       @status_line&.status('Loading user preferences...')
       @preferences = DataDir.preferences
-      custom_buffer_size = @preferences['buffer_size']
+      custom_review_buffer_size = @preferences['review_buffer_size']
+      custom_lesson_buffer_size = @preferences['lesson_buffer_size']
 
       @status_line&.status('Initializing the review module...')
-      @review = custom_buffer_size ? Review.new(@db, buffer_size: custom_buffer_size) : Review.new(@db)
+      @review = custom_review_buffer_size ? Review.new(@db, buffer_size: custom_review_buffer_size) : Review.new(@db)
+
+      @status_line&.status('Initializing the lesson module...')
+      @lesson = custom_lesson_buffer_size ? Lesson.new(@db, buffer_size: custom_lesson_buffer_size) : Lesson.new(@db)
 
       @status_line&.status('Fetching from remote...')
       fetch!
@@ -76,8 +81,8 @@ module WaniKaniTUI
 
     # Expect a string (bang since this is will modify the db)
     def answer_review_meaning!(answer)
-      is_correct = get_review[:meanings].any? do |reading_hash|
-        similarity = reading_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
+      is_correct = get_review[:meanings].any? do |meaning_hash|
+        similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
         similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
       end
 
@@ -117,7 +122,53 @@ module WaniKaniTUI
     # Lesson section
     # ==============
 
-    # TODO
+    # rubocop: disable Metrics/AbcSize
+    def get_lesson
+      lesson = @lesson.peek_as_hash
+      assignment = @common_query.get_assignment_by_assignment_id_as_hash(lesson[:assignment_id])
+      subject = @common_query.get_subject_by_id_as_hash(lesson[:subject_id])
+      components = @common_query.get_components_by_id_as_hash(lesson[:subject_id])
+      amalgamations = @common_query.get_amalgamations_by_id_as_hash(lesson[:subject_id])
+      meanings = @common_query.get_meanings_by_id_as_hash(lesson[:subject_id])
+      readings = @common_query.get_readings_by_id_as_hash(lesson[:subject_id])
+      { lesson: lesson, assignment: assignment, subject: subject, readings: readings, meanings: meanings,
+        components: components, amalgamations: amalgamations }
+      # Return structured hash with all the relevant data from the front of the buffer
+      # e.g {review: {}, assignment: {}, subject: {}, readings: [{},..], meanings: [{},..],
+      #      components: [{},..], amalgamations: [{},..]}}
+    end
+    # rubocop: enable Metrics/AbcSize
+
+    def lesson_seen!
+      @lesson.seen!
+    end
+
+    def answer_lesson_meaning!(answer)
+    is_correct = get_lesson[:meanings].any? do |meaning_hash|
+      similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
+      similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
+    end
+
+    if is_correct
+      @lesson.pass_meaning!
+    else
+      @lesson.fail_meaning!
+    end
+
+      is_correct
+    end
+
+    def answer_lesson_reading!(answer)
+      is_correct = get_lesson[:readings].any? { |reading_hash| reading_hash['reading'] == answer }
+
+      if is_correct
+        @lesson.pass_reading!
+      else
+        @lesson.fail_reading!
+      end
+
+      is_correct
+    end
 
     # ==============
     #  Misc section

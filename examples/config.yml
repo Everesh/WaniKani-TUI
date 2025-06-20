@@ -3,7 +3,10 @@
 #    Windows:  %LOCALAPPDATA%\WaniKaniTUI\config.yml
 
 # Maximum number of review items the user is working on at once.
-buffer_size: 5
+review_buffer_size: 5
+
+# Amount of items in each lesson block.
+lesson_buffer_size: 5
 
 # Typo leniency for meaning questions
 # 0 - everything passes
