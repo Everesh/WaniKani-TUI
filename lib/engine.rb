@@ -215,7 +215,7 @@ module WaniKaniTUI
         @status_line&.status("Preparing payload for '#{lesson['characters'] || lesson['slug']}'...")
         payload = PayloadGenerator.lesson(lesson)
         @status_line&.status("Reporting '#{lesson['characters'] || lesson['slug']}'...")
-        @api.submit_lesson(payload, lesson[:assignment_id])
+        @api.submit_lesson(payload, lesson['assignment_id'])
       end
     ensure
       @status_line.clear

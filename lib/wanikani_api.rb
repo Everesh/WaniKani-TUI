@@ -23,27 +23,27 @@ module WaniKaniTUI
 
     def fetch_subjects(updated_after)
       url = 'https://api.wanikani.com/v2/subjects'
-      request_bulk(url, updated_after)
+      bulk_get(url, updated_after)
     end
 
     def fetch_assignments(updated_after)
       url = 'https://api.wanikani.com/v2/assignments'
-      request_bulk(url, updated_after)
+      bulk_get(url, updated_after)
     end
 
     def fetch_user_data(updated_after)
       url = 'https://api.wanikani.com/v2/user'
-      attempt_request(url, updated_after)
+      attempt_get(url, updated_after)
     end
 
     def submit_review(review)
       url = 'https://api.wanikani.com/v2/reviews/'
-      attempt_submit(url, review)
+      attempt_post(url, review)
     end
 
     def submit_lesson(lesson_payload, lesson_id)
-      url = "PUT https://api.wanikani.com/v2/assignments/#{lesson_id}/start"
-      attempt_submit(url, lesson_payload)
+      url = "https://api.wanikani.com/v2/assignments/#{lesson_id}/start"
+      attempt_put(url, lesson_payload)
     end
 
     private
@@ -56,26 +56,26 @@ module WaniKaniTUI
       @db.execute('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', ['api_key', key])
     end
 
-    def request_bulk(url, updated_after)
+    def bulk_get(url, updated_after)
       all_pages = []
 
       while url
-        next_page = attempt_request(url, updated_after)
+        next_page = attempt_get(url, updated_after)
         all_pages.concat(next_page['data'])
         url = next_page.dig('pages', 'next_url')
       end
       all_pages
     end
 
-    def attempt_request(url, updated_after)
-      response = request(URI(url), updated_after)
+    def attempt_get(url, updated_after)
+      response = get(URI(url), updated_after)
       parse_response(response)
     rescue RateLimitError
       count_down('Ratelimited, attempting again', 60)
       retry
     end
 
-    def request(uri, updated_after)
+    def get(uri, updated_after)
       if updated_after
         query = URI.decode_www_form(uri.query || '') << ['updated_after', updated_after]
         uri.query = URI.encode_www_form(query)
@@ -102,17 +102,36 @@ module WaniKaniTUI
       JSON.parse(response.body)
     end
 
-    def attempt_submit(url, review)
-      response = submit(URI(url), review)
+    def attempt_post(url, review)
+      response = post(URI(url), review)
       parse_response(response)
     rescue RateLimitError
       count_down('Ratelimited, attempting again', 60)
       retry
     end
 
-    def submit(uri, review)
+    def post(uri, review)
       Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
         req = Net::HTTP::Post.new(uri)
+        req['Content-Type'] = 'application/json; charset=utf-8'
+        req['Wanikani-Revision'] = '20170710'
+        req['Authorization'] = "Bearer #{@api_key}"
+        req.body = review.to_json
+        http.request(req)
+      end
+    end
+
+    def attempt_put(url, review)
+      response = put(URI(url), review)
+      parse_response(response)
+    rescue RateLimitError
+      count_down('Ratelimited, attempting again', 60)
+      retry
+    end
+
+    def put(uri, review)
+      Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        req = Net::HTTP::Put.new(uri)
         req['Content-Type'] = 'application/json; charset=utf-8'
         req['Wanikani-Revision'] = '20170710'
         req['Authorization'] = "Bearer #{@api_key}"
