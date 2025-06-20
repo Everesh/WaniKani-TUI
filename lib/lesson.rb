@@ -73,20 +73,22 @@ module WaniKaniTUI
 
     # rubocop: disable Metrics/MethodLength
     def create_buffer!
-      @buffer = @db.execute(
+      raw_rows = @db.execute(
         "SELECT a.assignment_id, s.id, 0 AS 'meaning_passed',
          CASE WHEN s.object IN ('kana_vocabulary', 'radical') THEN 1 ELSE 0 END AS 'reading_passed', 0 AS 'seen'
          FROM assignment a
          JOIN subject s
          ON a.subject_id = s.id
          WHERE a.started_at IS NULL
-         AND a.available_at <= ?
          AND a.hidden = 0
          AND s.hidden_at IS NULL
          AND a.unlocked_at IS NOT NULL
+         AND a.assignment_id NOT IN (SELECT assignment_id FROM lesson)
          ORDER BY RANDOM()
-         LIMIT ?", [Time.now.utc.iso8601, @buffer_size]
+         LIMIT ?", [@buffer_size]
       ) # [assignment_id, subject_id, meaning_passed?, reading_passed?, seen?]
+
+      @buffer = raw_rows.map(&:dup)
     end
     # rubocop: enable Metrics/MethodLength
 
