@@ -37,12 +37,20 @@ module WaniKaniTUI
             @main.status_line.resize
           when Curses::KEY_LEFT, 'a', 'h'
             @mode = 'components'
-            @main.engine.lesson_unsee! rescue NotYetSeenError
+            begin
+              @main.engine.lesson_unsee!
+            rescue StandardError
+              NotYetSeenError
+            end
             draw(@mode)
           else
             break unless @main.engine.get_lesson[:lesson][:seen].zero?
 
-            @mode = @mode == 'components' ? 'meaning' : @mode == 'meaning' ? 'reading' : 'passed'
+            @mode = if @mode == 'components'
+                      'meaning'
+                    else
+                      @mode == 'meaning' ? 'reading' : 'passed'
+                    end
             if @mode == 'passed'
               @main.engine.lesson_seen!
               @mode = 'components'
@@ -52,8 +60,7 @@ module WaniKaniTUI
           end
         end
 
-        # TODO - review logic
-
+        # TODO: - review logic
       ensure
         @win.keypad(false)
       end
@@ -92,7 +99,7 @@ module WaniKaniTUI
 
         main_height = [(Curses.lines - 2) / 2, 3].max
         main_height.times do |i|
-          @win.setpos(1+i, 0)
+          @win.setpos(1 + i, 0)
           @win.addstr(' ' * Curses.cols)
         end
 
@@ -117,11 +124,11 @@ module WaniKaniTUI
           end
 
           subject.each_with_index do |row, i|
-            @win.setpos(2+i, ((Curses.cols - row.length) / 2) + 1)
+            @win.setpos(2 + i, ((Curses.cols - row.length) / 2) + 1)
             @win.addstr(row.join(''))
           end
         else
-          @win.setpos(((main_height-2) / 2) + 2, ((Curses.cols - chars.length) / 2) + 1)
+          @win.setpos(((main_height - 2) / 2) + 2, ((Curses.cols - chars.length) / 2) + 1)
           @win.addstr(chars)
         end
         @win.attroff(Curses::A_BOLD)
@@ -141,8 +148,8 @@ module WaniKaniTUI
       end
 
       def draw_components
-        top_offset = ((Curses.lines - 2 ) / 2) + 1
-        height = 2 * ((Curses.lines - 2 ) / 2)
+        top_offset = ((Curses.lines - 2) / 2) + 1
+        height = 2 * ((Curses.lines - 2) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Components:')
@@ -151,8 +158,8 @@ module WaniKaniTUI
       end
 
       def draw_meaning
-        top_offset = ((Curses.lines - 2 ) / 2) + 1
-        height = 2 * ((Curses.lines - 2 ) / 2)
+        top_offset = ((Curses.lines - 2) / 2) + 1
+        height = 2 * ((Curses.lines - 2) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Meaning:')
@@ -161,8 +168,8 @@ module WaniKaniTUI
       end
 
       def draw_reading
-        top_offset = ((Curses.lines - 2 ) / 2) + 1
-        height = 2 * ((Curses.lines - 2 ) / 2)
+        top_offset = ((Curses.lines - 2) / 2) + 1
+        height = 2 * ((Curses.lines - 2) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Reading:')
