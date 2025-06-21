@@ -52,6 +52,9 @@ module WaniKaniTUI
             draw(@mode)
           end
         end
+
+        # TODO - review logic
+
       ensure
         @win.keypad(false)
       end
@@ -76,7 +79,6 @@ module WaniKaniTUI
         when 'reading' then draw_reading
         when 'passed' then draw_task
         end
-        # draw_components
         @win.refresh
       end
 
@@ -145,6 +147,8 @@ module WaniKaniTUI
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Components:')
+
+        # TODO
       end
 
       def draw_meaning
@@ -153,6 +157,8 @@ module WaniKaniTUI
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Meaning:')
+
+        # TODO
       end
 
       def draw_reading
@@ -161,6 +167,8 @@ module WaniKaniTUI
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Reading:')
+
+        # TODO
       end
     end
   end
