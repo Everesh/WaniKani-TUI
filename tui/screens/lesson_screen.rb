@@ -30,10 +30,7 @@ module WaniKaniTUI
           case ch
           when 27
             @main.open_menu(source: 'lesson')
-            if @should_exit
-              @main.screens[caller].close if caller
-              return
-            end
+            return if @should_exit
 
             draw(@mode)
           when 410
