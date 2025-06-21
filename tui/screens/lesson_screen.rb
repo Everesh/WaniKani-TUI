@@ -49,8 +49,10 @@ module WaniKaniTUI
 
             @mode = if @mode == 'components'
                       'meaning'
+                    elsif @mode == 'meaning' && @main.engine.get_lesson[:subject]['object'] != 'radical'
+                      'reading'
                     else
-                      @mode == 'meaning' ? 'reading' : 'passed'
+                      'passed'
                     end
             if @mode == 'passed'
               @main.engine.lesson_seen!
