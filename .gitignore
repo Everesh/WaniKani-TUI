@@ -4,3 +4,4 @@ tui/cjk_renderer/*
 !tui/cjk_renderer/cjk_renderer*
 !tui/cjk_renderer/README.md
 .ropeproject
+.bundle
