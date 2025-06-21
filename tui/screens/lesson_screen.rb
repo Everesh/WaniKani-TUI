@@ -23,7 +23,7 @@ module WaniKaniTUI
         # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
         @win.keypad(true)
         @should_exit = false
-        @mode = 'components'
+        @mode = %w[kanji vocabulary].include?(@main.engine.get_lesson[:subject]['object']) ? 'components' : 'meaning'
         draw(@mode)
         while ch = @win.getch
           case ch
@@ -149,12 +149,33 @@ module WaniKaniTUI
 
       def draw_components
         top_offset = ((Curses.lines - 2) / 2) + 1
-        height = 2 * ((Curses.lines - 2) / 2)
+        height = (Curses.lines - 2) / 2
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Components:')
 
-        # TODO
+        lesson = @main.engine.get_lesson
+        if lesson[:components].length.zero?
+          @mode = 'meaning'
+          return draw(@mode)
+        end
+        gap = ((Curses.cols * 4) / 5) / lesson[:components].length
+        lesson[:components].each_with_index do |component, i|
+          char = component['characters'] || component['slug']
+          meaning = @main.engine.common_query.get_meanings_by_id_as_hash(component['id']).first['meaning']
+          @win.setpos(top_offset + (height / 2) + 3, (Curses.cols / 5) + (i * gap) - (meaning.length / 2) + 1)
+          @win.addstr(meaning)
+          @win.attron(Curses.color_pair(component['object'] == 'radical' ? 3 : 4))
+          @win.setpos(top_offset + (height / 2) + 1, (Curses.cols / 5) + (i * gap) - 1)
+          @win.addstr('    ')
+          @win.setpos(top_offset + (height / 2), (Curses.cols / 5) + (i * gap) - 1)
+          @win.addstr('    ')
+          @win.setpos(top_offset + (height / 2), (Curses.cols / 5) + (i * gap))
+          @win.addstr(char)
+          @win.setpos(top_offset + (height / 2) - 1, (Curses.cols / 5) + (i * gap) - 1)
+          @win.addstr('    ')
+          @win.attroff(Curses.color_pair(component['object'] == 'radical' ? 3 : 4))
+        end
       end
 
       def draw_meaning
