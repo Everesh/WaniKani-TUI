@@ -14,6 +14,10 @@ module WaniKaniTUI
         @win.bkgd(Curses.color_pair(1))
         @should_exit = false
         @mode = 'components'
+
+        @buffer_size = @main.preferences['lesson_buffer_size'] || WaniKaniTUI::Lesson::DEFAULT_BUFFER_SIZE
+        @seen = 0
+        @finished = 0
       end
 
       def open
@@ -46,6 +50,7 @@ module WaniKaniTUI
             if @mode == 'passed'
               @main.engine.lesson_seen!
               @mode = 'components'
+              @seen += 1
             end
             draw(@mode)
           end
@@ -66,7 +71,7 @@ module WaniKaniTUI
 
       def draw(mode)
         @win.clear
-        # draw_progress_bar
+        draw_progress_bar
         draw_compact_main
         case mode
         when 'components' then draw_components
@@ -97,6 +102,13 @@ module WaniKaniTUI
         @win.setpos(2, 3)
         @win.addstr(chars)
 
+        progress = "Learned: #{@seen}/#{@buffer_size}"
+        @win.setpos(2, Curses.cols - (progress.length + 2))
+        @win.addstr(progress)
+        finished = "Passed: #{@finished}/#{@buffer_size}"
+        @win.setpos(3, Curses.cols - (finished.length + 2))
+        @win.addstr(finished)
+
         @win.attron(Curses::A_BOLD)
         if main_height > 7
           zero_gap = @main.preferences['no_line_spacing_correction']
@@ -117,6 +129,17 @@ module WaniKaniTUI
         @win.attroff(Curses::A_BOLD)
 
         @win.attroff(Curses.color_pair(color))
+      end
+
+      def draw_progress_bar
+        @win.attron(Curses.color_pair(6))
+        @win.setpos(0, 0)
+        last_col = ((@seen.to_f / @buffer_size) * Curses.cols).floor
+        @win.addstr('░' * last_col)
+        @win.addstr(' ' * (Curses.cols - last_col))
+        last_col_finished = ((@finished.to_f / @buffer_size) * Curses.cols).floor
+        @win.addstr('█' * last_col_finished)
+        @win.attroff(Curses.color_pair(6))
       end
 
       def draw_components
