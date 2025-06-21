@@ -13,6 +13,8 @@ module WaniKaniTUI
   class Lesson
     DEFAULT_BUFFER_SIZE = 5
 
+    attr_reader :buffer_size
+
     def initialize(db, buffer_size: DEFAULT_BUFFER_SIZE)
       @db = db
       @buffer_size = buffer_size

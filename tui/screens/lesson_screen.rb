@@ -15,7 +15,6 @@ module WaniKaniTUI
         @should_exit = false
         @mode = 'components'
 
-        @buffer_size = @main.preferences['lesson_buffer_size'] || WaniKaniTUI::Lesson::DEFAULT_BUFFER_SIZE
         @seen = 0
         @finished = 0
       end
@@ -101,10 +100,10 @@ module WaniKaniTUI
         @win.setpos(2, 3)
         @win.addstr(chars)
 
-        progress = "Learned: #{@seen}/#{@buffer_size}"
+        progress = "Learned: #{@seen}/#{@main.engine.lesson_buffer_size}"
         @win.setpos(2, Curses.cols - (progress.length + 2))
         @win.addstr(progress)
-        finished = "Passed: #{@finished}/#{@buffer_size}"
+        finished = "Passed: #{@finished}/#{@main.engine.lesson_buffer_size}"
         @win.setpos(3, Curses.cols - (finished.length + 2))
         @win.addstr(finished)
 
@@ -133,10 +132,10 @@ module WaniKaniTUI
       def draw_progress_bar
         @win.attron(Curses.color_pair(6))
         @win.setpos(0, 0)
-        last_col = ((@seen.to_f / @buffer_size) * Curses.cols).floor
+        last_col = ((@seen.to_f / @main.engine.lesson_buffer_size) * Curses.cols).floor
         @win.addstr('░' * last_col)
         @win.addstr(' ' * (Curses.cols - last_col))
-        last_col_finished = ((@finished.to_f / @buffer_size) * Curses.cols).floor
+        last_col_finished = ((@finished.to_f / @main.engine.lesson_buffer_size) * Curses.cols).floor
         @win.addstr('█' * last_col_finished)
         @win.attroff(Curses.color_pair(6))
       end
