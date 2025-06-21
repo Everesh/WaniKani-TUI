@@ -38,9 +38,10 @@ module WaniKaniTUI
           when Curses::KEY_LEFT, 'a', 'h'
             @mode = 'components'
             begin
+              @seen -= 1
               @main.engine.lesson_unsee!
-            rescue StandardError
-              NotYetSeenError
+            rescue NotYetSeenError
+              @seen += 1
             end
             draw(@mode)
           else
