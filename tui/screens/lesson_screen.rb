@@ -164,20 +164,24 @@ module WaniKaniTUI
           @mode = 'meaning'
           return draw(@mode)
         end
-        gap = ((Curses.cols * 4) / 5) / lesson[:components].length
+        gap = if lesson[:components].length == 1
+                0
+              else
+                (((Curses.cols * 3) / 5) - lesson[:components].length) / (lesson[:components].length - 1)
+              end
         lesson[:components].each_with_index do |component, i|
           char = component['characters'] || component['slug']
           meaning = @main.engine.common_query.get_meanings_by_id_as_hash(component['id']).first['meaning']
-          @win.setpos(top_offset + (height / 2) + 3, (Curses.cols / 5) + (i * gap) - (meaning.length / 2) + 1)
+          @win.setpos(top_offset + (height / 2) + 2, (Curses.cols / 5) + (i * gap) - (meaning.length / 2) + 1)
           @win.addstr(meaning)
           @win.attron(Curses.color_pair(component['object'] == 'radical' ? 3 : 4))
-          @win.setpos(top_offset + (height / 2) + 1, (Curses.cols / 5) + (i * gap) - 1)
-          @win.addstr('    ')
           @win.setpos(top_offset + (height / 2), (Curses.cols / 5) + (i * gap) - 1)
           @win.addstr('    ')
-          @win.setpos(top_offset + (height / 2), (Curses.cols / 5) + (i * gap))
-          @win.addstr(char)
           @win.setpos(top_offset + (height / 2) - 1, (Curses.cols / 5) + (i * gap) - 1)
+          @win.addstr('    ')
+          @win.setpos(top_offset + (height / 2) - 1, (Curses.cols / 5) + (i * gap))
+          @win.addstr(char)
+          @win.setpos(top_offset + (height / 2) - 2, (Curses.cols / 5) + (i * gap) - 1)
           @win.addstr('    ')
           @win.attroff(Curses.color_pair(component['object'] == 'radical' ? 3 : 4))
         end
