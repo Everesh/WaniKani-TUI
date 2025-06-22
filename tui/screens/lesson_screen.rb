@@ -120,14 +120,16 @@ module WaniKaniTUI
         @win.attron(Curses::A_BOLD)
         if main_height > 7
           zero_gap = @main.preferences['no_line_spacing_correction']
-          subject = @main.cjk_renderer.get_braille(chars, main_height - 2, zero_gap: zero_gap)
+          height = [main_height - 2, @main.preferences['max_char_height'] || main_height - 2].min
+          subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
           max_width = (Curses.cols * 2) / 3
           if subject.first.length > max_width
             subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
           end
 
+          top_offset = ((main_height - subject.length) / 2) + 1
           subject.each_with_index do |row, i|
-            @win.setpos(2 + i, ((Curses.cols - row.length) / 2) + 1)
+            @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
             @win.addstr(row.join(''))
           end
         else
