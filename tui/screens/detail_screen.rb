@@ -17,7 +17,7 @@ module WaniKaniTUI
         # Both arrow keys and ESC are detected as 27 without keypad, this somewhat fixes it
         @win.keypad(true)
         @should_exit = false
-        draw(subject, answer, mode)
+        draw(subject, answer, mode, caller: caller)
         while ch = @win.getch
           case ch
           when 27
@@ -27,9 +27,9 @@ module WaniKaniTUI
               return
             end
 
-            draw(subject, answer, mode)
+            draw(subject, answer, mode, caller: caller)
           when 410
-            draw(subject, answer, mode)
+            draw(subject, answer, mode, caller: caller)
             @main.status_line.resize
           else
             break
@@ -44,24 +44,24 @@ module WaniKaniTUI
       end
 
       def resize
-        draw(@last_state[0], @last_state[1], @last_state[2])
+        draw(@last_state[0], @last_state[1], @last_state[2], caller: @last_state[3])
       end
 
       private
 
-      def draw(subject, answer, mode)
-        @last_state = [subject, answer, mode]
+      def draw(subject, answer, mode, caller: nil)
+        @last_state = [subject, answer, mode, caller]
 
         @win.clear
-        draw_progress_bar
-        draw_compact_main(subject)
+        draw_progress_bar(caller: caller)
+        draw_compact_main(subject, caller: caller)
         draw_dialog(subject, answer, mode)
         draw_details(subject)
         @win.refresh
         draw_mnemonics(subject)
       end
 
-      def draw_compact_main(subject)
+      def draw_compact_main(subject, caller: nil)
         color = if subject[:subject]['object'] == 'radical'
                   3
                 else
@@ -83,21 +83,39 @@ module WaniKaniTUI
         @win.addstr(chars)
         @win.attroff(Curses::A_BOLD)
 
-        progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_available_reviews}"
-        @win.setpos(2, Curses.cols - 3 - progress_string.length)
-        @win.addstr(progress_string)
+        if caller == 'review'
+          progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_available_reviews}"
+          @win.setpos(2, Curses.cols - 3 - progress_string.length)
+          @win.addstr(progress_string)
+        elsif caller == 'lesson'
+          finished = @main.screens['lesson'].finished
+          progress_string = "Passed: #{finished}/#{@main.engine.lesson_buffer_size}"
+          @win.setpos(2, Curses.cols - (progress_string.length + 2))
+          @win.addstr(progress_string)
+        end
 
         @win.setpos(3, 0)
         @win.addstr('_' * Curses.cols)
         @win.attroff(Curses.color_pair(color))
       end
 
-      def draw_progress_bar
+      def draw_progress_bar(caller: nil)
         @win.attron(Curses.color_pair(6))
         @win.setpos(0, 0)
-        last_col = (@main.engine.progress_statuss_reviews * Curses.cols).floor
-        @win.addstr('█' * last_col)
-        @win.addstr(' ' * (Curses.cols - last_col))
+        if caller == 'review'
+          last_col = (@main.engine.progress_statuss_reviews * Curses.cols).floor
+          @win.addstr('█' * last_col)
+          @win.addstr(' ' * (Curses.cols - last_col))
+        elsif caller == 'lesson'
+          seen = @main.screens['lesson'].seen
+          finished = @main.screens['lesson'].finished
+          last_col = ((seen.to_f / @main.engine.lesson_buffer_size) * Curses.cols).floor
+          @win.addstr('░' * last_col)
+          @win.addstr(' ' * (Curses.cols - last_col))
+          @win.setpos(0, 0)
+          last_col_finished = ((finished.to_f / @main.engine.lesson_buffer_size) * Curses.cols).floor
+          @win.addstr('█' * last_col_finished)
+        end
         @win.attroff(Curses.color_pair(6))
       end
 

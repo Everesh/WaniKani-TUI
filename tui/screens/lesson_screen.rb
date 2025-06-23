@@ -9,6 +9,7 @@ module WaniKaniTUI
     # Detail screen of a subject showing components
     class LessonScreen
       attr_accessor :win
+      attr_reader :seen, :finished
 
       def initialize(main)
         @main = main
