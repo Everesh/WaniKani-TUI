@@ -84,7 +84,7 @@ module WaniKaniTUI
     # Expect a string (bang since this is will modify the db)
     def answer_review_meaning!(answer)
       is_correct = get_review[:meanings].any? do |meaning_hash|
-        similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
+        similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer.downcase)
         similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
       end
 
@@ -155,7 +155,7 @@ module WaniKaniTUI
 
     def answer_lesson_meaning!(answer)
       is_correct = get_lesson[:meanings].any? do |meaning_hash|
-        similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer)
+        similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer.downcase)
         similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
       end
 
