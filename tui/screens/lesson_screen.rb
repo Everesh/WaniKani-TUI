@@ -89,6 +89,12 @@ module WaniKaniTUI
         when 'passed' then draw_task
         end
         @win.refresh
+        return unless %w[meaning reading].include?(@mode)
+
+        mnem = @main.engine.get_lesson[:subject]["mnemonic_#{@mode}"]
+        top_offset = ((Curses.lines - 2) / 2) + 6
+        height = ((Curses.lines - 2) / 2) - 5
+        draw_mnemonic(mnem, top_offset, height)
       end
 
       def draw_compact_main
@@ -188,23 +194,103 @@ module WaniKaniTUI
       end
 
       def draw_meaning
+        lesson = @main.engine.get_lesson
         top_offset = ((Curses.lines - 2) / 2) + 1
-        height = 2 * ((Curses.lines - 2) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Meaning:')
 
-        # TODO
+        @win.attron(Curses.color_pair(8))
+        @win.attron(Curses::A_BOLD)
+        meanings = lesson[:meanings].filter { |meaning| meaning['accepted'] == 1 }.map { |meaning| meaning['meaning'] }
+        @win.setpos(top_offset + 1, 12)
+        @win.addstr(meanings.join(', '))
+        @win.attroff(Curses::A_BOLD)
+        @win.attroff(Curses.color_pair(8))
+
+        meanings_not_accepted = lesson[:meanings].filter do |meaning|
+          meaning['accepted'] == 0
+        end.map { |meaning| meaning['meaning'] }
+        @win.addstr(', ') if !meanings.empty? && !meanings_not_accepted.empty?
+        @win.addstr(meanings_not_accepted.join(', '))
+
+        @win.setpos(top_offset + 3, 3)
+        @win.addstr('Meaning mnemonic:')
       end
 
       def draw_reading
+        lesson = @main.engine.get_lesson
         top_offset = ((Curses.lines - 2) / 2) + 1
-        height = 2 * ((Curses.lines - 2) / 2)
 
         @win.setpos(top_offset + 1, 3)
         @win.addstr('Reading:')
 
-        # TODO
+        @win.attron(Curses.color_pair(8))
+        @win.attron(Curses::A_BOLD)
+        readings = lesson[:readings].filter do |reading|
+          reading['accepted'] == 1
+        end.map { |reading| reading['reading'] }
+        @win.setpos(top_offset + 1, 12)
+        @win.addstr(readings.join(', '))
+        @win.attroff(Curses::A_BOLD)
+        @win.attroff(Curses.color_pair(8))
+
+        readings_not_accepted = lesson[:readings].filter do |reading|
+          reading['accepted'] == 0
+        end.map { |reading| reading['reading'] }
+        @win.addstr(', ') if !readings.empty? && !readings_not_accepted.empty?
+        @win.addstr(readings_not_accepted.join(', '))
+
+        @win.setpos(top_offset + 3, 3)
+        @win.addstr('Reading mnemonic:')
+      end
+
+      def draw_mnemonic(mnemonic, top_offset, height)
+        return if height < 1
+
+        win_mnem = Curses::Window.new(height, Curses.cols - 10, top_offset, 5)
+        win_mnem.clear
+        win_mnem.bkgd(Curses.color_pair(1))
+        win_mnem.setpos(0, 0)
+        meaning_max_width = win_mnem.maxx
+        meaning_x = win_mnem.cury
+        meaning_y = win_mnem.curx
+
+        mnemonic.split(%r{(<\w+>.*?</\w+>)})
+                .map do |part|
+                  if part =~ %r{<(\w+)>(.*?)</\1>}
+                    [Regexp.last_match(1), Regexp.last_match(2)]
+                  else
+                    ['', part]
+                  end
+                end
+                .each do |tag, text|
+          color_pair = case tag
+                       when 'radical' then 3
+                       when 'kanji' then 4
+                       when 'vocabulary' then 5
+                       when 'reading' then 2
+                       when 'meaning' then 2
+                       end
+
+          win_mnem.attron(Curses.color_pair(color_pair)) if color_pair
+
+          text.scan(/\s*\S+\s*|\n/).each do |word|
+            if meaning_x + word.length >= meaning_max_width || word == "\n"
+              meaning_y += 1
+              meaning_x = 0
+              win_mnem.setpos(meaning_y, meaning_x)
+            end
+
+            win_mnem.addstr(word)
+            meaning_x += word.length
+          end
+
+          win_mnem.attroff(Curses.color_pair(color_pair)) if color_pair
+        end
+
+        win_mnem.refresh
+        win_mnem.close
       end
     end
   end
