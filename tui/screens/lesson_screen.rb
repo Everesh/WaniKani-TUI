@@ -1,6 +1,8 @@
 require 'curses'
+require 'romkan'
 
 require_relative '../../lib/error/not_yet_seen_error'
+require_relative '../../lib/error/attempting_already_passed_subject_error'
 
 module WaniKaniTUI
   module TUI
@@ -14,6 +16,9 @@ module WaniKaniTUI
         @win.bkgd(Curses.color_pair(1))
         @should_exit = false
         @mode = 'components'
+
+        @answer = ''
+        @mode_review = 'meaning'
 
         @seen = 0
         @finished = 0
@@ -45,8 +50,6 @@ module WaniKaniTUI
             end
             draw(@mode)
           else
-            break unless @main.engine.get_lesson[:lesson][:seen].zero?
-
             @mode = if @mode == 'components'
                       'meaning'
                     elsif @mode == 'meaning' && @main.engine.get_lesson[:subject]['object'] != 'radical'
@@ -60,10 +63,10 @@ module WaniKaniTUI
               @seen += 1
             end
             draw(@mode)
+            break unless @main.engine.get_lesson[:lesson][:seen].zero?
           end
         end
-
-        # TODO: - review logic
+        open_review
       ensure
         @win.keypad(false)
       end
@@ -153,6 +156,7 @@ module WaniKaniTUI
         last_col = ((@seen.to_f / @main.engine.lesson_buffer_size) * Curses.cols).floor
         @win.addstr('░' * last_col)
         @win.addstr(' ' * (Curses.cols - last_col))
+        @win.setpos(0, 0)
         last_col_finished = ((@finished.to_f / @main.engine.lesson_buffer_size) * Curses.cols).floor
         @win.addstr('█' * last_col_finished)
         @win.attroff(Curses.color_pair(6))
@@ -291,6 +295,155 @@ module WaniKaniTUI
 
         win_mnem.refresh
         win_mnem.close
+      end
+
+      def open_review
+        loop do
+          lesson = @main.engine.get_lesson
+          @mode_review = get_review_mode(lesson)
+          draw_review
+          draw_answer
+          draw_progress_bar
+
+          while ch = @win.getch
+            case ch
+            when 27
+              @main.open_menu(source: 'lesson')
+
+              return if @should_exit
+            when 127, 8, 263
+              @answer = @answer[0...-1] unless @answer.empty?
+            when 10, 13
+              about_to_finish = lesson[:lesson][:meaning_passed] == 1 || lesson[:lesson][:reading_passed] == 1
+              correct_answer = if @mode_review == 'meaning'
+                                 @main.engine.answer_lesson_meaning!(@answer)
+                               else
+                                 @main.engine.answer_lesson_reading!(@answer)
+                               end
+              if correct_answer
+                @finished += 1 if about_to_finish
+                if @main.engine.lesson_buffer_size <= @finished
+
+                  # reset state before exit
+                  @answer = ''
+                  @mode_review = 'meaning'
+                  @seen = 0
+                  @finished = 0
+                  return
+                end
+              else
+                @main.screens['detail'].open(lesson, @answer, @mode_review, caller: 'lesson')
+              end
+              return if @should_exit
+
+              @answer = ''
+              break
+            when 410
+              @main.status_line.resize
+            else
+              @answer << ch
+              if @mode_review == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
+                @answer = @answer.to_kana
+              end
+            end
+            draw_review
+            draw_answer
+            draw_progress_bar
+          end
+        end
+      end
+
+      def draw_review
+        lesson = @main.engine.get_lesson
+        color = if lesson[:subject]['object'] == 'radical'
+                  3
+                else
+                  lesson[:subject]['object'] == 'kanji' ? 4 : 5
+                end
+        @win.attron(Curses.color_pair(color))
+
+        height = Curses.lines - 7
+        height.times do |i|
+          @win.setpos(1 + i, 0)
+          @win.addstr(' ' * Curses.cols)
+        end
+
+        chars = lesson[:subject]['characters'] || lesson[:subject]['slug']
+        @win.setpos(2, 3)
+        @win.addstr(chars)
+
+        progress = "Learned: #{@seen}/#{@main.engine.lesson_buffer_size}"
+        @win.setpos(2, Curses.cols - (progress.length + 2))
+        @win.addstr(progress)
+        finished = "Passed: #{@finished}/#{@main.engine.lesson_buffer_size}"
+        @win.setpos(3, Curses.cols - (finished.length + 2))
+        @win.addstr(finished)
+
+        @win.attron(Curses::A_BOLD)
+        if height > 7
+          zero_gap = @main.preferences['no_line_spacing_correction']
+          height = [height - 2, @main.preferences['max_char_height'] || height - 6].min
+          subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
+          max_width = (Curses.cols * 2) / 3
+          if subject.first.length > max_width
+            subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
+          end
+
+          top_offset = ((height - subject.length) / 2) + 1
+          subject.each_with_index do |row, i|
+            @win.setpos(top_offset + i, ((Curses.cols - row.length) / 2) + 1)
+            @win.addstr(row.join(''))
+          end
+        else
+          @win.setpos(((height - 2) / 2) + 2, ((Curses.cols - chars.length) / 2) + 1)
+          @win.addstr(chars)
+        end
+        @win.attroff(Curses::A_BOLD)
+        @win.setpos(height + 1, 0)
+        @win.addstr('_' * Curses.cols)
+
+        @win.attroff(Curses.color_pair(color))
+        draw_bottom_dialog(height + 2, lesson)
+      end
+
+      def draw_bottom_dialog(top_offset, lesson)
+        object = "#{lesson[:subject]['object'].capitalize} "
+        @win.attron(Curses.color_pair(2)) if @mode_review == 'meaning'
+        @win.setpos(top_offset, 0)
+        @win.addstr(' ' * Curses.cols)
+        @win.setpos(top_offset + 1, 0)
+        @win.addstr(' ' * Curses.cols)
+        @win.setpos(top_offset + 1, (Curses.cols - object.length - 1 - @mode_review.length) / 2)
+        @win.addstr(object)
+        @win.attron(Curses::A_BOLD)
+        @win.addstr(@mode_review.capitalize)
+        @win.attroff(Curses::A_BOLD)
+        @win.setpos(top_offset + 2, 0)
+        @win.addstr('_' * Curses.cols)
+        @win.attroff(Curses.color_pair(2)) if @mode_review == 'meaning'
+      end
+
+      def get_review_mode(lesson)
+        options = []
+        options << 'meaning' if lesson[:lesson][:meaning_passed].zero?
+        options << 'reading' if lesson[:lesson][:reading_passed].zero?
+        raise AttemptingAlreadyPassedSubjectError if options.empty?
+
+        options.sample
+      end
+
+      def draw_answer
+        (2..4).each do |i|
+          @win.setpos(Curses.lines - i, 0)
+          @win.addstr(' ' * Curses.cols)
+        end
+
+        real_string_width = @answer.each_char.sum { |ch| ch.ord.between?(0x2E80, 0x9FFF) ? 2 : 1 }
+        @win.setpos(Curses.lines - 3, (Curses.cols - real_string_width) / 2)
+        @win.addstr(@answer)
+
+        @win.setpos(Curses.lines - 2, 0)
+        @win.addstr('_' * Curses.cols)
       end
     end
   end
