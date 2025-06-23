@@ -98,6 +98,9 @@ module WaniKaniTUI
             raise ArgumentError, 'Option out of scope!'
           end
         end
+      rescue EmptyBufferError
+        @status_line.state('No more pending items!')
+        retry
       end
 
       private

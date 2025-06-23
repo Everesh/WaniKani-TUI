@@ -46,9 +46,6 @@ module WaniKaniTUI
 
           draw_menu(win, menu_options, main, position)
         end
-      rescue EmptyBufferError
-        main.status_line.state('No more pending items!')
-        retry
       ensure
         win.keypad(false) if win
         win.close if win
