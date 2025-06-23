@@ -53,7 +53,6 @@ module WaniKaniTUI
       @buffer.first[4] = 0
     end
 
-
     def pass_meaning!
       raise AttemptingAlreadyPassedSubjectError, 'Cannot pass meaning: already marked as passed!' if meaning_passed?
 
@@ -100,6 +99,7 @@ module WaniKaniTUI
       ) # [assignment_id, subject_id, meaning_passed?, reading_passed?, seen?]
 
       @buffer = raw_rows.map(&:dup)
+      @buffer_size = @buffer.length
     end
     # rubocop: enable Metrics/MethodLength
 
