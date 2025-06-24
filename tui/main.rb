@@ -44,7 +44,6 @@ module WaniKaniTUI
         # make sure non-openers like fetch, dont close the app
         loop do
           open_menu
-          @screens['title'].show
         end
       rescue Interrupt
         @status_line.state('Exiting...')
@@ -99,6 +98,7 @@ module WaniKaniTUI
           end
         end
       rescue EmptyBufferError
+        @screens['title'].show
         @status_line.state('No more pending items!')
         retry
       end
