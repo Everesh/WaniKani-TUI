@@ -84,7 +84,7 @@ module WaniKaniTUI
         @win.attroff(Curses::A_BOLD)
 
         if caller == 'review'
-          progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_available_reviews}"
+          progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_total_reviews}"
           @win.setpos(2, Curses.cols - 3 - progress_string.length)
           @win.addstr(progress_string)
         elsif caller == 'lesson'

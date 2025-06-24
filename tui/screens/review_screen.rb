@@ -40,10 +40,10 @@ module WaniKaniTUI
               @answer = @answer[0...-1] unless @answer.empty?
             when 10, 13
               correct_answer = if @mode == 'meaning'
-                                @main.engine.answer_review_meaning!(@answer)
-                              else
-                                @main.engine.answer_review_reading!(@answer)
-                              end
+                                 @main.engine.answer_review_meaning!(@answer)
+                               else
+                                 @main.engine.answer_review_reading!(@answer)
+                               end
               @main.screens['detail'].open(@subject, @answer, @mode, caller: 'review') unless correct_answer
               return if @should_exit
 
@@ -136,7 +136,7 @@ module WaniKaniTUI
       end
 
       def draw_meta
-        progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_available_reviews}"
+        progress_string = "#{@main.engine.common_query.count_pending_review_reports}/#{@main.engine.common_query.count_total_reviews}"
         @win.setpos(2, Curses.cols - 3 - progress_string.length)
         @win.addstr(progress_string)
 

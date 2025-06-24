@@ -152,6 +152,21 @@ module WaniKaniTUI
     end
     # rubocop: enable Metrics/MethodLength
 
+    def count_total_reviews
+      @db.get_first_row(
+        "SELECT COUNT(*)
+         FROM assignment a
+         JOIN subject s
+         ON a.subject_id = s.id
+         WHERE a.available_at <= ?
+         AND a.started_at IS NOT NULL
+         AND a.hidden = 0
+         AND s.hidden_at IS NULL
+         AND a.unlocked_at IS NOT NULL", [Time.now.utc.iso8601]
+      ).first
+    end
+    # rubo
+
     def count_pending_review_reports
       @db.get_first_row(
         "SELECT COUNT(*)

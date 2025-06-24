@@ -113,10 +113,10 @@ module WaniKaniTUI
     end
 
     def progress_statuss_reviews
-      available_reviews = @common_query.count_available_reviews
-      return 0 if available_reviews.zero?
+      total_reviews = @common_query.count_total_reviews
+      return 0 if total_reviews.zero?
 
-      @common_query.count_pending_review_reports / available_reviews.to_f
+      @common_query.count_pending_review_reports / total_reviews.to_f
       # Return float, 0.0 - 1.0 representing % of all available reviews completed and unreported
     end
 
