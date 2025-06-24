@@ -205,6 +205,9 @@ module WaniKaniTUI
       @status_line&.status('Updating review table...')
       @review.update_review_table!
       @review.update_buffer!
+    rescue Socket::ResolutionError
+      @status_line.state("No internet connection. Could not fetch!")
+      sleep(1)
     ensure
       @status_line.clear
     end
@@ -227,6 +230,9 @@ module WaniKaniTUI
         @status_line&.status("Reporting '#{lesson['characters'] || lesson['slug']}'...")
         @api.submit_lesson(payload, lesson['assignment_id'])
       end
+    rescue Socket::ResolutionError
+      @status_line.state("No internet connection. Could not submit!")
+      sleep(1)
     ensure
       @status_line.clear
     end
