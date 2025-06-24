@@ -383,8 +383,8 @@ module WaniKaniTUI
         @win.attron(Curses::A_BOLD)
         if height > 7
           zero_gap = @main.preferences['no_line_spacing_correction']
-          height = [height - 2, @main.preferences['max_char_height'] || height - 6].min
-          subject = @main.cjk_renderer.get_braille(chars, height, zero_gap: zero_gap)
+          char_height = [height - 2, @main.preferences['max_char_height'] || height - 6].min
+          subject = @main.cjk_renderer.get_braille(chars, char_height, zero_gap: zero_gap)
           max_width = (Curses.cols * 2) / 3
           if subject.first.length > max_width
             subject = @main.cjk_renderer.get_braille(chars, max_width, zero_gap: zero_gap, size_as_width: true)
@@ -404,7 +404,7 @@ module WaniKaniTUI
         @win.addstr('_' * Curses.cols)
 
         @win.attroff(Curses.color_pair(color))
-        draw_bottom_dialog(height + 2, lesson)
+        draw_bottom_dialog(height, lesson)
       end
 
       def draw_bottom_dialog(top_offset, lesson)
