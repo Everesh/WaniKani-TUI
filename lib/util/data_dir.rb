@@ -32,7 +32,7 @@ module WaniKaniTUI
       config_file = File.join(path, CONFIG_FILE)
       return {} unless File.exist?(config_file)
 
-      YAML.load_file(config_file)
+      YAML.load_file(config_file) || {}
     rescue Psych::SyntaxError => e
       puts "Failed to parse config file: #{e.message}"
       {}
