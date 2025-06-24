@@ -204,6 +204,7 @@ module WaniKaniTUI
 
       @status_line&.status('Updating review table...')
       @review.update_review_table!
+      @review.update_buffer!
     ensure
       @status_line.clear
     end

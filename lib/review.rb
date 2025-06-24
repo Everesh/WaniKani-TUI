@@ -117,6 +117,29 @@ module WaniKaniTUI
       pass_radical_readings!
       pass_kana_vocab_readings!
     end
+
+    def update_buffer!
+      return if @buffer.length >= @buffer_size
+
+      buffer_assignment_ids = @buffer.map(&:first)
+
+      not_in_clause = if buffer_assignment_ids.empty?
+                        ''
+                      else
+                        "AND r.assignment_id NOT IN (#{buffer_assignment_ids.join(', ')})"
+                      end
+
+      query = "SELECT r.assignment_id, s.id
+                     FROM review r
+                     JOIN assignment a ON r.assignment_id = a.assignment_id
+                     JOIN subject s ON s.id = a.subject_id
+                     WHERE NOT (r.meaning_passed = 1 AND r.reading_passed = 1)
+                     #{not_in_clause}
+                     ORDER BY RANDOM()
+                     LIMIT #{@buffer_size - @buffer.length}"
+
+      @buffer.concat(@db.execute(query))
+    end
     # rubocop: enable Metrics/MethodLength
 
     private
@@ -174,31 +197,6 @@ module WaniKaniTUI
         end
       end
     end
-
-    # rubocop: disable Metrics/MethodLength
-    def update_buffer!
-      return if @buffer.length >= @buffer_size
-
-      buffer_assignment_ids = @buffer.map(&:first)
-
-      not_in_clause = if buffer_assignment_ids.empty?
-                        ''
-                      else
-                        "AND r.assignment_id NOT IN (#{buffer_assignment_ids.join(', ')})"
-                      end
-
-      query = "SELECT r.assignment_id, s.id
-                     FROM review r
-                     JOIN assignment a ON r.assignment_id = a.assignment_id
-                     JOIN subject s ON s.id = a.subject_id
-                     WHERE NOT (r.meaning_passed = 1 AND r.reading_passed = 1)
-                     #{not_in_clause}
-                     ORDER BY RANDOM()
-                     LIMIT #{@buffer_size - @buffer.length}"
-
-      @buffer.concat(@db.execute(query))
-    end
-    # rubocop: enable Metrics/MethodLength
   end
 end
 
