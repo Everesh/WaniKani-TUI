@@ -319,7 +319,7 @@ module WaniKaniTUI
               correct_answer = if @mode_review == 'meaning'
                                  @main.engine.answer_lesson_meaning!(@answer)
                                else
-                                 @main.engine.answer_lesson_reading!(@answer)
+                                 @main.engine.answer_lesson_reading!(@answer.to_kana)
                                end
               if correct_answer
                 @finished += 1 if about_to_finish

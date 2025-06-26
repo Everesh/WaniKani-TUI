@@ -42,7 +42,7 @@ module WaniKaniTUI
               correct_answer = if @mode == 'meaning'
                                  @main.engine.answer_review_meaning!(@answer)
                                else
-                                 @main.engine.answer_review_reading!(@answer)
+                                 @main.engine.answer_review_reading!(@answer.to_kana)
                                end
               @main.screens['detail'].open(@subject, @answer, @mode, caller: 'review') unless correct_answer
               return if @should_exit
