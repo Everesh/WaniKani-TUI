@@ -204,7 +204,9 @@ module WaniKaniTUI
 
       @status_line&.status('Updating review table...')
       @review.update_review_table!
+      @status_line&.status('Updating review buffer...')
       @review.update_buffer!
+      @status_line&.status('Updating lesson buffer...')
       @lesson.update_buffer!
     rescue Socket::ResolutionError
       @status_line.state("No internet connection. Could not fetch!")

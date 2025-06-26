@@ -13,11 +13,10 @@ module WaniKaniTUI
   class Lesson
     DEFAULT_BUFFER_SIZE = 5
 
-    attr_reader :buffer_size
-
     def initialize(db, buffer_size: DEFAULT_BUFFER_SIZE)
       @db = db
-      @buffer_size = buffer_size
+      @max_buffer_size = buffer_size
+      @cur_buffer_size = 0
       create_buffer!
     end
 
@@ -83,6 +82,10 @@ module WaniKaniTUI
       create_buffer! if @buffer.empty?
     end
 
+    def buffer_size
+      @cur_buffer_size
+    end
+
     private
 
     # rubocop: disable Metrics/MethodLength
@@ -99,11 +102,11 @@ module WaniKaniTUI
          AND a.unlocked_at IS NOT NULL
          AND a.assignment_id NOT IN (SELECT assignment_id FROM lesson)
          ORDER BY RANDOM()
-         LIMIT ?", [@buffer_size]
+         LIMIT ?", [@max_buffer_size]
       ) # [assignment_id, subject_id, meaning_passed?, reading_passed?, seen?]
 
       @buffer = raw_rows.map(&:dup)
-      @buffer_size = @buffer.length
+      @cur_buffer_size = @buffer.length
     end
     # rubocop: enable Metrics/MethodLength
 
