@@ -41,9 +41,10 @@ module WaniKaniTUI
             when 10, 13
               unless (@mode == 'meaning' && @answer.match?(/\A[a-zA-Z]+\z/)) ||
                      (@mode == 'reading' && @answer.match?(/\A[\u3040-\u309F\u30A0-\u30FF]+\z/))
-                       @main.status_line.state("There is probably a typo in: \"#{@answer}\"")
+                       @main.status_line.state("There is probably a typo in: \"#{@answer}\", only #{@mode == 'meaning' ? "[a-z][A-Z]" : "kana"} accepted!")
                        next
               end
+              @main.status_line.clear
 
               correct_answer = if @mode == 'meaning'
                                  @main.engine.answer_review_meaning!(@answer)
