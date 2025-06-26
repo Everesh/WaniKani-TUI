@@ -44,6 +44,7 @@ module WaniKaniTUI
         # make sure non-openers like fetch, dont close the app
         loop do
           open_menu
+          @screens['title'].show # Shows title on section complete
         end
       rescue Interrupt
         @status_line.state('Exiting...')
