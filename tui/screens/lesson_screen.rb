@@ -315,6 +315,12 @@ module WaniKaniTUI
             when 127, 8, 263
               @answer = @answer[0...-1] unless @answer.empty?
             when 10, 13
+              unless (@mode_review == 'meaning' && @answer.match?(/\A[a-zA-Z]+\z/)) ||
+                     (@mode_review == 'reading' && @answer.match?(/\A[\u3040-\u309F\u30A0-\u30FF]+\z/))
+                       @main.status_line.state("There is probably a typo in: #{@answer}")
+                       next
+              end
+
               about_to_finish = lesson[:lesson][:meaning_passed] == 1 || lesson[:lesson][:reading_passed] == 1
               correct_answer = if @mode_review == 'meaning'
                                  @main.engine.answer_lesson_meaning!(@answer)
