@@ -79,6 +79,10 @@ module WaniKaniTUI
       @buffer.rotate!
     end
 
+    def update_buffer!
+      create_buffer! if @buffer.empty?
+    end
+
     private
 
     # rubocop: disable Metrics/MethodLength
