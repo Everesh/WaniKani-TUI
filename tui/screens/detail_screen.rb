@@ -209,15 +209,15 @@ module WaniKaniTUI
         meaning_y = window_mnemonic_meaning.curx
 
         subject[:subject]['mnemonic_meaning']
-          .split(%r{(<\w+>.*?</\w+>)})
-          .map do |part|
+          &.split(%r{(<\w+>.*?</\w+>)})
+          &.map do |part|
             if part =~ %r{<(\w+)>(.*?)</\1>}
               [Regexp.last_match(1), Regexp.last_match(2)]
             else
               ['', part]
             end
           end
-          .each do |tag, text|
+          &.each do |tag, text|
             color_pair = case tag
                          when 'radical' then 3
                          when 'kanji' then 4

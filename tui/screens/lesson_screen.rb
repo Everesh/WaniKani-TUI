@@ -261,15 +261,15 @@ module WaniKaniTUI
         meaning_x = win_mnem.cury
         meaning_y = win_mnem.curx
 
-        mnemonic.split(%r{(<\w+>.*?</\w+>)})
-                .map do |part|
+        mnemonic&.split(%r{(<\w+>.*?</\w+>)})
+                &.map do |part|
                   if part =~ %r{<(\w+)>(.*?)</\1>}
                     [Regexp.last_match(1), Regexp.last_match(2)]
                   else
                     ['', part]
                   end
                 end
-                .each do |tag, text|
+                &.each do |tag, text|
           color_pair = case tag
                        when 'radical' then 3
                        when 'kanji' then 4
