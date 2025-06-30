@@ -200,7 +200,7 @@ module WaniKaniTUI
 
         @win.setpos(15, 3)
         @win.addstr('Meaning mnemonic:')
-        window_mnemonic_meaning = Curses::Window.new((Curses.lines - 22) / 2, Curses.cols - 10, 17, 5)
+        window_mnemonic_meaning = Curses::Window.new(((Curses.lines - 22) / 2.0).ceil, Curses.cols - 10, 17, 5)
         window_mnemonic_meaning.clear
         window_mnemonic_meaning.bkgd(Curses.color_pair(1))
         window_mnemonic_meaning.setpos(0, 0)
