@@ -85,7 +85,7 @@ module WaniKaniTUI
     def answer_review_meaning!(answer)
       is_correct = get_review[:meanings].any? do |meaning_hash|
         similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer.downcase)
-        similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
+        similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS) && meaning_hash['accepted'] == 1
       end
 
       if is_correct
@@ -100,7 +100,9 @@ module WaniKaniTUI
 
     # Expect a string (bang since this is will modify the db)
     def answer_review_reading!(answer)
-      is_correct = get_review[:readings].any? { |reading_hash| reading_hash['reading'] == answer }
+      is_correct = get_review[:readings].any? do |reading_hash|
+        reading_hash['reading'] == answer && reading_hash['accepted'] == 1
+      end
 
       if is_correct
         @review.pass_reading!
@@ -156,7 +158,7 @@ module WaniKaniTUI
     def answer_lesson_meaning!(answer)
       is_correct = get_lesson[:meanings].any? do |meaning_hash|
         similarity = meaning_hash['meaning'].downcase.damerau_levenshtein_similar(answer.downcase)
-        similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS)
+        similarity >= (@preferences['typo_strictness'] || DEFAULT_TYPO_STRICTNESS) && meaning_hash['accepted'] == 1
       end
 
       if is_correct
@@ -169,7 +171,9 @@ module WaniKaniTUI
     end
 
     def answer_lesson_reading!(answer)
-      is_correct = get_lesson[:readings].any? { |reading_hash| reading_hash['reading'] == answer }
+      is_correct = get_lesson[:readings].any? do |reading_hash|
+        reading_hash['reading'] == answer && reading_hash['accepted'] == 1
+      end
 
       if is_correct
         @lesson.pass_reading!
@@ -209,7 +213,7 @@ module WaniKaniTUI
       @status_line&.status('Updating lesson buffer...')
       @lesson.update_buffer!
     rescue Socket::ResolutionError
-      @status_line.state("No internet connection. Could not fetch!")
+      @status_line.state('No internet connection. Could not fetch!')
       sleep(1)
     ensure
       @status_line.clear
@@ -234,7 +238,7 @@ module WaniKaniTUI
         @api.submit_lesson(payload, lesson['assignment_id'])
       end
     rescue Socket::ResolutionError
-      @status_line.state("No internet connection. Could not submit!")
+      @status_line.state('No internet connection. Could not submit!')
       sleep(1)
     ensure
       @status_line.clear
