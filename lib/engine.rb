@@ -19,7 +19,7 @@ require_relative 'util/payload_generator'
 module WaniKaniTUI
   # Manages the core functionality of the application.
   class Engine
-    DEFAULT_TYPO_STRICTNESS = 0.9
+    DEFAULT_TYPO_STRICTNESS = 0.8
 
     attr_reader :common_query
 
