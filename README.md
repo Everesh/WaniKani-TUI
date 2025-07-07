@@ -37,6 +37,7 @@ For the app to initialize, you will have to provide it with a [WK api key](https
 - Generic:
   - `ENTER` to submit answer
   - `ESC` to bring out the menu
+  - `ctrl + p` to pass current task
 - Menu:
   - `w`, `k`, `↑` to move up
   - `s`, `j`, `↓` to move down

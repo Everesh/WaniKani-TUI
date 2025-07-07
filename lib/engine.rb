@@ -98,6 +98,10 @@ module WaniKaniTUI
       # Return bool, whether the asnwer was correct
     end
 
+    def pass_meaning!
+      @review.pass_meaning!
+    end
+
     # Expect a string (bang since this is will modify the db)
     def answer_review_reading!(answer)
       is_correct = get_review[:readings].any? do |reading_hash|
@@ -112,6 +116,10 @@ module WaniKaniTUI
 
       is_correct
       # Return bool, whether the asnwer was correct
+    end
+
+    def pass_reading!
+      @review.pass_reading!
     end
 
     def progress_statuss_reviews
@@ -170,6 +178,10 @@ module WaniKaniTUI
       is_correct
     end
 
+    def pass_lesson_meaning!
+      @lesson.pass_meaning!
+    end
+
     def answer_lesson_reading!(answer)
       is_correct = get_lesson[:readings].any? do |reading_hash|
         reading_hash['reading'] == answer && reading_hash['accepted'] == 1
@@ -182,6 +194,10 @@ module WaniKaniTUI
       end
 
       is_correct
+    end
+
+    def pass_lesson_reading!
+      @lesson.pass_reading!
     end
 
     # ==============

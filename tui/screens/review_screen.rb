@@ -58,6 +58,13 @@ module WaniKaniTUI
               break
             when 410
               @main.status_line.resize
+            when 16 # ctrl + p
+              if @mode == 'meaning'
+                @main.engine.pass_meaning!
+              else
+                @main.engine.pass_reading!
+              end
+              break
             else
               @answer << ch
               if @mode == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))

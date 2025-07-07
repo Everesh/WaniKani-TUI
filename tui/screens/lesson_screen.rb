@@ -348,6 +348,24 @@ module WaniKaniTUI
               break
             when 410
               @main.status_line.resize
+            when 16 # ctrl + p
+              about_to_finish = lesson[:lesson][:meaning_passed] == 1 || lesson[:lesson][:reading_passed] == 1
+              if @mode_review == 'meaning'
+                @main.engine.pass_lesson_meaning!
+              else
+                @main.engine.pass_lesson_reading!
+              end
+              @finished += 1 if about_to_finish
+              if @main.engine.lesson_buffer_size <= @finished
+
+                # reset state before exit
+                @answer = ''
+                @mode_review = 'meaning'
+                @seen = 0
+                @finished = 0
+                return
+              end
+              break
             else
               @answer << ch
               if @mode_review == 'reading' && (@answer[-1] != 'n' || (@answer.length > 1 && @answer[-2] == 'n'))
