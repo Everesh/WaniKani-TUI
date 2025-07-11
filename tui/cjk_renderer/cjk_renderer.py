@@ -132,6 +132,7 @@ def main() -> None:
     parser.add_argument("n", type=int, help="Base resolution height")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument("--font", default=None, help="TrueType font file path")
+    parser.add_argument("--no_line_spacing", action="store_true", help="Doubles rendered height")
 
     render_group = parser.add_mutually_exclusive_group()
     render_group.add_argument(
@@ -154,7 +155,8 @@ def main() -> None:
         args.text,
         args.n,
         args.resolution_ratio if not args.braille else None,
-        args.braille
+        args.braille,
+        args.no_line_spacing
     )
 
     # Output final matrix

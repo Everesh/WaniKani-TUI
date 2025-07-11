@@ -10,8 +10,6 @@ end
 
 gem 'sqlite3', '~> 2.6'
 
-gem 'pycall', '~> 1.5'
-
 gem 'curses', '~> 1.5'
 
 gem "romkan", "~> 0.4.0"

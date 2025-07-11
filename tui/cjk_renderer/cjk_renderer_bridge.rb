@@ -1,25 +1,24 @@
 # frozen_string_literal: true
 
-require 'pycall/import'
+require 'json'
 
 module WaniKaniTUI
   module TUI
     # Provides entrypoit to the cjk_renderer.py script
     class CJKRendererBridge
       def initialize(font_path: nil)
-        PyCall.sys.path.append(__dir__)
-        cjk_renderer = PyCall.import_module('cjk_renderer')
-
-        @renderer = font_path ? cjk_renderer.CJKRenderer.new(font_path) : cjk_renderer.CJKRenderer.new
+        @font_path = font_path
+        @path = File.join(__dir__, 'cjk_renderer.py')
       end
 
       def get_braille(chars, size, zero_gap: false, size_as_width: false)
         size /= (chars.length * 2) if size_as_width
         zero_gap = false unless size_as_width # zero_gap with restricted height is just resolution downgrade
+        font_arg = @font_path ? "--font #{@font_path}" : ""
         matrix = if zero_gap
-                   @renderer.render_text(chars, size, use_braille: true, no_line_spacing: true)
+                   JSON.parse(`python #{@path} #{chars} #{size} --braille --no_line_spacing --json #{font_arg}`)
                  else
-                   @renderer.render_text(chars, size, use_braille: true)
+                   JSON.parse(`python #{@path} #{chars} #{size} --braille --json #{font_arg}`)
                  end
         deep_to_a(matrix)
       end
@@ -30,7 +29,8 @@ module WaniKaniTUI
                 'Invalid ratio, expected pair [width, height]!'
         end
 
-        matrix = @renderer.render_text(chars, height, ratio: [ratio.first, ratio.last])
+        font_arg = @font_path ? "--font #{@font_path}" : ""
+        matrix = JSON.parse(`python #{@path} #{chars} #{height} --resolution-ratio #{ratio.first}:#{ratio.last} --json #{font_arg}`)
         deep_to_a(matrix)
       end
 
