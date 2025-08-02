@@ -31,7 +31,9 @@ bundle exec ruby bin/tui.rb
 
 ### First Run
 For the app to initialize, you will have to provide it with a [WK api key](https://www.wanikani.com/settings/personal_access_tokens). Simply create one, grant it `all_data:read`, `assignments:start` and `reviews:create` and paste it into the prompt(ctrl + shift + V)... Or type it out manually, if you are into that.
-- .ᐟ If something breaks, report it here and try deleting your `db.sqlite3` file, located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI` depending on your platform!
+
+> [!TIP]
+> If something breaks try deleting your `db.sqlite3` file, located at `~/.local/share/WaniKaniTUI/` or `%LOCALAPPDATA%\WaniKaniTUI`!
 
 ### Controls
 - Generic:
