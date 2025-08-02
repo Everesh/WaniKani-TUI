@@ -315,9 +315,9 @@ module WaniKaniTUI
             when 127, 8, 263
               @answer = @answer[0...-1] unless @answer.empty?
             when 10, 13
-              unless (@mode_review == 'meaning' && @answer.match?(/\A[a-zA-Z ]+\z/)) ||
-                     (@mode_review == 'reading' && @answer.match?(/\A[\u3040-\u309F\u30A0-\u30FF]+\z/))
-                @main.status_line.state("There is probably a typo in: \"#{@answer}\", only #{@mode_review == 'meaning' ? '[a-z][A-Z]' : 'kana'} accepted!")
+              unless (@mode_review == 'meaning' && @answer.match?(/\A[a-zA-Z0-9 ]+\z/)) ||
+                     (@mode_review == 'reading' && @answer.match?(/\A[\u3040-\u309F\u30A0-\u30FF0-9]+\z/))
+                @main.status_line.state("There is probably a typo in: \"#{@answer}\", only #{@mode_review == 'meaning' ? '[a-z][A-Z][0-9]' : 'kana or [0-9]'} accepted!")
                 next
               end
               @main.status_line.clear
