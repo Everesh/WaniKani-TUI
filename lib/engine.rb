@@ -53,6 +53,7 @@ module WaniKaniTUI
       @lesson = custom_lesson_buffer_size ? Lesson.new(@db, buffer_size: custom_lesson_buffer_size) : Lesson.new(@db)
 
       @status_line&.status('Fetching from remote...')
+      @review.flush_buffer!
       fetch!
     ensure
       @status_line.clear

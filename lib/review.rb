@@ -118,6 +118,10 @@ module WaniKaniTUI
       pass_kana_vocab_readings!
     end
 
+    def flush_buffer!
+      @buffer = []
+    end
+
     def update_buffer!
       return if @buffer.length >= @buffer_size
 
