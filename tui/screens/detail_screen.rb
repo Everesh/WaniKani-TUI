@@ -52,7 +52,7 @@ module WaniKaniTUI
       def draw(subject, answer, mode, caller: nil)
         @last_state = [subject, answer, mode, caller]
 
-        @win.clear
+        @win.erase
         draw_progress_bar(caller: caller)
         draw_compact_main(subject, caller: caller)
         draw_dialog(subject, answer, mode)

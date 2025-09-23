@@ -94,7 +94,7 @@ module WaniKaniTUI
       private
 
       def draw
-        @win.clear
+        @win.erase
 
         color = if @subject[:subject]['object'] == 'radical'
                   3

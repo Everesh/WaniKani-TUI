@@ -83,7 +83,7 @@ module WaniKaniTUI
       private
 
       def draw(mode)
-        @win.clear
+        @win.erase
         draw_progress_bar
         draw_compact_main
         case mode
