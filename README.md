@@ -60,3 +60,4 @@ Example with all the available flags at `./examples/config.yml`
 
 ### Database
 ![database img](https://github.com/user-attachments/assets/7b3752d4-695c-46a2-843c-2ffb4720c945)
+*seperation of assingment and subject id is mandated by the rest api
