@@ -53,7 +53,7 @@ module WaniKaniTUI
 
       class << self
         def draw_menu(win, menu_options, main, active_index = nil)
-          win.clear
+          win.erase
           win.attrset(Curses::A_NORMAL)
           win.box
           menu_options.each_with_index do |label, i|

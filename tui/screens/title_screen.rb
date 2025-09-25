@@ -17,7 +17,7 @@ module WaniKaniTUI
       def show
         @win = Curses::Window.new(Curses.lines - 1, Curses.cols, 0, 0)
         @win.bkgd(Curses.color_pair(1))
-        @win.clear
+        @win.erase
         draw_title
         @win.refresh
       end

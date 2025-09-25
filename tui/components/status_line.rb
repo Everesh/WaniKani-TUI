@@ -38,7 +38,7 @@ module WaniKaniTUI
 
       def clear
         @spinner.stop
-        @win.clear
+        @win.erase
         @win.refresh
       end
 
