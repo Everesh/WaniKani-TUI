@@ -56,7 +56,7 @@ module WaniKaniTUI
       @review.flush_buffer!
       fetch!
     ensure
-      @status_line.clear
+      @status_line&.clear
     end
     # rubocop: enable Metrics
 
@@ -230,10 +230,10 @@ module WaniKaniTUI
       @status_line&.status('Updating lesson buffer...')
       @lesson.update_buffer!
     rescue Socket::ResolutionError
-      @status_line.state('No internet connection. Could not fetch!')
+      @status_line&.state('No internet connection. Could not fetch!')
       sleep(1)
     ensure
-      @status_line.clear
+      @status_line&.clear
     end
 
     def submit!
@@ -255,10 +255,10 @@ module WaniKaniTUI
         @api.submit_lesson(payload, lesson['assignment_id'])
       end
     rescue Socket::ResolutionError
-      @status_line.state('No internet connection. Could not submit!')
+      @status_line&.state('No internet connection. Could not submit!')
       sleep(1)
     ensure
-      @status_line.clear
+      @status_line&.clear
     end
     # rubocop: enable Metrics
 
