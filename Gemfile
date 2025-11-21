@@ -8,6 +8,7 @@ group :development do
   gem 'rubocop', '~> 1.75'
 end
 
+gem 'openssl', '~> 3.2.2'
 gem 'sqlite3', '~> 2.6'
 
 gem 'pycall', '~> 1.5'
